@@ -1,0 +1,5 @@
+// comment
+page TestPage {
+CreateBalloon("speaker", "hello world");
+AddText("window", "second line");
+}
