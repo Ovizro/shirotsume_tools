@@ -7,9 +7,11 @@ from .ShirotsumeListener import ShirotsumeListener
 from .ShirotsumeParser import ShirotsumeParser
 
 TEXT_EXTRACTORS = {
-    "CreateBalloon":   lambda exprs: exprs[-1],
-    "CreateBalloonEx": lambda exprs: exprs[-4],
-    "AddText":         lambda exprs: exprs[1],
+    "CreateBalloon":    lambda exprs: exprs[-1],
+    "CreateBalloonEx":  lambda exprs: exprs[-4],
+    "CreateBalloonBie": lambda exprs: exprs[-1],
+    "CreateText":       lambda exprs: exprs[-1],
+    "AddText":          lambda exprs: exprs[1],
 }
 
 

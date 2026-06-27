@@ -31,3 +31,34 @@ def test_parse_directory(tmp_path):
     entries = parse_directory(str(tmp_path))
     assert len(entries) == 2
     assert {e.text for e in entries} == {"one", "two"}
+
+
+from shirotsume_tools.parser import parse_script_text
+
+FIVE_FUNC_SCRIPT = '''\
+page TestPage {
+CreateBalloon("a", "balloon text");
+CreateBalloonEx("a", "b", "c", "ex text", "e", "f", "g");
+CreateBalloonBie("a", "bie text");
+CreateText("text content");
+AddText("win", "add text");
+}
+'''
+
+
+def test_parse_script_text_extracts_all_five_functions():
+    entries = parse_script_text(FIVE_FUNC_SCRIPT, file_path="test.txt")
+    assert len(entries) == 5
+    assert entries[0].text == "balloon text"
+    assert entries[1].text == "ex text"
+    assert entries[2].text == "bie text"
+    assert entries[3].text == "text content"
+    assert entries[4].text == "add text"
+    assert all(e.file_path == "test.txt" for e in entries)
+
+
+def test_parse_script_text_sets_start_stop():
+    entries = parse_script_text('page T { CreateBalloon("x", "hi"); }', file_path="t.txt")
+    assert len(entries) == 1
+    assert entries[0].start < entries[0].stop
+    assert entries[0].line >= 1

@@ -1,4 +1,4 @@
-from .core import parse_directory, parse_script
+from .core import parse_directory, parse_script, parse_script_text
 from .errors import ParserError
 from .listener import TextExtractionListener
 from .model import TextEntry
@@ -9,4 +9,5 @@ __all__ = [
     "TextExtractionListener",
     "parse_directory",
     "parse_script",
+    "parse_script_text",
 ]
