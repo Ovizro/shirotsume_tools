@@ -35,3 +35,23 @@ def test_myindex_command(tmp_path):
     assert result.exit_code == 0
     assert csv_path.exists()
     assert "hello" in csv_path.read_text(encoding="utf-8")
+
+
+def test_cli_help_includes_translation_commands():
+    result = runner.invoke(app, ["--help"])
+    assert result.exit_code == 0
+    assert "patch-script" in result.output
+    assert "translate-scripts" in result.output
+    assert "sync-translation-csvs" in result.output
+
+
+def test_sync_translation_csvs_command(tmp_path):
+    script = tmp_path / "1-01.txt"
+    script.write_text('page T {\nCreateBalloon("x", "テスト");\n}', encoding="cp932")
+    repl_dir = tmp_path / "translations"
+    result = runner.invoke(app, [
+        "sync-translation-csvs", str(tmp_path), "-o", str(repl_dir),
+        "-e", "cp932",
+    ])
+    assert result.exit_code == 0
+    assert (repl_dir / "1-01.csv").exists()

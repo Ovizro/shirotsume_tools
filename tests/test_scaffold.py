@@ -4,4 +4,4 @@ def test_version():
 
 
 def test_submodules_importable():
-    from shirotsume_tools import archive, cli, export, index, parser  # noqa: F401
+    from shirotsume_tools import archive, cli, export, index, parser, translation  # noqa: F401
