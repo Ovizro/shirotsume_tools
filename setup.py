@@ -10,8 +10,9 @@ extensions = [
         "shirotsume_tools.archive._decrypt",
         [
             "shirotsume_tools/archive/_decrypt" + FILE_SUFFIX,
-            "shirotsume_tools/archive/_decrypt.cpp",
+            "shirotsume_tools/archive/decrypt.cpp",
         ],
+        include_dirs=["shirotsume_tools/archive"],
     ),
 ]
 
