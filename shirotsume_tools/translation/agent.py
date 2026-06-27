@@ -259,11 +259,15 @@ def translate_batch(
     translations = data.get("translations")
     if not isinstance(translations, list):
         raise ValueError("OpenAI response did not contain a translations list")
+    id_to_source = {f"{item.file_path}#{i}": item.text for i, item in enumerate(batch)}
     result: dict[str, str] = {}
     for entry in translations:
         if not isinstance(entry, dict) or "id" not in entry or "text" not in entry:
             raise ValueError(f"Invalid translation entry: {entry!r}")
-        result[str(entry["id"])] = str(entry["text"])
+        source = id_to_source.get(str(entry["id"]))
+        if source is None:
+            raise ValueError(f"Unknown translation id: {entry['id']!r}")
+        result[source] = str(entry["text"])
     suggestions = data.get("memory_suggestions", [])
     if not isinstance(suggestions, list):
         raise ValueError("OpenAI response memory_suggestions must be a list")
@@ -449,13 +453,9 @@ def translate_scripts(
             save_translation_memory(memory_path, memory)
 
     by_file: dict[str, list[str]] = {}
-    for i, item in enumerate(items):
-        translated = translations.get(item.text)
-        if translated is None and item in missing_items:
-            translated = translations.get(f"{item.file_path}#{i}")
-        if translated is None:
-            raise ValueError(f"Missing translation for {item.file_path}#{i}")
-        translations[item.text] = translated
+    for item in items:
+        if item.text not in translations:
+            raise ValueError(f"Missing translation for {item.file_path}")
         by_file.setdefault(item.file_path, []).append(item.text)
 
     for relative_file, raw_texts in by_file.items():
