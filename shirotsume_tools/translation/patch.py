@@ -146,7 +146,9 @@ def patch_script_file(
         script = file.read()
     patched, count = patch_script_text(script, load_replacements(replacements_path))
     encoded = encode_script_text(patched, mapping)
-    Path(out_path).write_bytes(encoded)
+    out = Path(out_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_bytes(encoded)
     if mapping_path is not None:
         save_mapping(mapping_path, mapping)
     return count
