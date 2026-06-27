@@ -1,0 +1,56 @@
+[build-system]
+requires = ["setuptools>=61.0", "Cython>=3.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "shirotsume_tools"
+version = "0.1.2"
+description = "tools for shirotsume"
+license = "GPL-3.0-or-later"
+authors = [
+    {name = "Moe"},
+    {name = "Ovizro", email = "Ovizro@visecy.org"},
+]
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "typing_extensions",
+    "antlr4-python3-runtime>=4.13",
+    "KoiLang>=2.0.0b1",
+    "pandas",
+    "openpyxl",
+    "openai>=1.0.0",
+    "pydantic>=2.0",
+    "typer>=0.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff",
+    "coverage",
+]
+
+[project.urls]
+Homepage = "https://github.com/Ovizro/shirotsume_tools"
+
+[tool.setuptools]
+package-data = {"*" = ["*.pyi", "*.pyx", "*.pxd", "*.h", "*.g4"]}
+
+[tool.ruff]
+line-length = 127
+exclude = ["__init__.py"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = ["E402"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["shirotsume_tools*"]
+exclude = [
+    "build*",
+    "tests*",
+]
