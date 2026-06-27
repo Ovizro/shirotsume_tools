@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "shirotsume_tools"
-version = "0.1.2"
+dynamic = ["version"]
 description = "tools for shirotsume"
 license = "GPL-3.0-or-later"
 authors = [
@@ -20,18 +20,14 @@ dependencies = [
     "typing_extensions",
     "antlr4-python3-runtime>=4.13",
     "KoiLang>=2.0.0b1",
-    "pandas",
-    "openpyxl",
-    "openai>=1.0.0",
     "pydantic>=2.0",
     "typer>=0.9.0",
 ]
 
 [project.optional-dependencies]
-dev = [
-    "ruff",
-    "coverage",
-]
+export = ["pandas", "openpyxl"]
+translation = ["openai>=1.0.0"]
+dev = ["ruff", "coverage", "pytest", "cython"]
 
 [project.urls]
 Homepage = "https://github.com/Ovizro/shirotsume_tools"
@@ -39,18 +35,45 @@ Homepage = "https://github.com/Ovizro/shirotsume_tools"
 [tool.setuptools]
 package-data = {"*" = ["*.pyi", "*.pyx", "*.pxd", "*.h", "*.g4"]}
 
-[tool.ruff]
-line-length = 127
-exclude = ["__init__.py"]
-
-[tool.ruff.lint]
-select = ["E", "F", "W", "I"]
-ignore = ["E402"]
+[tool.setuptools.dynamic]
+version = {attr = "shirotsume_tools._version.__version__"}
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["shirotsume_tools*"]
+exclude = ["build*", "tests*"]
+
+[tool.ruff]
+line-length = 127
+target-version = "py310"
 exclude = [
-    "build*",
-    "tests*",
+    "shirotsume_tools/parser/Shirotsume*.py",
+    "build",
+    "dist",
 ]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "B", "C4", "SIM", "RUF"]
+ignore = ["E402", "B008"]
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["shirotsume_tools"]
+
+[tool.ruff.format]
+line-ending = "lf"
+
+[tool.pyright]
+include = ["shirotsume_tools", "tests"]
+exclude = [
+    "shirotsume_tools/parser/Shirotsume*.py",
+    ".venv",
+    "build",
+    "dist",
+]
+pythonVersion = "3.10"
+typeCheckingMode = "standard"
+reportMissingTypeStubs = "none"
+reportPossiblyUnboundVariable = "warning"

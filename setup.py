@@ -7,8 +7,11 @@ FILE_SUFFIX = ".pyx" if USE_CYTHON else ".c"
 
 extensions = [
     Extension(
-        "shirotsume_tools.decrypt",
-        ["shirotsume_tools/decrypt" + FILE_SUFFIX, "shirotsume_tools/_decrypt.cpp"],
+        "shirotsume_tools.archive._decrypt",
+        [
+            "shirotsume_tools/archive/_decrypt" + FILE_SUFFIX,
+            "shirotsume_tools/archive/_decrypt.cpp",
+        ],
     ),
 ]
 
