@@ -261,18 +261,9 @@ rp_error_t rp_encode_body(const uint8_t *in, size_t in_len,
         buf_len = in_len;
     }
 
-    size_t padded_len = (buf_len + 3) & ~size_t(3);
-    if (padded_len != buf_len) {
-        uint8_t *tmp = static_cast<uint8_t*>(std::realloc(buf, padded_len));
-        if (!tmp) {
-            std::free(buf);
-            return RP_ERR_ALLOC;
-        }
-        buf = tmp;
-        std::memset(buf + buf_len, 0, padded_len - buf_len);
+    if (buf_len > 0) {
+        crypt_words(reinterpret_cast<uint32_t*>(buf), buf_len / 4, FILE_KEY);
     }
-
-    crypt_words(reinterpret_cast<uint32_t*>(buf), padded_len / 4, FILE_KEY);
     *out = buf;
     *out_len = buf_len;
     *crypt_type = 1;
@@ -306,7 +297,7 @@ rp_error_t rp_encode_header(uint8_t **out, size_t *out_len,
             return RP_ERR_ALLOC;
         }
         std::memcpy(encrypted_header, header, header_len);
-        decrypt_words(reinterpret_cast<uint32_t*>(encrypted_header), header_len / 4, HEADER_KEY);
+        crypt_words(reinterpret_cast<uint32_t*>(encrypted_header), header_len / 4, HEADER_KEY);
         std::memcpy(p, encrypted_header, header_len);
         std::free(encrypted_header);
     }
