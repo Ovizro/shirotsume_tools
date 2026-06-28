@@ -7,6 +7,8 @@ from libc.string cimport memcpy, memset
 
 import struct
 
+from collections.abc import Mapping
+
 
 class RepiPackError(Exception):
     pass
@@ -347,6 +349,9 @@ cpdef void replace(object in_file, object out_file, object replacements, bint co
         size_t header_len = len(u.header)
         rp_error_t err
         object enc_result
+        object repl
+        bint is_mapping
+        bint is_callable
 
     if raw_arr is NULL:
         raise MemoryError()
@@ -372,18 +377,21 @@ cpdef void replace(object in_file, object out_file, object replacements, bint co
             rp_free(full_header)
             full_header = NULL
 
+        is_mapping = isinstance(replacements, Mapping)
+        is_callable = callable(replacements)
+        if not is_mapping and not is_callable:
+            raise TypeError("replacements must be a mapping or a callable")
+
         for i in range(count):
             raw = <RawEntry>entries[i]
-            if raw.name() in replacements:
-                new_data = replacements[raw.name()]
-                enc_result = encode_body(new_data, compress)
-                encrypted = enc_result[0]
-                crypt_type = enc_result[1]
-                raw_arr[i].size = len(new_data)
-                raw_arr[i].comp_size = len(encrypted)
-                raw_arr[i].crypt_type = crypt_type
-                out_file.write(encrypted)
-            else:
+            repl = None
+            if is_mapping:
+                if raw.name() in replacements:
+                    repl = replacements[raw.name()]
+            elif is_callable:
+                repl = replacements(raw.name())
+
+            if repl is None:
                 in_file.seek(raw.offset())
                 comp_data = in_file.read(raw.comp_size())
                 if <size_t>len(comp_data) != raw.comp_size():
@@ -392,6 +400,17 @@ cpdef void replace(object in_file, object out_file, object replacements, bint co
                 out_file.write(comp_data)
                 offset += raw.comp_size()
                 continue
+
+            if not isinstance(repl, bytes):
+                raise TypeError("replacement must be bytes or None")
+            new_data = <bytes>repl
+            enc_result = encode_body(new_data, compress)
+            encrypted = enc_result[0]
+            crypt_type = enc_result[1]
+            raw_arr[i].size = len(new_data)
+            raw_arr[i].comp_size = len(encrypted)
+            raw_arr[i].crypt_type = crypt_type
+            out_file.write(encrypted)
 
             raw_arr[i].offset = offset
             offset += raw_arr[i].comp_size

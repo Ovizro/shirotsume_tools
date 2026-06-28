@@ -192,3 +192,42 @@ def test_ms932_content_with_nec_char(tmp_path):
 
     out = (outdir / filename).read_text(encoding="ms932")
     assert out == "\u2460\u2461\u2462"
+
+
+def test_public_pack_entry_has_crypt_type():
+    """shirotsume_tools.archive.PackEntry must preserve crypt_type for BC."""
+    from shirotsume_tools.archive import PackEntry
+
+    pe = PackEntry("a.txt", b"x", crypt_type=2)
+    assert pe.crypt_type == 2
+
+
+def test_replace_entries_callable(tmp_path, dat_path):
+    """replace_entries accepts a callable that returns bytes or None."""
+    out = tmp_path / "replaced.dat"
+
+    def repl(name):
+        if name == "script.txt":
+            return b"replaced content"
+        return None
+
+    replace_entries(dat_path, out, repl, compress=True)
+
+    _header, entries = read_pack(out)
+    target = next(e for e in entries if e.name == "script.txt")
+    assert target.data == b"replaced content"
+    b_entry = next(e for e in entries if e.name == "b.bin")
+    assert b_entry.data == bytes(range(256)) * 10
+
+
+def test_roundtrip_header_size_zero(tmp_path):
+    """A zero-byte header must round-trip without malloc(0)/memcpy UB."""
+    header = b""
+    entries = [
+        PackEntry("a.txt", b"hello world" * 100),
+        PackEntry("b.bin", bytes(range(256)) * 5),
+    ]
+    result = _pack_and_read(tmp_path, header, entries, compress=True)
+    assert [e.name for e in result] == ["a.txt", "b.bin"]
+    assert result[0].data == entries[0].data
+    assert result[1].data == entries[1].data
