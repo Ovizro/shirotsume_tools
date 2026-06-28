@@ -6,6 +6,10 @@
 
 #define RP_NAME_MAX 64
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 typedef struct {
     char name[RP_NAME_MAX];
     uint32_t offset;
@@ -40,5 +44,9 @@ rp_error_t rp_encode_body(const uint8_t *in, size_t in_len,
                           uint8_t *crypt_type, int compress);
 
 void rp_free(void *p);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
