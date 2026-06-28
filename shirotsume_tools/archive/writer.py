@@ -3,7 +3,6 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import BinaryIO
 
 from . import crypt
 
@@ -12,13 +11,20 @@ from . import crypt
 class PackEntry:
     name: str
     data: bytes
+    crypt_type: int = 1
 
 
 def read_pack(path: str | Path) -> tuple[bytes, list[PackEntry]]:
     with open(path, "rb") as f:
-        unpacker = crypt.unpack(f)
+        try:
+            unpacker = crypt.unpack(f)
+        except (crypt.InvalidSignatureError, crypt.UnsupportedVersionError) as exc:
+            raise ValueError(str(exc)) from exc
         header = unpacker.header
-        entries = [PackEntry(e.name, e.data) for e in unpacker]
+        entries = [
+            PackEntry(e.name, e.data, crypt_type=unpacker.entries[i].crypt_type())
+            for i, e in enumerate(unpacker)
+        ]
     return header, entries
 
 
@@ -32,11 +38,17 @@ def replace_entries(dat_path: str | Path, out_path: str | Path,
     missing = set(replacements)
     with open(dat_path, "rb") as fin, open(out_path, "wb") as fout:
         # Verify targets exist by reading table first
-        unpacker = crypt.unpack(fin)
+        try:
+            unpacker = crypt.unpack(fin)
+        except (crypt.InvalidSignatureError, crypt.UnsupportedVersionError) as exc:
+            raise ValueError(str(exc)) from exc
         for entry in unpacker.entries:
             if entry.name() in missing:
                 missing.remove(entry.name())
         if missing:
             raise KeyError(f"replacement target(s) not found: {', '.join(sorted(missing))}")
         fin.seek(0)
-        crypt.replace(fin, fout, replacements, compress=compress)
+        try:
+            crypt.replace(fin, fout, replacements, compress=compress)
+        except (crypt.InvalidSignatureError, crypt.UnsupportedVersionError) as exc:
+            raise ValueError(str(exc)) from exc
