@@ -1,6 +1,5 @@
 #include "repipack.h"
 
-#include <algorithm>
 #include <cstdint>
 #include <cstdlib>
 #include <cstring>
@@ -123,6 +122,13 @@ rp_error_t rp_decode_header(const uint8_t *in, size_t in_len,
 
     uint32_t count = *reinterpret_cast<const uint32_t*>(in + table_offset);
     *entry_count = count;
+    if (count == 0) {
+        *entries = nullptr;
+        return RP_OK;
+    }
+    if (count > SIZE_MAX / 80) return RP_ERR_SHORT_READ;
+    if (count > SIZE_MAX / sizeof(rp_entry_t)) return RP_ERR_ALLOC;
+
     *entries = static_cast<rp_entry_t*>(std::malloc(count * sizeof(rp_entry_t)));
     if (!*entries) {
         std::free(*header);
