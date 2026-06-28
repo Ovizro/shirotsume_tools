@@ -99,9 +99,10 @@ def load_replacements(path: str | Path) -> Sequence[str] | Mapping[str, str]:
         rows = list(reader)
     if not rows:
         return []
-    if "raw_text" in reader.fieldnames and "text" in reader.fieldnames:
+    fieldnames = reader.fieldnames or []
+    if "raw_text" in fieldnames and "text" in fieldnames:
         return {row["raw_text"]: normalize_replacement_text(row["text"]) for row in rows if row.get("text")}
-    if "text" in reader.fieldnames:
+    if "text" in fieldnames:
         return [normalize_replacement_text(row["text"]) for row in rows]
     raise ValueError("replacement CSV must have a text column, or raw_text and text columns")
 

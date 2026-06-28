@@ -233,10 +233,7 @@ def translate_batch(
     except ModuleNotFoundError as exc:
         raise RuntimeError("Install the OpenAI SDK first: pip install shirotsume_tools[translation]") from exc
 
-    client_kwargs: dict[str, str] = {}
-    if api_base_url:
-        client_kwargs["base_url"] = api_base_url
-    client = OpenAI(**client_kwargs)
+    client = OpenAI(base_url=api_base_url) if api_base_url else OpenAI()
     payload = {
         "target_language": target_language,
         "story_context": story_context,

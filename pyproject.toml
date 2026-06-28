@@ -27,7 +27,6 @@ dependencies = [
 [project.optional-dependencies]
 export = ["pandas", "openpyxl"]
 translation = ["openai>=1.0.0"]
-dev = ["ruff", "coverage", "pytest", "cython"]
 
 [project.urls]
 Homepage = "https://github.com/Ovizro/shirotsume_tools"
@@ -77,3 +76,16 @@ pythonVersion = "3.10"
 typeCheckingMode = "standard"
 reportMissingTypeStubs = "none"
 reportPossiblyUnboundVariable = "warning"
+
+[tool.uv.sources]
+shirotsume-tools = { workspace = true }
+
+[dependency-groups]
+dev = [
+    "coverage>=7.14.3",
+    "cython>=3.2.6",
+    "pytest>=9.1.1",
+    "ruff>=0.11.13",
+    "pyright>=1.1.405",
+    "shirotsume-tools[export,translation]",
+]
