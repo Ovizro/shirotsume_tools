@@ -64,14 +64,15 @@ known-first-party = ["shirotsume_tools"]
 [tool.ruff.format]
 line-ending = "lf"
 
+# pyright is a global tool (uv tool install pyright), not a project dep.
+# venvPath/venv point it at the project venv so it can resolve imports.
 [tool.pyright]
 include = ["shirotsume_tools", "tests"]
 exclude = [
     "shirotsume_tools/parser/Shirotsume*.py",
-    ".venv",
-    "build",
-    "dist",
 ]
+venvPath = "."
+venv = ".venv"
 pythonVersion = "3.10"
 typeCheckingMode = "standard"
 reportMissingTypeStubs = "none"
@@ -85,7 +86,5 @@ dev = [
     "coverage>=7.14.3",
     "cython>=3.2.6",
     "pytest>=9.1.1",
-    "ruff>=0.11.13",
-    "pyright>=1.1.405",
     "shirotsume-tools[export,translation]",
 ]

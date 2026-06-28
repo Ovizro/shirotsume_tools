@@ -24,9 +24,11 @@ develop:
 build_dist:
 	uv build
 
+# ruff and pyright are global tools installed via `uv tool install ruff pyright`,
+# not project dependencies. They are invoked directly (not via `uv run`).
 lint:
 	ruff check ${MODULE}/ tests/ --fix
-	uv run pyright ${MODULE}/
+	pyright ${MODULE}/
 
 test: build
 	uv run pytest
