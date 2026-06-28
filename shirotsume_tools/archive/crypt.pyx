@@ -118,6 +118,7 @@ cpdef bytes encode_table(const uint8_t[::1] header, list entries):
         rp_entry_t *raw = <rp_entry_t*>malloc(count * sizeof(rp_entry_t))
         uint8_t *out = NULL
         size_t out_len = 0
+        const uint8_t *header_ptr = NULL
         rp_error_t err
         RawEntry entry
         size_t i
@@ -129,7 +130,9 @@ cpdef bytes encode_table(const uint8_t[::1] header, list entries):
         for i in range(count):
             entry = <RawEntry>entries[i]
             memcpy(&raw[i], &entry._entry, sizeof(rp_entry_t))
-        err = rp_encode_header(&out, &out_len, &header[0], header.shape[0],
+        if header.shape[0] > 0:
+            header_ptr = &header[0]
+        err = rp_encode_header(&out, &out_len, header_ptr, header.shape[0],
                                raw, count)
         _raise_on_error(err)
         return bytes((<uint8_t*>out)[:out_len])
@@ -262,6 +265,7 @@ cpdef void pack(object file, const uint8_t[::1] header, list entries, bint compr
         uint8_t crypt_type = 0
         uint8_t *full_header = NULL
         size_t full_header_len = 0
+        const uint8_t *header_ptr = NULL
         rp_error_t err
         bytes name_bytes
         bytes body_data
@@ -282,8 +286,10 @@ cpdef void pack(object file, const uint8_t[::1] header, list entries, bint compr
         data_offset = 8 + 4 + 4 + header.shape[0] + 4 + count * 80
         offset = data_offset
 
+        if header.shape[0] > 0:
+            header_ptr = &header[0]
         err = rp_encode_header(&full_header, &full_header_len,
-                               &header[0], header.shape[0], raw, count)
+                               header_ptr, header.shape[0], raw, count)
         _raise_on_error(err)
         try:
             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
@@ -311,7 +317,7 @@ cpdef void pack(object file, const uint8_t[::1] header, list entries, bint compr
 
         file.seek(0)
         err = rp_encode_header(&full_header, &full_header_len,
-                               &header[0], header.shape[0], raw, count)
+                               header_ptr, header.shape[0], raw, count)
         _raise_on_error(err)
         try:
             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
@@ -337,6 +343,8 @@ cpdef void replace(object in_file, object out_file, object replacements, bint co
         size_t data_offset
         uint8_t *full_header = NULL
         size_t full_header_len = 0
+        const uint8_t *header_ptr = NULL
+        size_t header_len = len(u.header)
         rp_error_t err
         object enc_result
 
@@ -349,11 +357,13 @@ cpdef void replace(object in_file, object out_file, object replacements, bint co
             raw = <RawEntry>entries[i]
             memcpy(&raw_arr[i], &raw._entry, sizeof(rp_entry_t))
 
-        data_offset = 8 + 4 + 4 + len(u.header) + 4 + count * 80
+        data_offset = 8 + 4 + 4 + header_len + 4 + count * 80
         offset = data_offset
 
+        if header_len > 0:
+            header_ptr = <const uint8_t*>u.header
         err = rp_encode_header(&full_header, &full_header_len,
-                               <const uint8_t*>u.header, len(u.header),
+                               header_ptr, header_len,
                                raw_arr, count)
         _raise_on_error(err)
         try:
@@ -388,7 +398,7 @@ cpdef void replace(object in_file, object out_file, object replacements, bint co
 
         out_file.seek(0)
         err = rp_encode_header(&full_header, &full_header_len,
-                               <const uint8_t*>u.header, len(u.header),
+                               header_ptr, header_len,
                                raw_arr, count)
         _raise_on_error(err)
         try:
