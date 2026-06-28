@@ -230,10 +230,10 @@ rp_error_t rp_decode_header(const uint8_t *in, size_t in_len,
         return RP_ERR_ALLOC;
     }
     std::memcpy(raw_table, in + table_offset + 4, table_size);
-    decrypt_words(reinterpret_cast<uint32_t*>(raw_table), table_size / 4, FILE_KEY);
 
     for (size_t i = 0; i < count; i++) {
         uint8_t *p = raw_table + i * 80;
+        decrypt_words(reinterpret_cast<uint32_t*>(p), 80 / 4, FILE_KEY);
         rp_entry_t *e = &(*entries)[i];
         std::memcpy(e->name, p, 64);
         e->offset = *reinterpret_cast<uint32_t*>(p + 64);
@@ -322,8 +322,8 @@ rp_error_t rp_encode_header(uint8_t **out, size_t *out_len,
         *reinterpret_cast<uint32_t*>(slot + 68) = e->size;
         *reinterpret_cast<uint32_t*>(slot + 72) = e->comp_size;
         slot[76] = e->crypt_type;
+        crypt_words(reinterpret_cast<uint32_t*>(slot), 80 / 4, FILE_KEY);
     }
-    crypt_words(reinterpret_cast<uint32_t*>(raw_table), table_size / 4, FILE_KEY);
     std::memcpy(p, raw_table, table_size);
     std::free(raw_table);
 

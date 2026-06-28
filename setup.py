@@ -14,6 +14,15 @@ extensions = [
         ],
         include_dirs=["shirotsume_tools/archive"],
     ),
+    Extension(
+        "shirotsume_tools.archive.crypt",
+        [
+            "shirotsume_tools/archive/crypt" + FILE_SUFFIX,
+            "shirotsume_tools/archive/repipack.cpp",
+        ],
+        include_dirs=["shirotsume_tools/archive"],
+        language="c++",
+    ),
 ]
 
 if USE_CYTHON:
