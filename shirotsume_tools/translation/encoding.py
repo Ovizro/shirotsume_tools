@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable, Mapping, MutableMapping
 from pathlib import Path
-from typing import Dict, Iterable, Mapping, MutableMapping
-
 
 CP932 = "cp932"
 
@@ -14,11 +13,11 @@ def jis_private_codes() -> Iterable[int]:
             yield (lead << 8) | trail
 
 
-def load_mapping(path: str | Path | None) -> Dict[str, int]:
+def load_mapping(path: str | Path | None) -> dict[str, int]:
     if path is None or not Path(path).exists():
         return {}
     data = json.loads(Path(path).read_text(encoding="utf-8"))
-    mapping: Dict[str, int] = {}
+    mapping: dict[str, int] = {}
     for char, value in data.items():
         if isinstance(value, str):
             mapping[char] = int(value, 16)

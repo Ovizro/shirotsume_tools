@@ -1,5 +1,8 @@
 from shirotsume_tools.translation.encoding import (
-    encode_text, encode_script_text, load_mapping, save_mapping, jis_private_codes,
+    encode_text,
+    jis_private_codes,
+    load_mapping,
+    save_mapping,
 )
 
 

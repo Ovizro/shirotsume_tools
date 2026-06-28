@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import csv
-from io import StringIO
 import json
+from collections.abc import Mapping, Sequence
+from io import StringIO
 from pathlib import Path
-from typing import Mapping, Sequence
 
 from ..archive import replace_entries
-from ..parser import TextEntry, parse_script_text
+from ..parser import parse_script_text
 from .encoding import encode_script_text, load_mapping, save_mapping
 
 
@@ -117,7 +117,7 @@ def patch_script_text(script: str, replacements: Sequence[str] | Mapping[str, st
     else:
         if len(replacements) > len(entries):
             raise ValueError(f"{len(replacements)} replacements provided for {len(entries)} script text spans")
-        for entry, replacement in zip(entries, replacements):
+        for entry, replacement in zip(entries, replacements, strict=False):
             edits.append((entry.start, entry.stop, replacement))
 
     if not edits:

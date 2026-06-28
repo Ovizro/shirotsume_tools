@@ -3,12 +3,12 @@ from __future__ import annotations
 import csv
 import json
 import os
+from collections.abc import Iterable, Mapping, Sequence
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any
 
 from ..parser import TextEntry, parse_directory
 from .patch import patch_script_file
-
 
 DEFAULT_MEMORY: dict[str, Any] = {
     "glossary": {},
@@ -23,7 +23,9 @@ DEFAULT_MEMORY: dict[str, Any] = {
 }
 
 
-def extract_translation_items(script_dir: str | Path, *, source_encoding: str = "cp932", limit: int | None = None) -> list[TextEntry]:
+def extract_translation_items(
+    script_dir: str | Path, *, source_encoding: str = "cp932", limit: int | None = None,
+) -> list[TextEntry]:
     script_root = Path(script_dir).resolve()
     entries = parse_directory(str(script_root), encoding=source_encoding)
     result: list[TextEntry] = []
@@ -167,13 +169,15 @@ def translation_system_prompt(prompt_language: str = "en") -> str:
             "只返回如下形状的 JSON：\n"
             "{"
             '"translations":[{"id":"same id","text":"translated Chinese text"}],'
-            '"memory_suggestions":[{"type":"glossary|character|style|decision","source":"Japanese term or topic","target":"Chinese decision","note":"short reason"}]'
+            '"memory_suggestions":[{"type":"glossary|character|style|decision",'
+            '"source":"Japanese term or topic","target":"Chinese decision","note":"short reason"}]'
             "}."
         )
 
     return (
         "You are translating Japanese visual novel game scripts into Simplified Chinese.\n"
-        "Think through the local scene context, speaker intent, emotional tone, and idiomatic Chinese phrasing before writing each translation. "
+        "Think through the local scene context, speaker intent, emotional tone, "
+        "and idiomatic Chinese phrasing before writing each translation. "
         "Do this reasoning internally; do not include analysis, notes, alternatives, or explanations in the JSON output.\n"
         "\n"
         "Translation memory is binding:\n"
@@ -183,18 +187,23 @@ def translation_system_prompt(prompt_language: str = "en") -> str:
         "- If a glossary decision seems wrong, do not override it in the translation. Add a suggestion instead.\n"
         "\n"
         "Script safety rules:\n"
-        "- Preserve tags, markup, escapes, variables, command-like fragments, punctuation required by the engine, and line breaks.\n"
-        "- Preserve punctuation-only display fragments exactly, especially timed pauses such as <TYPE interval=60>･･････</TYPE>.\n"
+        "- Preserve tags, markup, escapes, variables, command-like fragments, "
+        "punctuation required by the engine, and line breaks.\n"
+        "- Preserve punctuation-only display fragments exactly, "
+        "especially timed pauses such as <TYPE interval=60>･･････</TYPE>.\n"
         "- Translate only human-readable prose inside source_text.\n"
         "- Keep each output line usable as a direct replacement for the corresponding source string.\n"
         "- Use ordered items in each file as one continuous scene; preserve continuity across adjacent entries.\n"
-        "- Avoid stiff literal translations of Japanese grammar, body-part idioms, ellipses, and sentence endings when natural Chinese would phrase them differently.\n"
-        "- Keep tags at their original positions relative to the text they affect. Do not delete or translate tag names or attributes.\n"
+        "- Avoid stiff literal translations of Japanese grammar, body-part idioms, "
+        "ellipses, and sentence endings when natural Chinese would phrase them differently.\n"
+        "- Keep tags at their original positions relative to the text they affect. "
+        "Do not delete or translate tag names or attributes.\n"
         "- Prefer polished visual-novel narration and dialogue over dictionary-literal wording.\n"
         "\n"
         "Memory update rules:\n"
         "- Actively check every batch for durable decisions worth recording; if any exist, return 1 to 5 suggestions.\n"
-        "- Good suggestions include character/name translations, forms of address, research groups, recurring places/items, special terminology, and style decisions.\n"
+        "- Good suggestions include character/name translations, forms of address, "
+        "research groups, recurring places/items, special terminology, and style decisions.\n"
         "- Do not suggest one-off ordinary phrases.\n"
         "- Do not repeat suggestions already present in memory.\n"
         "- If the batch truly has no reusable decisions, memory_suggestions may be an empty array.\n"
@@ -202,7 +211,8 @@ def translation_system_prompt(prompt_language: str = "en") -> str:
         "Return only JSON with this exact shape:\n"
         "{"
         '"translations":[{"id":"same id","text":"translated Chinese text"}],'
-        '"memory_suggestions":[{"type":"glossary|character|style|decision","source":"Japanese term or topic","target":"Chinese decision","note":"short reason"}]'
+        '"memory_suggestions":[{"type":"glossary|character|style|decision",'
+        '"source":"Japanese term or topic","target":"Chinese decision","note":"short reason"}]'
         "}."
     )
 

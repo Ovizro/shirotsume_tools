@@ -1,7 +1,8 @@
 from shirotsume_tools.translation.patch import (
-    patch_script_text, load_replacements, normalize_replacement_text,
+    load_replacements,
+    normalize_replacement_text,
+    patch_script_text,
 )
-
 
 SAMPLE = '''page T {
 CreateBalloon("x", "こんにちは");

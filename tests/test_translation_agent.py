@@ -2,9 +2,11 @@ import json
 from unittest.mock import MagicMock, patch
 
 from shirotsume_tools.translation.agent import (
-    extract_translation_items, translate_batch, translate_scripts, sync_translation_csvs,
+    extract_translation_items,
+    sync_translation_csvs,
+    translate_batch,
+    translate_scripts,
 )
-
 
 SAMPLE_SCRIPT = '''page T {
 CreateBalloon("x", "テスト");

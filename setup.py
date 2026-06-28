@@ -1,6 +1,6 @@
 import os
-from setuptools import setup, Extension
 
+from setuptools import Extension, setup
 
 USE_CYTHON = "USE_CYTHON" in os.environ
 FILE_SUFFIX = ".pyx" if USE_CYTHON else ".c"

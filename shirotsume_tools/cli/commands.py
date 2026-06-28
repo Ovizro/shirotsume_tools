@@ -120,7 +120,9 @@ def translate_scripts_cmd(
     target_language: str = typer.Option("Simplified Chinese", "-t", "--target-language", help="Translation target language"),
     source_encoding: str = typer.Option("cp932", "-e", "--source-encoding", help="Encoding of extracted scripts"),
     batch_size: int = typer.Option(24, "-b", "--batch-size", min=1, help="Number of strings per OpenAI request"),
-    max_source_chars: int = typer.Option(6000, "--max-source-chars", min=1, help="Maximum source characters per OpenAI request"),
+    max_source_chars: int = typer.Option(
+        6000, "--max-source-chars", min=1, help="Maximum source characters per OpenAI request",
+    ),
     limit: int | None = typer.Option(None, "--limit", min=1, help="Translate only the first N strings"),
     story_context: str = typer.Option("", "--context", help="Global story/style context passed to the translator"),
     temperature: float = typer.Option(0.2, "--temperature", min=0.0, max=2.0, help="OpenAI sampling temperature"),

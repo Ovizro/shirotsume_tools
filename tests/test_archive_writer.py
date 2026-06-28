@@ -1,5 +1,6 @@
 import pytest
-from shirotsume_tools.archive import PackEntry, write_pack, read_pack, replace_entries
+
+from shirotsume_tools.archive import PackEntry, read_pack, replace_entries, write_pack
 
 
 def test_pack_roundtrip(tmp_path):
