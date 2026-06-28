@@ -16,20 +16,20 @@
 
 ```bash
 # 从 git 源安装 (含 Cython 编译)
-uv pip install "git+https://github.com/Ovizro/shirotsume_tools.git"
+pip install "git+https://github.com/elementary-particle/shirotsume_tools.git"
 
 # 安装可选依赖
-uv pip install "git+https://github.com/Ovizro/shirotsume_tools.git#egg=shirotsume_tools[export,translation]"
+pip install "shirotsume_tools[export,translation] @ git+https://github.com/elementary-particle/shirotsume_tools.git"
 ```
 
 也可以从本地克隆安装:
 
 ```bash
-git clone https://github.com/Ovizro/shirotsume_tools.git
+git clone https://github.com/elementary-particle/shirotsume_tools.git
 cd shirotsume_tools
-uv sync --all-extras          # 创建 .venv 并安装全部依赖
+uv sync          # 创建 .venv 并安装全部依赖
 # 或仅安装核心依赖:
-uv sync
+uv sync --no-dev
 ```
 
 ### 可选依赖
@@ -38,7 +38,6 @@ uv sync
 |-------|------|------|
 | `export` | pandas, openpyxl | CSV / Excel 导出 |
 | `translation` | openai | OpenAI 翻译 API |
-| `dev` | ruff, coverage, pytest, cython | 开发与测试 |
 
 未安装 `translation` 时调用翻译命令会提示 `pip install shirotsume_tools[translation]`。
 
@@ -99,14 +98,14 @@ from shirotsume_tools.translation import (
 ## 开发
 
 ```bash
-git clone https://github.com/Ovizro/shirotsume_tools.git
+git clone https://github.com/elementary-particle/shirotsume_tools.git
 cd shirotsume_tools
 uv sync --all-extras          # 安装全部依赖 (含 dev)
 uv run pytest tests/ -v       # 运行测试
 uv run ruff check .           # lint
 ```
 
-Cython 扩展在安装时自动从 `.pyx` 编译。如需强制重新编译:
+Cython 扩展在安装时不会自动从 `.pyx` 编译，而是直接使用已有的`.c`文件。如需强制重新编译:
 
 ```bash
 USE_CYTHON=1 uv sync --reinstall-package shirotsume_tools

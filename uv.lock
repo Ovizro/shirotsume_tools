@@ -1160,7 +1160,7 @@ dev = [
     { name = "coverage", specifier = ">=7.14.3" },
     { name = "cython", specifier = ">=3.2.6" },
     { name = "pytest", specifier = ">=9.1.1" },
-    { name = "shirotsume-tools", extras = ["export", "translation"], editable = "." },
+    { name = "shirotsume-tools", extras = ["export", "translation"] },
 ]
 
 [[package]]
