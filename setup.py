@@ -7,21 +7,12 @@ FILE_SUFFIX = ".pyx" if USE_CYTHON else ".c"
 
 extensions = [
     Extension(
-        "shirotsume_tools.archive._decrypt",
-        [
-            "shirotsume_tools/archive/_decrypt" + FILE_SUFFIX,
-            "shirotsume_tools/archive/decrypt.cpp",
-        ],
-        include_dirs=["shirotsume_tools/archive"],
-    ),
-    Extension(
         "shirotsume_tools.archive.crypt",
         [
             "shirotsume_tools/archive/crypt" + FILE_SUFFIX,
             "shirotsume_tools/archive/repipack.cpp",
         ],
         include_dirs=["shirotsume_tools/archive"],
-        language="c++",
     ),
 ]
 
@@ -34,7 +25,4 @@ if USE_CYTHON:
         compiler_directives={"language_level": "3"},
     )
 
-
-setup(
-    ext_modules=extensions,
-)
+setup(ext_modules=extensions)
