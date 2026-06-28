@@ -5,8 +5,11 @@ from libc.stdlib cimport malloc, free
 from libc.string cimport memcpy, memset
 
 import struct
-
 from collections.abc import Mapping
+try:
+    import dataclasses
+except ImportError:
+    pass
 
 
 class RepiPackError(Exception):
@@ -76,13 +79,11 @@ cdef class RawEntry:
         return f"RawEntry(name={self.name()!r}, offset={self.offset()}, size={self.size()}, comp_size={self.comp_size()}, crypt_type={self.crypt_type()})"
 
 
+@dataclasses.dataclass(frozen=True)
 cdef class PackEntry:
-    def __init__(self, str name, bytes data):
-        self.name = name
-        self.data = data
-
-    def __repr__(self):
-        return f"PackEntry(name={self.name!r}, data_len={len(self.data)})"
+    name: str
+    data: bytes
+    crypt_type: int = 0
 
 
 cpdef tuple decode_table(const uint8_t[::1] data):
@@ -313,7 +314,7 @@ cpdef void pack(object file, const uint8_t[::1] header, list entries, bint compr
 
             raw[i].offset = offset
             raw[i].comp_size = encrypted_len
-            raw[i].crypt_type = crypt_type
+            raw[i].crypt_type = entry.crypt_type if entry.crypt_type != 0 else crypt_type
             offset += encrypted_len
 
         file.seek(0)

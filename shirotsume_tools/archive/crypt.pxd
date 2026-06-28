@@ -42,3 +42,4 @@ cdef class RawEntry:
 cdef class PackEntry:
     cdef public str name
     cdef public bytes data
+    cdef public uint8_t crypt_type

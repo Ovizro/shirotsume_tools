@@ -1,33 +1,25 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Iterable, Mapping
-from dataclasses import dataclass
 from pathlib import Path
 
 from . import crypt
 
 
-@dataclass(frozen=True)
-class PackEntry:
-    name: str
-    data: bytes
-    crypt_type: int = 1
-
-
-def read_pack(path: str | Path) -> tuple[bytes, list[PackEntry]]:
+def read_pack(path: str | Path) -> tuple[bytes, list[crypt.PackEntry]]:
     with open(path, "rb") as f:
         try:
             unpacker = crypt.unpack(f)
         except (crypt.InvalidSignatureError, crypt.UnsupportedVersionError) as exc:
             raise ValueError(str(exc)) from exc
         header = unpacker.header
-        entries = [PackEntry(e.name, e.data, crypt_type=unpacker.entries[i].crypt_type()) for i, e in enumerate(unpacker)]
+        entries = list(unpacker)
     return header, entries
 
 
-def write_pack(path: str | Path, header: bytes, entries: Iterable[PackEntry], *, compress: bool = True) -> None:
+def write_pack(path: str | Path, header: bytes, entries: Iterable[crypt.PackEntry], *, compress: bool = True) -> None:
     with open(path, "wb") as f:
-        crypt.pack(f, header, [crypt.PackEntry(e.name, e.data) for e in entries], compress=compress)
+        crypt.pack(f, header, list(entries), compress=compress)
 
 
 def replace_entries(

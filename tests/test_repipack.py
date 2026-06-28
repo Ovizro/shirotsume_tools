@@ -202,6 +202,19 @@ def test_public_pack_entry_has_crypt_type():
     assert pe.crypt_type == 2
 
 
+def test_crypt_pack_entry_crypt_type_roundtrip(tmp_path):
+    """crypt.PackEntry.crypt_type is written to the archive table."""
+    header = b""
+    entries = [PackEntry("a.txt", b"hello", crypt_type=1)]
+    out = tmp_path / "out.dat"
+    with open(out, "wb") as f:
+        crypt.pack(f, header, entries)
+    with open(out, "rb") as f:
+        unpacker = crypt.unpack(f)
+        assert unpacker.entries[0].crypt_type() == 1
+        assert next(iter(unpacker)).data == b"hello"
+
+
 def test_replace_entries_callable(tmp_path, dat_path):
     """replace_entries accepts a callable that returns bytes or None."""
     out = tmp_path / "replaced.dat"

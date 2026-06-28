@@ -1,8 +1,11 @@
-import os
-
 from setuptools import Extension, setup
 
-USE_CYTHON = "USE_CYTHON" in os.environ
+try:
+    from Cython.Build import cythonize
+    USE_CYTHON = True
+except ImportError:
+    USE_CYTHON = False
+
 FILE_SUFFIX = ".pyx" if USE_CYTHON else ".c"
 
 extensions = [
@@ -17,8 +20,6 @@ extensions = [
 ]
 
 if USE_CYTHON:
-    from Cython.Build import cythonize
-
     extensions = cythonize(
         extensions,
         annotate=True,

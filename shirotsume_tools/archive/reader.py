@@ -20,7 +20,7 @@ class Archive:
         self._path = Path(path)
         self._file: BinaryIO | None = None
         self._unpacker: crypt.Unpacker | None = None
-        self._entries: list[crypt.RawEntry] | None = None
+        self._entries: list[crypt.RawEntry] = []
 
     def __enter__(self) -> "Archive":
         self._file = self._path.open("rb")
