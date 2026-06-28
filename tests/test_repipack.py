@@ -244,3 +244,160 @@ def test_roundtrip_header_size_zero(tmp_path):
     assert [e.name for e in result] == ["a.txt", "b.bin"]
     assert result[0].data == entries[0].data
     assert result[1].data == entries[1].data
+
+
+# ---------------------------------------------------------------------------
+# crypt_type=2 (file_encrypt_words) regression tests
+#
+# The game stores audio archives (K.dat, M.dat) with crypt_type=2, which uses
+# a different cipher than the default crypt_type=1 (crypt_words).  The encoder
+# originally only implemented crypt_type=1 and silently wrote type=1 data
+# even when the source used type=2, producing archives that could not be
+# decoded correctly by the game.
+# ---------------------------------------------------------------------------
+
+
+def test_crypt_type_2_roundtrip(tmp_path):
+    """Entries with crypt_type=2 must round-trip through pack/unpack."""
+    header = b"\x00" * 8
+    entries = [
+        PackEntry("a.wav", b"\x00" * 1024, crypt_type=2),
+        PackEntry("b.wav", bytes(range(256)) * 8, crypt_type=2),
+    ]
+    result = _pack_and_read(tmp_path, header, entries, compress=False)
+    assert [e.name for e in result] == ["a.wav", "b.wav"]
+    assert result[0].data == entries[0].data
+    assert result[1].data == entries[1].data
+    # The archive must record crypt_type=2, not the default 1
+    with open(tmp_path / "out.dat", "rb") as f:
+        unpacker = crypt.unpack(f)
+        assert unpacker.entries[0].crypt_type() == 2
+        assert unpacker.entries[1].crypt_type() == 2
+
+
+def test_crypt_type_2_differs_from_type_1():
+    """crypt_type=2 must produce different ciphertext than type=1."""
+    data = b"hello world" * 100
+    enc1, ct1 = crypt.encode_body(data, compress=False, crypt_type_in=1)
+    enc2, ct2 = crypt.encode_body(data, compress=False, crypt_type_in=2)
+    assert ct1 == 1
+    assert ct2 == 2
+    assert enc1 != enc2
+    # Both must decrypt back to the original
+    assert crypt.decode_body(enc1, len(data), ct1) == data
+    assert crypt.decode_body(enc2, len(data), ct2) == data
+
+
+def test_unpacker_preserves_crypt_type(tmp_path):
+    """Unpacker.__next__ must carry crypt_type into the yielded PackEntry."""
+    header = b"\x00" * 4
+    entries = [
+        PackEntry("type1.bin", b"data for type 1", crypt_type=1),
+        PackEntry("type2.bin", b"data for type 2", crypt_type=2),
+    ]
+    out = tmp_path / "mixed.dat"
+    with open(out, "wb") as f:
+        crypt.pack(f, header, entries, compress=False)
+
+    with open(out, "rb") as f:
+        unpacker = crypt.unpack(f)
+        yielded = list(unpacker)
+
+    assert yielded[0].crypt_type == 1
+    assert yielded[1].crypt_type == 2
+
+
+def test_reencode_uncompressed_crypt_type_2_byte_identical(tmp_path):
+    """Decode-then-reencode of an uncompressed type-2 archive must be
+    byte-identical, exercising file_encrypt_words as the inverse of
+    file_decrypt_words."""
+    header = b"\x00\x01\x02\x03"
+    original_entries = [
+        PackEntry(f"file{i}.bin", bytes((i * 7) % 256 for _ in range(2000)), crypt_type=2)
+        for i in range(5)
+    ]
+
+    src = tmp_path / "src.dat"
+    with open(src, "wb") as f:
+        crypt.pack(f, header, original_entries, compress=False)
+
+    # Read back and re-encode
+    with open(src, "rb") as f:
+        unpacker = crypt.unpack(f)
+        read_header = unpacker.header
+        read_entries = list(unpacker)
+    assert read_header == header
+
+    dst = tmp_path / "dst.dat"
+    with open(dst, "wb") as f:
+        crypt.pack(f, read_header, read_entries, compress=False)
+
+    assert src.read_bytes() == dst.read_bytes()
+
+
+def test_replace_preserves_crypt_type_of_untouched_entries(tmp_path):
+    """replace_entries must keep the original crypt_type for entries
+    that are merely copied, not replaced."""
+    header = b"\x00" * 4
+    entries = [
+        PackEntry("keep.bin", b"keep me" * 100, crypt_type=2),
+        PackEntry("replace.bin", b"old data" * 100, crypt_type=2),
+    ]
+    src = tmp_path / "src.dat"
+    with open(src, "wb") as f:
+        crypt.pack(f, header, entries, compress=False)
+
+    out = tmp_path / "out.dat"
+    replace_entries(src, out, {"replace.bin": b"new data" * 100}, compress=False)
+
+    with open(out, "rb") as f:
+        unpacker = crypt.unpack(f)
+        assert unpacker.entries[0].crypt_type() == 2
+        assert unpacker.entries[1].crypt_type() == 2
+
+
+# ---------------------------------------------------------------------------
+# LZSS self-referential match regression tests
+#
+# The compressor previously allowed matches whose window [off, off+len)
+# overlapped the write window [cache_ptr, cache_ptr+len).  In that case
+# the compressor wrote bytes from the match area (being modified during the
+# write) while the decompressor read different, already-overwritten values,
+# producing corrupted output.  The classic trigger is text with short
+# repeating tokens (e.g. "233, ") whose period aligns with the cache
+# pointer after the 0x1000-byte ring wraps.
+# ---------------------------------------------------------------------------
+
+
+def test_lzss_repeating_pattern_longer_than_cache(tmp_path):
+    """Data with a short repeating period longer than the 0x1000-byte
+    cache must round-trip without self-referential corruption."""
+    pattern = b"233, "
+    data = pattern * 5000  # 25000 bytes, well beyond the 4096-byte cache
+    header = b"lzss"
+    entries = [PackEntry("repeat.txt", data)]
+    result = _pack_and_read(tmp_path, header, entries, compress=True)
+    assert result[0].data == data
+
+
+def test_lzss_short_period_repetition(tmp_path):
+    """A 3-byte repeating pattern fills the ring buffer and wraps around,
+    which can trigger self-referential matches at the wrap boundary."""
+    data = b"abc" * 8192  # 24576 bytes, 6 full cache rotations
+    header = b""
+    entries = [PackEntry("abc.bin", data)]
+    result = _pack_and_read(tmp_path, header, entries, compress=True)
+    assert result[0].data == data
+
+
+def test_lzss_quasi_periodic_text(tmp_path):
+    """Quasi-periodic text (like game scripts with repeated dialogue
+    markers) exercises self-referential match paths in the compressor."""
+    # Full-width space (U+3000) encodes to 0x81 0x41 in cp932
+    spacer = "\u3000".encode("cp932") * 20
+    line = spacer + b"233, 233, 233, I10, 233, 233, 233, 233,\n"
+    data = line * 1000
+    header = b"script"
+    entries = [PackEntry("10-01.txt", data)]
+    result = _pack_and_read(tmp_path, header, entries, compress=True)
+    assert result[0].data == data

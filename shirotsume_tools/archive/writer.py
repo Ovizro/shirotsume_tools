@@ -17,9 +17,16 @@ def read_pack(path: str | Path) -> tuple[bytes, list[crypt.PackEntry]]:
     return header, entries
 
 
-def write_pack(path: str | Path, header: bytes, entries: Iterable[crypt.PackEntry], *, compress: bool = True) -> None:
+def write_pack(
+    path: str | Path,
+    header: bytes,
+    entries: Iterable[crypt.PackEntry],
+    *,
+    compress: bool = True,
+    count: int | None = None,
+) -> None:
     with open(path, "wb") as f:
-        crypt.pack(f, header, list(entries), compress=compress)
+        crypt.pack(f, header, entries, compress=compress, count=count)
 
 
 def replace_entries(

@@ -37,6 +37,37 @@ static void file_decrypt_words(uint32_t *buf, size_t word_count) {
     }
 }
 
+static void file_encrypt_words(uint32_t *buf, size_t word_count) {
+    const uint32_t XOR6 = 0x26262626U;
+    const uint32_t MASK6 = 0x3F3F3F3FU;
+    const uint32_t LOW2 = 0x03030303U;
+    for (size_t i = 0; i < word_count; i++) {
+        uint32_t v = buf[i];
+        uint32_t hi = (v >> 6) & LOW2;
+        uint32_t lo = ((v & MASK6) ^ XOR6) << 2;
+        buf[i] = (hi | lo) & 0xFFFFFFFFU;
+    }
+}
+
+static void build_encrypted_table(uint8_t *raw_table,
+                                  const rp_entry_t *entries,
+                                  size_t entry_count) {
+    size_t table_size = entry_count * 80;
+    std::memset(raw_table, 0, table_size);
+    for (size_t i = 0; i < entry_count; i++) {
+        const rp_entry_t *e = &entries[i];
+        uint8_t *slot = raw_table + i * 80;
+        size_t name_len = std::strlen(e->name);
+        size_t copy_len = std::min(name_len, size_t(RP_NAME_MAX - 1));
+        std::memcpy(slot, e->name, copy_len);
+        *reinterpret_cast<uint32_t*>(slot + 64) = e->offset;
+        *reinterpret_cast<uint32_t*>(slot + 68) = e->size;
+        *reinterpret_cast<uint32_t*>(slot + 72) = e->comp_size;
+        slot[76] = e->crypt_type;
+        crypt_words(reinterpret_cast<uint32_t*>(slot), 80 / 4, FILE_KEY);
+    }
+}
+
 static rp_error_t compress(const uint8_t *in, size_t in_len,
                            uint8_t **out, size_t *out_len) {
     if (in_len == 0) {
@@ -70,6 +101,30 @@ static rp_error_t compress(const uint8_t *in, size_t in_len,
                 while (len < limit && cache[(off + len) & 0xFFF] == in[i + len]) {
                     ++len;
                 }
+
+                // Disallow self-referential matches: the match window
+                // [off, off+len) must not overlap the write window
+                // [cache_ptr, cache_ptr+len), otherwise the compressor and
+                // decompressor will disagree on the cache contents.
+                if (len >= 3) {
+                    uint16_t write_start = cache_ptr;
+                    uint16_t write_end = (cache_ptr + len) & 0xFFF;
+                    uint16_t match_end = (off + len) & 0xFFF;
+                    if (write_start < write_end) {
+                        if (!(match_end <= write_start || off >= write_end)) {
+                            if (off <= write_start) {
+                                len = static_cast<uint8_t>((write_start - off) & 0xFFF);
+                            } else {
+                                len = 0;
+                            }
+                        }
+                    } else {
+                        if (write_start <= match_end || off < write_end) {
+                            len = 0;
+                        }
+                    }
+                }
+
                 if (len > best_len) {
                     best_len = len;
                     best_offset = off;
@@ -252,7 +307,8 @@ rp_error_t rp_decode_header(const uint8_t *in, size_t in_len,
 
 rp_error_t rp_encode_body(const uint8_t *in, size_t in_len,
                           uint8_t **out, size_t *out_len,
-                          uint8_t *crypt_type, int do_compress) {
+                          uint8_t *crypt_type, int do_compress,
+                          uint8_t crypt_type_in) {
     uint8_t *buf = nullptr;
     size_t buf_len = 0;
 
@@ -266,12 +322,17 @@ rp_error_t rp_encode_body(const uint8_t *in, size_t in_len,
         buf_len = in_len;
     }
 
+    uint8_t ct = (crypt_type_in != 0) ? crypt_type_in : 1;
     if (buf_len > 0) {
-        crypt_words(reinterpret_cast<uint32_t*>(buf), buf_len / 4, FILE_KEY);
+        if (ct == 2) {
+            file_encrypt_words(reinterpret_cast<uint32_t*>(buf), buf_len / 4);
+        } else {
+            crypt_words(reinterpret_cast<uint32_t*>(buf), buf_len / 4, FILE_KEY);
+        }
     }
     *out = buf;
     *out_len = buf_len;
-    *crypt_type = 1;
+    *crypt_type = ct;
     return RP_OK;
 }
 
@@ -317,23 +378,31 @@ rp_error_t rp_encode_header(uint8_t **out, size_t *out_len,
             std::free(*out);
             return RP_ERR_ALLOC;
         }
-        std::memset(raw_table, 0, table_size);
-        for (size_t i = 0; i < entry_count; i++) {
-            const rp_entry_t *e = &entries[i];
-            uint8_t *slot = raw_table + i * 80;
-            size_t name_len = std::strlen(e->name);
-            size_t copy_len = std::min(name_len, size_t(RP_NAME_MAX - 1));
-            std::memcpy(slot, e->name, copy_len);
-            *reinterpret_cast<uint32_t*>(slot + 64) = e->offset;
-            *reinterpret_cast<uint32_t*>(slot + 68) = e->size;
-            *reinterpret_cast<uint32_t*>(slot + 72) = e->comp_size;
-            slot[76] = e->crypt_type;
-            crypt_words(reinterpret_cast<uint32_t*>(slot), 80 / 4, FILE_KEY);
-        }
+        build_encrypted_table(raw_table, entries, entry_count);
         std::memcpy(p, raw_table, table_size);
         std::free(raw_table);
     }
 
     *out_len = total;
+    return RP_OK;
+}
+
+rp_error_t rp_encode_table(uint8_t **out, size_t *out_len,
+                           const rp_entry_t *entries, size_t entry_count) {
+    if (entry_count > SIZE_MAX / 80) return RP_ERR_ALLOC;
+
+    size_t table_size = entry_count * 80;
+    if (table_size == 0) {
+        *out = nullptr;
+        *out_len = 0;
+        return RP_OK;
+    }
+
+    uint8_t *raw_table = static_cast<uint8_t*>(std::malloc(table_size));
+    if (!raw_table) return RP_ERR_ALLOC;
+
+    build_encrypted_table(raw_table, entries, entry_count);
+    *out = raw_table;
+    *out_len = table_size;
     return RP_OK;
 }

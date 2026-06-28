@@ -162,7 +162,7 @@ cpdef bytes decode_body(const uint8_t[::1] comp_data, uint32_t size, uint8_t cry
         free(buf)
 
 
-cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True):
+cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True, uint8_t crypt_type_in=0):
     cdef:
         uint8_t *out = NULL
         size_t out_len = 0
@@ -170,7 +170,7 @@ cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True):
         rp_error_t err
 
     err = rp_encode_body(&data[0], data.shape[0], &out, &out_len,
-                         &crypt_type, 1 if compress else 0)
+                         &crypt_type, 1 if compress else 0, crypt_type_in)
     _raise_on_error(err)
     try:
         return (bytes((<uint8_t*>out)[:out_len]), crypt_type)
@@ -218,7 +218,7 @@ cdef class Unpacker:
         if <size_t>len(comp_data) != raw.comp_size():
             raise ShortReadError("unexpected end of file")
         data = decode_body(comp_data, raw.size(), raw.crypt_type())
-        return PackEntry(raw.name(), data)
+        return PackEntry(raw.name(), data, crypt_type=raw.crypt_type())
 
 
 cpdef Unpacker unpack(object file):
@@ -254,77 +254,117 @@ cpdef Unpacker unpack(object file):
     return u
 
 
-cpdef void pack(object file, const uint8_t[::1] header, list entries, bint compress=True) except *:
+cpdef void pack(object file, const uint8_t[::1] header, object entries,
+                bint compress=True, object count=None) except *:
     cdef:
-        size_t count = len(entries)
-        rp_entry_t *raw = <rp_entry_t*>malloc(count * sizeof(rp_entry_t))
+        size_t entry_count
+        rp_entry_t *raw = NULL
         PackEntry entry
-        size_t i
         size_t data_offset
         size_t offset
+        size_t table_offset
         uint8_t *encrypted_body = NULL
         size_t encrypted_len = 0
         uint8_t crypt_type = 0
         uint8_t *full_header = NULL
         size_t full_header_len = 0
+        uint8_t *full_table = NULL
+        size_t full_table_len = 0
         const uint8_t *header_ptr = NULL
         rp_error_t err
         bytes name_bytes
         bytes body_data
+        object py_entry
+        object count_obj
+        Py_ssize_t view_len
+        size_t seen
+        uint8_t[:] _mv
 
-    if raw is NULL:
-        raise MemoryError()
-    memset(raw, 0, count * sizeof(rp_entry_t))
+    if count is None:
+        entry_count = len(entries)
+    else:
+        count_obj = int(count)
+        if count_obj < 0:
+            raise ValueError("count must be non-negative")
+        entry_count = <size_t>count_obj
+
+    if entry_count > 0:
+        raw = <rp_entry_t*>malloc(entry_count * sizeof(rp_entry_t))
+        if raw is NULL:
+            raise MemoryError()
+        memset(raw, 0, entry_count * sizeof(rp_entry_t))
 
     try:
-        for i in range(count):
-            entry = <PackEntry>entries[i]
-            name_bytes = entry.name.encode("cp932")
-            if <size_t>len(name_bytes) >= 64:
-                raise ValueError(f"packed name is too long: {entry.name}")
-            memcpy(raw[i].name, <const char*>name_bytes, len(name_bytes))
-            raw[i].size = len(entry.data)
-
-        data_offset = 8 + 4 + 4 + header.shape[0] + 4 + count * 80
+        data_offset = 8 + 4 + 4 + header.shape[0] + 4 + entry_count * 80
+        table_offset = data_offset - entry_count * 80
         offset = data_offset
 
         if header.shape[0] > 0:
             header_ptr = &header[0]
+
         err = rp_encode_header(&full_header, &full_header_len,
-                               header_ptr, header.shape[0], raw, count)
+                               header_ptr, header.shape[0], raw, entry_count)
         _raise_on_error(err)
         try:
-            file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
+            view_len = <Py_ssize_t>full_header_len
+            _mv = <uint8_t[:view_len]>full_header
+            file.write(_mv)
+            _mv = None
         finally:
             rp_free(full_header)
             full_header = NULL
 
-        for i in range(count):
-            entry = <PackEntry>entries[i]
+        seen = 0
+        for py_entry in entries:
+            if seen >= entry_count:
+                raise ValueError("entries yielded more items than count")
+            if not isinstance(py_entry, PackEntry):
+                raise TypeError(f"expected PackEntry, got {type(py_entry)}")
+            entry = <PackEntry>py_entry
+
+            name_bytes = entry.name.encode("cp932")
+            if <size_t>len(name_bytes) >= 64:
+                raise ValueError(f"packed name is too long: {entry.name}")
+            memcpy(raw[seen].name, <const char*>name_bytes, len(name_bytes))
+            raw[seen].size = len(entry.data)
+
             body_data = entry.data
             err = rp_encode_body(<const uint8_t*>body_data, len(body_data),
                                  &encrypted_body, &encrypted_len,
-                                 &crypt_type, 1 if compress else 0)
+                                 &crypt_type, 1 if compress else 0,
+                                 entry.crypt_type)
             _raise_on_error(err)
             try:
-                file.write(bytes((<uint8_t*>encrypted_body)[:encrypted_len]))
+                if encrypted_len > 0:
+                    view_len = <Py_ssize_t>encrypted_len
+                    _mv = <uint8_t[:view_len]>encrypted_body
+                    file.write(_mv)
+                    _mv = None
             finally:
                 rp_free(encrypted_body)
                 encrypted_body = NULL
 
-            raw[i].offset = offset
-            raw[i].comp_size = encrypted_len
-            raw[i].crypt_type = entry.crypt_type if entry.crypt_type != 0 else crypt_type
+            raw[seen].offset = offset
+            raw[seen].comp_size = encrypted_len
+            raw[seen].crypt_type = crypt_type
             offset += encrypted_len
+            seen += 1
 
-        file.seek(0)
-        err = rp_encode_header(&full_header, &full_header_len,
-                               header_ptr, header.shape[0], raw, count)
-        _raise_on_error(err)
-        try:
-            file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
-        finally:
-            rp_free(full_header)
+        if seen != entry_count:
+            raise ValueError(f"entries yielded {seen} items, expected {entry_count}")
+
+        if entry_count > 0:
+            file.seek(table_offset)
+            err = rp_encode_table(&full_table, &full_table_len, raw, entry_count)
+            _raise_on_error(err)
+            try:
+                view_len = <Py_ssize_t>full_table_len
+                _mv = <uint8_t[:view_len]>full_table
+                file.write(_mv)
+                _mv = None
+            finally:
+                rp_free(full_table)
+                full_table = NULL
     finally:
         free(raw)
 
@@ -404,7 +444,7 @@ cpdef void replace(object in_file, object out_file, object replacements, bint co
             if not isinstance(repl, bytes):
                 raise TypeError("replacement must be bytes or None")
             new_data = <bytes>repl
-            enc_result = encode_body(new_data, compress)
+            enc_result = encode_body(new_data, compress, raw.crypt_type())
             encrypted = enc_result[0]
             crypt_type = enc_result[1]
             raw_arr[i].size = len(new_data)

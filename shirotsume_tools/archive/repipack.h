@@ -36,12 +36,16 @@ rp_error_t rp_encode_header(uint8_t **out, size_t *out_len,
                             const uint8_t *header, size_t header_len,
                             const rp_entry_t *entries, size_t entry_count);
 
+rp_error_t rp_encode_table(uint8_t **out, size_t *out_len,
+                           const rp_entry_t *entries, size_t entry_count);
+
 /* Caller must allocate `buf` with at least `size` bytes. */
 rp_error_t rp_decode_body(uint8_t *buf, size_t comp_size, uint32_t size, uint8_t crypt_type);
 
 rp_error_t rp_encode_body(const uint8_t *in, size_t in_len,
                           uint8_t **out, size_t *out_len,
-                          uint8_t *crypt_type, int compress);
+                          uint8_t *crypt_type, int compress,
+                          uint8_t crypt_type_in);
 
 void rp_free(void *p);
 

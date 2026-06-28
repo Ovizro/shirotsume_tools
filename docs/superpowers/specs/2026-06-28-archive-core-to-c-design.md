@@ -80,6 +80,9 @@ rp_error_t rp_encode_header(uint8_t **out, size_t *out_len,
                             const uint8_t *header, size_t header_len,
                             const rp_entry_t *entries, size_t entry_count);
 
+rp_error_t rp_encode_table(uint8_t **out, size_t *out_len,
+                           const rp_entry_t *entries, size_t entry_count);
+
 /* 单文件体处理 */
 rp_error_t rp_decode_body(uint8_t *buf, size_t comp_size, uint32_t size, uint8_t crypt_type);
 rp_error_t rp_encode_body(const uint8_t *in, size_t in_len,
@@ -185,7 +188,8 @@ cpdef Unpacker unpack(object file)  # file: BinaryIO; 构造时读表，迭代�
 cpdef void pack(object file,
                 const uint8_t[::1] header,
                 object entries,   # Iterable[PackEntry]
-                bint compress=*) except *
+                bint compress=True,
+                object count=None) except *
 
 # 流式替换
 cpdef void replace(object in_file,
@@ -202,7 +206,7 @@ cpdef void replace(object in_file,
 
 流式处理细节：
 - `unpack`：构造时读取头/表到 `_entries`；迭代时按 entry 逐个 `seek` → `read(comp_size)` → C 解密/解压 → 构造 `PackEntry` 返回。任何时候内存中只保留一个文件体。
-- `pack`：要求 `entries` 支持 `__len__` 与两次遍历。第一次遍历收集元数据（name / size）构建 `list[RawEntry]`；写 SIG/version/header_size/header/file_count，预留 `count * 80` 字节表；第二次遍历逐个 `encode_body` 写体；最后 seek 回填加密表。
+- `pack`：单遍流式打包。若 `count` 为 `None`，则从 `len(entries)` 取条目数（要求 `entries` 为 `Sized`）；若显式传入 `count`，则允许 `entries` 为一次性 generator。先根据 `count` 分配 `rp_entry_t[count]` 元数据数组，再写占位头（表区域为加密后的 0），然后逐条遍历 `entries`：`encode_body` 后直接通过 memoryview 写入文件体并回填该条元数据；最后 `seek` 到表偏移，只回填加密表。
 - `replace`：单遍读取输入、写入输出。对每个 entry 查 `replacements`，命中则 `encode_body` 写入新数据，否则直接复制原 `comp_data`。无需缓存整个 `.dat`。
 
 ## 7. Python 层
@@ -261,9 +265,9 @@ def read_pack(path: str | Path) -> tuple[bytes, list[PackEntry]]:
         entries = list(unpacker)
     return header, entries
 
-def write_pack(path, header, entries, *, compress=True) -> None:
+def write_pack(path, header, entries, *, compress=True, count=None) -> None:
     with open(path, "wb") as f:
-        crypt.pack(f, header, entries, compress)
+        crypt.pack(f, header, entries, compress, count)
 
 def replace_entries(dat_path, out_path, replacements, *, compress=True) -> None:
     with open(dat_path, "rb") as fin, open(out_path, "wb") as fout:

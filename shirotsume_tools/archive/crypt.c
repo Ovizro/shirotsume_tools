@@ -1629,28 +1629,30 @@ struct __pyx_opt_args_16shirotsume_tools_7archive_5crypt_replace;
 /* "shirotsume_tools/archive/crypt.pyx":165
  * 
  * 
- * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True):             # <<<<<<<<<<<<<<
+ * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True, uint8_t crypt_type_in=0):             # <<<<<<<<<<<<<<
  *     cdef:
  *         uint8_t *out = NULL
 */
 struct __pyx_opt_args_16shirotsume_tools_7archive_5crypt_encode_body {
   int __pyx_n;
   int compress;
+  uint8_t crypt_type_in;
 };
 
 /* "shirotsume_tools/archive/crypt.pyx":257
  * 
  * 
- * cpdef void pack(object file, const uint8_t[::1] header, list entries, bint compress=True) except *:             # <<<<<<<<<<<<<<
+ * cpdef void pack(object file, const uint8_t[::1] header, object entries,             # <<<<<<<<<<<<<<
+ *                 bint compress=True, object count=None) except *:
  *     cdef:
- *         size_t count = len(entries)
 */
 struct __pyx_opt_args_16shirotsume_tools_7archive_5crypt_pack {
   int __pyx_n;
   int compress;
+  PyObject *count;
 };
 
-/* "shirotsume_tools/archive/crypt.pyx":332
+/* "shirotsume_tools/archive/crypt.pyx":372
  * 
  * 
  * cpdef void replace(object in_file, object out_file, object replacements, bint compress=True) except *:             # <<<<<<<<<<<<<<
@@ -1662,7 +1664,7 @@ struct __pyx_opt_args_16shirotsume_tools_7archive_5crypt_replace {
   int compress;
 };
 
-/* "shirotsume_tools/archive/crypt.pxd":33
+/* "shirotsume_tools/archive/crypt.pxd":36
  *     void rp_free(void *p)
  * 
  * cdef class RawEntry:             # <<<<<<<<<<<<<<
@@ -1676,7 +1678,7 @@ struct __pyx_obj_16shirotsume_tools_7archive_5crypt_RawEntry {
 };
 
 
-/* "shirotsume_tools/archive/crypt.pxd":42
+/* "shirotsume_tools/archive/crypt.pxd":45
  *     cpdef uint8_t crypt_type(self)
  * 
  * cdef class PackEntry:             # <<<<<<<<<<<<<<
@@ -2537,6 +2539,50 @@ static void __Pyx_RaiseUnboundLocalError(const char *varname);
 /* DivInt[long].proto */
 static CYTHON_INLINE long __Pyx_div_long(long, long, int b_is_constant);
 
+/* ListAppend.proto */
+#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
+static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
+    PyListObject* L = (PyListObject*) list;
+    Py_ssize_t len = Py_SIZE(list);
+    if (likely(L->allocated > len) & likely(len > (L->allocated >> 1))) {
+        Py_INCREF(x);
+        #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030d0000
+        L->ob_item[len] = x;
+        #else
+        PyList_SET_ITEM(list, len, x);
+        #endif
+        __Pyx_SET_SIZE(list, len + 1);
+        return 0;
+    }
+    return PyList_Append(list, x);
+}
+#else
+#define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
+#endif
+
+/* PyObjectCall2Args.proto (used by PyObjectCallMethod1) */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2);
+
+/* PyObjectGetMethod.proto (used by PyObjectCallMethod1) */
+#if !(CYTHON_VECTORCALL && (__PYX_LIMITED_VERSION_HEX >= 0x030C0000 || (!CYTHON_COMPILING_IN_LIMITED_API && PY_VERSION_HEX >= 0x03090000)))
+static int __Pyx_PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method);
+#endif
+
+/* PyObjectCallMethod1.proto (used by StringJoin) */
+static PyObject* __Pyx_PyObject_CallMethod1(PyObject* obj, PyObject* method_name, PyObject* arg);
+
+/* StringJoin.proto */
+static CYTHON_INLINE PyObject* __Pyx_PyBytes_Join(PyObject* sep, PyObject* values);
+
+/* CIntToPyUnicode.proto */
+#define __Pyx_PyUnicode_From_size_t(value, width, padding_char, format_char) (\
+    ((format_char) == ('c')) ?\
+        __Pyx_uchar___Pyx_PyUnicode_From_size_t(value, width, padding_char) :\
+        __Pyx____Pyx_PyUnicode_From_size_t(value, width, padding_char, format_char)\
+    )
+static CYTHON_INLINE PyObject* __Pyx_uchar___Pyx_PyUnicode_From_size_t(size_t value, Py_ssize_t width, char padding_char);
+static CYTHON_INLINE PyObject* __Pyx____Pyx_PyUnicode_From_size_t(size_t value, Py_ssize_t width, char padding_char, char format_char);
+
 /* CIntToPyUnicode.proto */
 #define __Pyx_PyUnicode_From_uint32_t(value, width, padding_char, format_char) (\
     ((format_char) == ('c')) ?\
@@ -2558,25 +2604,22 @@ static CYTHON_INLINE PyObject* __Pyx____Pyx_PyUnicode_From_uint8_t(uint8_t value
 /* BufferIndexError.proto */
 static void __Pyx_RaiseBufferIndexError(int axis);
 
-/* ListAppend.proto */
-#if CYTHON_USE_PYLIST_INTERNALS && CYTHON_ASSUME_SAFE_MACROS
-static CYTHON_INLINE int __Pyx_PyList_Append(PyObject* list, PyObject* x) {
-    PyListObject* L = (PyListObject*) list;
-    Py_ssize_t len = Py_SIZE(list);
-    if (likely(L->allocated > len) & likely(len > (L->allocated >> 1))) {
-        Py_INCREF(x);
-        #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030d0000
-        L->ob_item[len] = x;
-        #else
-        PyList_SET_ITEM(list, len, x);
-        #endif
-        __Pyx_SET_SIZE(list, len + 1);
-        return 0;
-    }
-    return PyList_Append(list, x);
-}
+/* PyObjectVectorCallKwBuilder.proto */
+CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n);
+#if CYTHON_VECTORCALL
+#if PY_VERSION_HEX >= 0x03090000
+#define __Pyx_Object_Vectorcall_CallFromBuilder PyObject_Vectorcall
 #else
-#define __Pyx_PyList_Append(L,x) PyList_Append(L,x)
+#define __Pyx_Object_Vectorcall_CallFromBuilder _PyObject_Vectorcall
+#endif
+#define __Pyx_MakeVectorcallBuilderKwds(n) PyTuple_New(n)
+static int __Pyx_VectorcallBuilder_AddArg(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n);
+static int __Pyx_VectorcallBuilder_AddArgStr(const char *key, PyObject *value, PyObject *builder, PyObject **args, int n);
+#else
+#define __Pyx_Object_Vectorcall_CallFromBuilder __Pyx_PyObject_FastCallDict
+#define __Pyx_MakeVectorcallBuilderKwds(n) __Pyx_PyDict_NewPresized(n)
+#define __Pyx_VectorcallBuilder_AddArg(key, value, builder, args, n) PyDict_SetItem(builder, key, value)
+#define __Pyx_VectorcallBuilder_AddArgStr(key, value, builder, args, n) PyDict_SetItemString(builder, key, value)
 #endif
 
 /* PyUnicode_Unicode.proto */
@@ -2631,11 +2674,6 @@ static CYTHON_INLINE int __Pyx_fix_up_extension_type_from_spec(PyType_Spec *spec
 /* PyObjectCallNoArg.proto (used by PyObjectCallMethod0) */
 static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func);
 
-/* PyObjectGetMethod.proto (used by PyObjectCallMethod0) */
-#if !(CYTHON_VECTORCALL && (__PYX_LIMITED_VERSION_HEX >= 0x030C0000 || (!CYTHON_COMPILING_IN_LIMITED_API && PY_VERSION_HEX >= 0x03090000)))
-static int __Pyx_PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method);
-#endif
-
 /* PyObjectCallMethod0.proto (used by PyType_Ready) */
 static PyObject* __Pyx_PyObject_CallMethod0(PyObject* obj, PyObject* method_name);
 
@@ -2674,9 +2712,6 @@ static PyObject* __Pyx_PEP560_update_bases(PyObject *bases);
 
 /* CalculateMetaclass.proto */
 static PyObject *__Pyx_CalculateMetaclass(PyTypeObject *metaclass, PyObject *bases);
-
-/* PyObjectCall2Args.proto (used by Py3ClassCreate) */
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2);
 
 /* PyObjectLookupSpecial.proto (used by Py3ClassCreate) */
 #if CYTHON_USE_PYTYPE_LOOKUP && CYTHON_USE_TYPE_SLOTS
@@ -2957,30 +2992,19 @@ static int __Pyx_ValidateAndInit_memviewslice(
 /* ObjectToMemviewSlice.proto */
 static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_dc_nn_uint8_t__const__(PyObject *, int writable_flag);
 
+/* ObjectToMemviewSlice.proto */
+static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_nn_uint8_t(PyObject *, int writable_flag);
+
+/* MemviewDtypeToObject.proto */
+static CYTHON_INLINE PyObject *__pyx_memview_get_nn_uint8_t(const char *itemp);
+static CYTHON_INLINE int __pyx_memview_set_nn_uint8_t(char *itemp, PyObject *obj);
+
 /* MemviewSliceCopy.proto */
 static __Pyx_memviewslice
 __pyx_memoryview_copy_new_contig(const __Pyx_memviewslice *from_mvs,
                                  const char *mode, int ndim,
                                  size_t sizeof_dtype, int contig_flag,
                                  int dtype_is_object);
-
-/* PyObjectVectorCallKwBuilder.proto (used by CIntToPy) */
-CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n);
-#if CYTHON_VECTORCALL
-#if PY_VERSION_HEX >= 0x03090000
-#define __Pyx_Object_Vectorcall_CallFromBuilder PyObject_Vectorcall
-#else
-#define __Pyx_Object_Vectorcall_CallFromBuilder _PyObject_Vectorcall
-#endif
-#define __Pyx_MakeVectorcallBuilderKwds(n) PyTuple_New(n)
-static int __Pyx_VectorcallBuilder_AddArg(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n);
-static int __Pyx_VectorcallBuilder_AddArgStr(const char *key, PyObject *value, PyObject *builder, PyObject **args, int n);
-#else
-#define __Pyx_Object_Vectorcall_CallFromBuilder __Pyx_PyObject_FastCallDict
-#define __Pyx_MakeVectorcallBuilderKwds(n) __Pyx_PyDict_NewPresized(n)
-#define __Pyx_VectorcallBuilder_AddArg(key, value, builder, args, n) PyDict_SetItem(builder, key, value)
-#define __Pyx_VectorcallBuilder_AddArgStr(key, value, builder, args, n) PyDict_SetItemString(builder, key, value)
-#endif
 
 /* CIntToPy.proto */
 static CYTHON_INLINE PyObject* __Pyx_PyLong_From_uint8_t(uint8_t value);
@@ -2990,6 +3014,12 @@ static CYTHON_INLINE uint8_t __Pyx_PyLong_As_uint8_t(PyObject *);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE uint32_t __Pyx_PyLong_As_uint32_t(PyObject *);
+
+/* TypeInfoToFormat.proto */
+struct __pyx_typeinfo_string {
+    char string[3];
+};
+static struct __pyx_typeinfo_string __Pyx_TypeInfoToFormat(const __Pyx_TypeInfo *type);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE long __Pyx_PyLong_As_long(PyObject *);
@@ -3002,9 +3032,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyLong_From_uint32_t(uint32_t value);
 
 /* CIntFromPy.proto */
 static CYTHON_INLINE size_t __Pyx_PyLong_As_size_t(PyObject *);
-
-/* PyObjectCallMethod1.proto */
-static PyObject* __Pyx_PyObject_CallMethod1(PyObject* obj, PyObject* method_name, PyObject* arg);
 
 /* UpdateUnpickledDict.proto */
 static int __Pyx_UpdateUnpickledDict(PyObject *obj, PyObject *state, Py_ssize_t index);
@@ -3175,7 +3202,9 @@ static void __pyx_memoryview_refcount_objects_in_slice(char *, Py_ssize_t *, Py_
 static void __pyx_memoryview_slice_assign_scalar(__Pyx_memviewslice *, int, size_t, void *, int); /*proto*/
 static void __pyx_memoryview__slice_assign_scalar(char *, Py_ssize_t *, Py_ssize_t *, int, size_t, void *); /*proto*/
 static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *, PyObject *); /*proto*/
+static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo const *); /*proto*/
 /* #### Code section: typeinfo ### */
+static const __Pyx_TypeInfo __Pyx_TypeInfo_nn_uint8_t = { "uint8_t", NULL, sizeof(uint8_t), { 0 }, 0, __PYX_IS_UNSIGNED(uint8_t) ? 'U' : 'I', __PYX_IS_UNSIGNED(uint8_t), 0 };
 static const __Pyx_TypeInfo __Pyx_TypeInfo_nn_uint8_t__const__ = { "const uint8_t", NULL, sizeof(uint8_t const ), { 0 }, 0, __PYX_IS_UNSIGNED(uint8_t const ) ? 'U' : 'I', __PYX_IS_UNSIGNED(uint8_t const ), 0 };
 /* #### Code section: before_global_var ### */
 #define __Pyx_MODULE_NAME "shirotsume_tools.archive.crypt"
@@ -3262,7 +3291,7 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_9PackEntry_10__sets
 static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_decode_table(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_data); /* proto */
 static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_2encode_table(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_header, PyObject *__pyx_v_entries); /* proto */
 static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_4decode_body(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_comp_data, uint32_t __pyx_v_size, uint8_t __pyx_v_crypt_type); /* proto */
-static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_6encode_body(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_data, int __pyx_v_compress); /* proto */
+static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_6encode_body(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_data, int __pyx_v_compress, uint8_t __pyx_v_crypt_type_in); /* proto */
 static int __pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker___cinit__(struct __pyx_obj_16shirotsume_tools_7archive_5crypt_Unpacker *__pyx_v_self, PyObject *__pyx_v_file); /* proto */
 static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_6header___get__(struct __pyx_obj_16shirotsume_tools_7archive_5crypt_Unpacker *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_7entries___get__(struct __pyx_obj_16shirotsume_tools_7archive_5crypt_Unpacker *__pyx_v_self); /* proto */
@@ -3271,7 +3300,7 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_4__next__
 static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_6__reduce_cython__(CYTHON_UNUSED struct __pyx_obj_16shirotsume_tools_7archive_5crypt_Unpacker *__pyx_v_self); /* proto */
 static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_8__setstate_cython__(CYTHON_UNUSED struct __pyx_obj_16shirotsume_tools_7archive_5crypt_Unpacker *__pyx_v_self, CYTHON_UNUSED PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8unpack(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_file); /* proto */
-static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_10pack(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_file, __Pyx_memviewslice __pyx_v_header, PyObject *__pyx_v_entries, int __pyx_v_compress); /* proto */
+static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_10pack(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_file, __Pyx_memviewslice __pyx_v_header, PyObject *__pyx_v_entries, int __pyx_v_compress, PyObject *__pyx_v_count); /* proto */
 static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_12replace(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_in_file, PyObject *__pyx_v_out_file, PyObject *__pyx_v_replacements, int __pyx_v_compress); /* proto */
 static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_14__pyx_unpickle_PackEntry(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v___pyx_type, long __pyx_v___pyx_checksum, PyObject *__pyx_v___pyx_state); /* proto */
 static PyObject *__pyx_tp_new_16shirotsume_tools_7archive_5crypt_RawEntry(PyTypeObject *t, PyObject *a, PyObject *k); /*proto*/
@@ -3320,9 +3349,9 @@ typedef struct {
   __Pyx_CachedCFunction __pyx_umethod_PyDict_Type_values;
   __Pyx_CachedCFunction __pyx_umethod_PyBytes_Type__split;
   PyObject *__pyx_slice[1];
-  PyObject *__pyx_tuple[3];
+  PyObject *__pyx_tuple[5];
   PyObject *__pyx_codeobj_tab[19];
-  PyObject *__pyx_string_tab[229];
+  PyObject *__pyx_string_tab[242];
   PyObject *__pyx_number_tab[8];
 /* #### Code section: module_state_contents ### */
 /* CommonTypesMetaclass.module_state_decls */
@@ -3384,215 +3413,228 @@ static __pyx_mstatetype * const __pyx_mstate_global = &__pyx_mstate_global_stati
 #define __pyx_kp_u_Pickling_of_struct_members_such __pyx_string_tab[17]
 #define __pyx_kp_u_RawEntry_name __pyx_string_tab[18]
 #define __pyx_kp_u_Unable_to_convert_item_to_object __pyx_string_tab[19]
-#define __pyx_kp_u__2 __pyx_string_tab[20]
-#define __pyx_kp_u__3 __pyx_string_tab[21]
-#define __pyx_kp_u__4 __pyx_string_tab[22]
-#define __pyx_kp_u__5 __pyx_string_tab[23]
-#define __pyx_kp_u__8 __pyx_string_tab[24]
-#define __pyx_kp_u_add_note __pyx_string_tab[25]
-#define __pyx_kp_u_and __pyx_string_tab[26]
-#define __pyx_kp_u_at_0x __pyx_string_tab[27]
-#define __pyx_kp_u_collections_abc __pyx_string_tab[28]
-#define __pyx_kp_u_comp_size_2 __pyx_string_tab[29]
-#define __pyx_kp_u_compression_failed __pyx_string_tab[30]
-#define __pyx_kp_u_contiguous_and_direct __pyx_string_tab[31]
-#define __pyx_kp_u_contiguous_and_indirect __pyx_string_tab[32]
-#define __pyx_kp_u_crypt_type_2 __pyx_string_tab[33]
-#define __pyx_kp_u_data_2 __pyx_string_tab[34]
-#define __pyx_kp_u_decompression_failed __pyx_string_tab[35]
-#define __pyx_kp_u_disable __pyx_string_tab[36]
-#define __pyx_kp_u_enable __pyx_string_tab[37]
-#define __pyx_kp_u_gc __pyx_string_tab[38]
-#define __pyx_kp_u_getfullargspec __pyx_string_tab[39]
-#define __pyx_kp_u_got __pyx_string_tab[40]
-#define __pyx_kp_u_got_differing_extents_in_dimensi __pyx_string_tab[41]
-#define __pyx_kp_u_isenabled __pyx_string_tab[42]
-#define __pyx_kp_u_itemsize_0_for_cython_array __pyx_string_tab[43]
-#define __pyx_kp_u_name_3 __pyx_string_tab[44]
-#define __pyx_kp_u_no_default___reduce___due_to_non __pyx_string_tab[45]
-#define __pyx_kp_u_not_a_RepiPack_file __pyx_string_tab[46]
-#define __pyx_kp_u_object __pyx_string_tab[47]
-#define __pyx_kp_u_offset_2 __pyx_string_tab[48]
-#define __pyx_kp_u_packed_name_is_too_long __pyx_string_tab[49]
-#define __pyx_kp_u_replacement_must_be_bytes_or_Non __pyx_string_tab[50]
-#define __pyx_kp_u_replacements_must_be_a_mapping_o __pyx_string_tab[51]
-#define __pyx_kp_u_shirotsume_tools_archive_crypt_p __pyx_string_tab[52]
-#define __pyx_kp_u_size_2 __pyx_string_tab[53]
-#define __pyx_kp_u_strided_and_direct __pyx_string_tab[54]
-#define __pyx_kp_u_strided_and_direct_or_indirect __pyx_string_tab[55]
-#define __pyx_kp_u_strided_and_indirect __pyx_string_tab[56]
-#define __pyx_kp_u_stringsource __pyx_string_tab[57]
-#define __pyx_kp_u_unable_to_allocate_array_data __pyx_string_tab[58]
-#define __pyx_kp_u_unable_to_allocate_shape_and_str __pyx_string_tab[59]
-#define __pyx_kp_u_unexpected_end_of_file __pyx_string_tab[60]
-#define __pyx_kp_u_unknown_RepiPack_error __pyx_string_tab[61]
-#define __pyx_kp_u_unsupported_RepiPack_version __pyx_string_tab[62]
-#define __pyx_n_u_ASCII __pyx_string_tab[63]
-#define __pyx_n_u_CompressionError __pyx_string_tab[64]
-#define __pyx_n_u_DataclassParams __pyx_string_tab[65]
-#define __pyx_n_u_DecompressionError __pyx_string_tab[66]
-#define __pyx_n_u_Ellipsis __pyx_string_tab[67]
-#define __pyx_n_u_FIELD __pyx_string_tab[68]
-#define __pyx_n_u_InvalidSignatureError __pyx_string_tab[69]
-#define __pyx_n_u_Mapping __pyx_string_tab[70]
-#define __pyx_n_u_NotImplemented __pyx_string_tab[71]
-#define __pyx_n_u_PackEntry __pyx_string_tab[72]
-#define __pyx_n_u_PackEntry___reduce_cython __pyx_string_tab[73]
-#define __pyx_n_u_PackEntry___setstate_cython __pyx_string_tab[74]
-#define __pyx_n_u_Pyx_PyDict_NextRef __pyx_string_tab[75]
-#define __pyx_n_u_RawEntry __pyx_string_tab[76]
-#define __pyx_n_u_RawEntry___reduce_cython __pyx_string_tab[77]
-#define __pyx_n_u_RawEntry___setstate_cython __pyx_string_tab[78]
-#define __pyx_n_u_RawEntry_comp_size __pyx_string_tab[79]
-#define __pyx_n_u_RawEntry_crypt_type __pyx_string_tab[80]
-#define __pyx_n_u_RawEntry_name_2 __pyx_string_tab[81]
-#define __pyx_n_u_RawEntry_offset __pyx_string_tab[82]
-#define __pyx_n_u_RawEntry_size __pyx_string_tab[83]
-#define __pyx_n_u_RepiPackError __pyx_string_tab[84]
-#define __pyx_n_u_Sequence __pyx_string_tab[85]
-#define __pyx_n_u_ShortReadError __pyx_string_tab[86]
-#define __pyx_n_u_Unpacker __pyx_string_tab[87]
-#define __pyx_n_u_Unpacker___reduce_cython __pyx_string_tab[88]
-#define __pyx_n_u_Unpacker___setstate_cython __pyx_string_tab[89]
-#define __pyx_n_u_UnsupportedVersionError __pyx_string_tab[90]
-#define __pyx_n_u_View_MemoryView __pyx_string_tab[91]
-#define __pyx_n_u_abc __pyx_string_tab[92]
-#define __pyx_n_u_allocate_buffer __pyx_string_tab[93]
-#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[94]
-#define __pyx_n_u_base __pyx_string_tab[95]
-#define __pyx_n_u_bytes __pyx_string_tab[96]
-#define __pyx_n_u_c __pyx_string_tab[97]
-#define __pyx_n_u_class __pyx_string_tab[98]
-#define __pyx_n_u_class_getitem __pyx_string_tab[99]
-#define __pyx_n_u_cline_in_traceback __pyx_string_tab[100]
-#define __pyx_n_u_collections_abc __pyx_string_tab[101]
-#define __pyx_n_u_comp_data __pyx_string_tab[102]
-#define __pyx_n_u_comp_size __pyx_string_tab[103]
-#define __pyx_n_u_compare __pyx_string_tab[104]
-#define __pyx_n_u_compress __pyx_string_tab[105]
-#define __pyx_n_u_count __pyx_string_tab[106]
-#define __pyx_n_u_cp932 __pyx_string_tab[107]
-#define __pyx_n_u_crypt_type __pyx_string_tab[108]
-#define __pyx_n_u_data __pyx_string_tab[109]
-#define __pyx_n_u_dataclass_fields __pyx_string_tab[110]
-#define __pyx_n_u_dataclass_params __pyx_string_tab[111]
-#define __pyx_n_u_dataclasses __pyx_string_tab[112]
-#define __pyx_n_u_decode __pyx_string_tab[113]
-#define __pyx_n_u_decode_body __pyx_string_tab[114]
-#define __pyx_n_u_decode_table __pyx_string_tab[115]
-#define __pyx_n_u_default __pyx_string_tab[116]
-#define __pyx_n_u_dict __pyx_string_tab[117]
-#define __pyx_n_u_dict_2 __pyx_string_tab[118]
-#define __pyx_n_u_doc __pyx_string_tab[119]
-#define __pyx_n_u_dtype_is_object __pyx_string_tab[120]
-#define __pyx_n_u_encode __pyx_string_tab[121]
-#define __pyx_n_u_encode_body __pyx_string_tab[122]
-#define __pyx_n_u_encode_table __pyx_string_tab[123]
-#define __pyx_n_u_entries __pyx_string_tab[124]
-#define __pyx_n_u_enumerate __pyx_string_tab[125]
-#define __pyx_n_u_eq __pyx_string_tab[126]
-#define __pyx_n_u_error __pyx_string_tab[127]
-#define __pyx_n_u_field __pyx_string_tab[128]
-#define __pyx_n_u_field_type __pyx_string_tab[129]
-#define __pyx_n_u_file __pyx_string_tab[130]
-#define __pyx_n_u_flags __pyx_string_tab[131]
-#define __pyx_n_u_format __pyx_string_tab[132]
-#define __pyx_n_u_fortran __pyx_string_tab[133]
-#define __pyx_n_u_frozen __pyx_string_tab[134]
-#define __pyx_n_u_func __pyx_string_tab[135]
-#define __pyx_n_u_getstate __pyx_string_tab[136]
-#define __pyx_n_u_hash __pyx_string_tab[137]
-#define __pyx_n_u_header __pyx_string_tab[138]
-#define __pyx_n_u_id __pyx_string_tab[139]
-#define __pyx_n_u_import __pyx_string_tab[140]
-#define __pyx_n_u_in_file __pyx_string_tab[141]
-#define __pyx_n_u_index __pyx_string_tab[142]
-#define __pyx_n_u_init __pyx_string_tab[143]
-#define __pyx_n_u_is_coroutine __pyx_string_tab[144]
-#define __pyx_n_u_items __pyx_string_tab[145]
-#define __pyx_n_u_itemsize __pyx_string_tab[146]
-#define __pyx_n_u_kw_only __pyx_string_tab[147]
-#define __pyx_n_u_main __pyx_string_tab[148]
-#define __pyx_n_u_match_args __pyx_string_tab[149]
-#define __pyx_n_u_match_args_2 __pyx_string_tab[150]
-#define __pyx_n_u_memview __pyx_string_tab[151]
-#define __pyx_n_u_metaclass __pyx_string_tab[152]
-#define __pyx_n_u_metadata __pyx_string_tab[153]
-#define __pyx_n_u_mode __pyx_string_tab[154]
-#define __pyx_n_u_module __pyx_string_tab[155]
-#define __pyx_n_u_mro_entries __pyx_string_tab[156]
-#define __pyx_n_u_name __pyx_string_tab[157]
-#define __pyx_n_u_name_2 __pyx_string_tab[158]
-#define __pyx_n_u_ndim __pyx_string_tab[159]
-#define __pyx_n_u_new __pyx_string_tab[160]
-#define __pyx_n_u_obj __pyx_string_tab[161]
-#define __pyx_n_u_offset __pyx_string_tab[162]
-#define __pyx_n_u_order __pyx_string_tab[163]
-#define __pyx_n_u_out_file __pyx_string_tab[164]
-#define __pyx_n_u_pack __pyx_string_tab[165]
-#define __pyx_n_u_pop __pyx_string_tab[166]
-#define __pyx_n_u_prepare __pyx_string_tab[167]
-#define __pyx_n_u_pyx_checksum __pyx_string_tab[168]
-#define __pyx_n_u_pyx_result __pyx_string_tab[169]
-#define __pyx_n_u_pyx_state __pyx_string_tab[170]
-#define __pyx_n_u_pyx_type __pyx_string_tab[171]
-#define __pyx_n_u_pyx_unpickle_Enum __pyx_string_tab[172]
-#define __pyx_n_u_pyx_unpickle_PackEntry __pyx_string_tab[173]
-#define __pyx_n_u_pyx_vtable __pyx_string_tab[174]
-#define __pyx_n_u_qualname __pyx_string_tab[175]
-#define __pyx_n_u_read __pyx_string_tab[176]
-#define __pyx_n_u_reduce __pyx_string_tab[177]
-#define __pyx_n_u_reduce_cython __pyx_string_tab[178]
-#define __pyx_n_u_reduce_ex __pyx_string_tab[179]
-#define __pyx_n_u_register __pyx_string_tab[180]
-#define __pyx_n_u_replace __pyx_string_tab[181]
-#define __pyx_n_u_replacements __pyx_string_tab[182]
-#define __pyx_n_u_repr __pyx_string_tab[183]
-#define __pyx_n_u_seek __pyx_string_tab[184]
-#define __pyx_n_u_self __pyx_string_tab[185]
-#define __pyx_n_u_set_name __pyx_string_tab[186]
-#define __pyx_n_u_setdefault __pyx_string_tab[187]
-#define __pyx_n_u_setstate __pyx_string_tab[188]
-#define __pyx_n_u_setstate_cython __pyx_string_tab[189]
-#define __pyx_n_u_shape __pyx_string_tab[190]
-#define __pyx_n_u_shirotsume_tools_archive_crypt __pyx_string_tab[191]
-#define __pyx_n_u_size __pyx_string_tab[192]
-#define __pyx_n_u_slots __pyx_string_tab[193]
-#define __pyx_n_u_split __pyx_string_tab[194]
-#define __pyx_n_u_start __pyx_string_tab[195]
-#define __pyx_n_u_state __pyx_string_tab[196]
-#define __pyx_n_u_step __pyx_string_tab[197]
-#define __pyx_n_u_stop __pyx_string_tab[198]
-#define __pyx_n_u_str __pyx_string_tab[199]
-#define __pyx_n_u_struct __pyx_string_tab[200]
-#define __pyx_n_u_test __pyx_string_tab[201]
-#define __pyx_n_u_type __pyx_string_tab[202]
-#define __pyx_n_u_uint8_t __pyx_string_tab[203]
-#define __pyx_n_u_unpack __pyx_string_tab[204]
-#define __pyx_n_u_unpack_from __pyx_string_tab[205]
-#define __pyx_n_u_unsafe_hash __pyx_string_tab[206]
-#define __pyx_n_u_update __pyx_string_tab[207]
-#define __pyx_n_u_use_setstate __pyx_string_tab[208]
-#define __pyx_n_u_values __pyx_string_tab[209]
-#define __pyx_n_u_weakref_slot __pyx_string_tab[210]
-#define __pyx_n_u_write __pyx_string_tab[211]
-#define __pyx_n_u_x __pyx_string_tab[212]
-#define __pyx_kp_b__6 __pyx_string_tab[213]
-#define __pyx_kp_b__7 __pyx_string_tab[214]
-#define __pyx_kp_b_iso88591_9F_1_z_Q_z_q_t3a_Rq_5_4q_nAU_V1 __pyx_string_tab[215]
-#define __pyx_kp_b_iso88591_A_a_Q_a_1D_T_q_AXQa_IQa_1A_E_aq __pyx_string_tab[216]
-#define __pyx_kp_b_iso88591_A_q_G6_1_q_ay_2WAQ __pyx_string_tab[217]
-#define __pyx_kp_b_iso88591_A_t7 __pyx_string_tab[218]
-#define __pyx_kp_b_iso88591_Q __pyx_string_tab[219]
-#define __pyx_kp_b_iso88591_TTU_s_1_vQfBa_q_Q_q_A_t3a_5_6_1 __pyx_string_tab[220]
-#define __pyx_kp_b_iso88591_T_d_Q_G1F_a_vWE_Q_q_t6_S_F_q_aw __pyx_string_tab[221]
-#define __pyx_kp_b_iso88591_WWX_V1A_q_s_1_m6_Q_q_A_Cq_xs_9C __pyx_string_tab[222]
-#define __pyx_kp_b_iso88591_hhaq_Ya_U_1_s_Cq_nAQ_l_69RRUUVV __pyx_string_tab[223]
-#define __pyx_kp_b_iso88591_q_0_kQR_9HAQ_7_1L_a_1 __pyx_string_tab[224]
-#define __pyx_kp_b_iso88591_q_a __pyx_string_tab[225]
-#define __pyx_kp_b_iso88591_q_q_Q_at4vQd_5_e_1A_Rz_R_q __pyx_string_tab[226]
-#define __pyx_kp_b_iso88591_s_1_vQfBa_q_A_t3a_5_6_1_E_aq_Jg __pyx_string_tab[227]
-#define __pyx_n_b_O __pyx_string_tab[228]
+#define __pyx_kp_u__10 __pyx_string_tab[20]
+#define __pyx_kp_u__11 __pyx_string_tab[21]
+#define __pyx_kp_u__13 __pyx_string_tab[22]
+#define __pyx_kp_u__2 __pyx_string_tab[23]
+#define __pyx_kp_u__3 __pyx_string_tab[24]
+#define __pyx_kp_u__4 __pyx_string_tab[25]
+#define __pyx_kp_u__5 __pyx_string_tab[26]
+#define __pyx_kp_u_add_note __pyx_string_tab[27]
+#define __pyx_kp_u_and __pyx_string_tab[28]
+#define __pyx_kp_u_at_0x __pyx_string_tab[29]
+#define __pyx_kp_u_collections_abc __pyx_string_tab[30]
+#define __pyx_kp_u_comp_size_2 __pyx_string_tab[31]
+#define __pyx_kp_u_compression_failed __pyx_string_tab[32]
+#define __pyx_kp_u_contiguous_and_direct __pyx_string_tab[33]
+#define __pyx_kp_u_contiguous_and_indirect __pyx_string_tab[34]
+#define __pyx_kp_u_count_must_be_non_negative __pyx_string_tab[35]
+#define __pyx_kp_u_crypt_type_2 __pyx_string_tab[36]
+#define __pyx_kp_u_data_2 __pyx_string_tab[37]
+#define __pyx_kp_u_decompression_failed __pyx_string_tab[38]
+#define __pyx_kp_u_disable __pyx_string_tab[39]
+#define __pyx_kp_u_enable __pyx_string_tab[40]
+#define __pyx_kp_u_entries_yielded __pyx_string_tab[41]
+#define __pyx_kp_u_entries_yielded_more_items_than __pyx_string_tab[42]
+#define __pyx_kp_u_expected_PackEntry_got __pyx_string_tab[43]
+#define __pyx_kp_u_gc __pyx_string_tab[44]
+#define __pyx_kp_u_getfullargspec __pyx_string_tab[45]
+#define __pyx_kp_u_got __pyx_string_tab[46]
+#define __pyx_kp_u_got_differing_extents_in_dimensi __pyx_string_tab[47]
+#define __pyx_kp_u_isenabled __pyx_string_tab[48]
+#define __pyx_kp_u_items_expected __pyx_string_tab[49]
+#define __pyx_kp_u_itemsize_0_for_cython_array __pyx_string_tab[50]
+#define __pyx_kp_u_name_3 __pyx_string_tab[51]
+#define __pyx_kp_u_no_default___reduce___due_to_non __pyx_string_tab[52]
+#define __pyx_kp_u_not_a_RepiPack_file __pyx_string_tab[53]
+#define __pyx_kp_u_object __pyx_string_tab[54]
+#define __pyx_kp_u_offset_2 __pyx_string_tab[55]
+#define __pyx_kp_u_packed_name_is_too_long __pyx_string_tab[56]
+#define __pyx_kp_u_replacement_must_be_bytes_or_Non __pyx_string_tab[57]
+#define __pyx_kp_u_replacements_must_be_a_mapping_o __pyx_string_tab[58]
+#define __pyx_kp_u_shirotsume_tools_archive_crypt_p __pyx_string_tab[59]
+#define __pyx_kp_u_size_2 __pyx_string_tab[60]
+#define __pyx_kp_u_strided_and_direct __pyx_string_tab[61]
+#define __pyx_kp_u_strided_and_direct_or_indirect __pyx_string_tab[62]
+#define __pyx_kp_u_strided_and_indirect __pyx_string_tab[63]
+#define __pyx_kp_u_stringsource __pyx_string_tab[64]
+#define __pyx_kp_u_unable_to_allocate_array_data __pyx_string_tab[65]
+#define __pyx_kp_u_unable_to_allocate_shape_and_str __pyx_string_tab[66]
+#define __pyx_kp_u_unexpected_end_of_file __pyx_string_tab[67]
+#define __pyx_kp_u_unknown_RepiPack_error __pyx_string_tab[68]
+#define __pyx_kp_u_unsupported_RepiPack_version __pyx_string_tab[69]
+#define __pyx_n_u_ASCII __pyx_string_tab[70]
+#define __pyx_n_u_CompressionError __pyx_string_tab[71]
+#define __pyx_n_u_DataclassParams __pyx_string_tab[72]
+#define __pyx_n_u_DecompressionError __pyx_string_tab[73]
+#define __pyx_n_u_Ellipsis __pyx_string_tab[74]
+#define __pyx_n_u_FIELD __pyx_string_tab[75]
+#define __pyx_n_u_InvalidSignatureError __pyx_string_tab[76]
+#define __pyx_n_u_Mapping __pyx_string_tab[77]
+#define __pyx_n_u_NotImplemented __pyx_string_tab[78]
+#define __pyx_n_u_PackEntry __pyx_string_tab[79]
+#define __pyx_n_u_PackEntry___reduce_cython __pyx_string_tab[80]
+#define __pyx_n_u_PackEntry___setstate_cython __pyx_string_tab[81]
+#define __pyx_n_u_Pyx_PyDict_NextRef __pyx_string_tab[82]
+#define __pyx_n_u_RawEntry __pyx_string_tab[83]
+#define __pyx_n_u_RawEntry___reduce_cython __pyx_string_tab[84]
+#define __pyx_n_u_RawEntry___setstate_cython __pyx_string_tab[85]
+#define __pyx_n_u_RawEntry_comp_size __pyx_string_tab[86]
+#define __pyx_n_u_RawEntry_crypt_type __pyx_string_tab[87]
+#define __pyx_n_u_RawEntry_name_2 __pyx_string_tab[88]
+#define __pyx_n_u_RawEntry_offset __pyx_string_tab[89]
+#define __pyx_n_u_RawEntry_size __pyx_string_tab[90]
+#define __pyx_n_u_RepiPackError __pyx_string_tab[91]
+#define __pyx_n_u_Sequence __pyx_string_tab[92]
+#define __pyx_n_u_ShortReadError __pyx_string_tab[93]
+#define __pyx_n_u_Unpacker __pyx_string_tab[94]
+#define __pyx_n_u_Unpacker___reduce_cython __pyx_string_tab[95]
+#define __pyx_n_u_Unpacker___setstate_cython __pyx_string_tab[96]
+#define __pyx_n_u_UnsupportedVersionError __pyx_string_tab[97]
+#define __pyx_n_u_View_MemoryView __pyx_string_tab[98]
+#define __pyx_n_u_abc __pyx_string_tab[99]
+#define __pyx_n_u_allocate_buffer __pyx_string_tab[100]
+#define __pyx_n_u_asyncio_coroutines __pyx_string_tab[101]
+#define __pyx_n_u_base __pyx_string_tab[102]
+#define __pyx_n_u_bytes __pyx_string_tab[103]
+#define __pyx_n_u_c __pyx_string_tab[104]
+#define __pyx_n_u_class __pyx_string_tab[105]
+#define __pyx_n_u_class_getitem __pyx_string_tab[106]
+#define __pyx_n_u_cline_in_traceback __pyx_string_tab[107]
+#define __pyx_n_u_collections_abc __pyx_string_tab[108]
+#define __pyx_n_u_comp_data __pyx_string_tab[109]
+#define __pyx_n_u_comp_size __pyx_string_tab[110]
+#define __pyx_n_u_compare __pyx_string_tab[111]
+#define __pyx_n_u_compress __pyx_string_tab[112]
+#define __pyx_n_u_count __pyx_string_tab[113]
+#define __pyx_n_u_cp932 __pyx_string_tab[114]
+#define __pyx_n_u_crypt_type __pyx_string_tab[115]
+#define __pyx_n_u_crypt_type_in __pyx_string_tab[116]
+#define __pyx_n_u_data __pyx_string_tab[117]
+#define __pyx_n_u_dataclass_fields __pyx_string_tab[118]
+#define __pyx_n_u_dataclass_params __pyx_string_tab[119]
+#define __pyx_n_u_dataclasses __pyx_string_tab[120]
+#define __pyx_n_u_decode __pyx_string_tab[121]
+#define __pyx_n_u_decode_body __pyx_string_tab[122]
+#define __pyx_n_u_decode_table __pyx_string_tab[123]
+#define __pyx_n_u_default __pyx_string_tab[124]
+#define __pyx_n_u_dict __pyx_string_tab[125]
+#define __pyx_n_u_dict_2 __pyx_string_tab[126]
+#define __pyx_n_u_doc __pyx_string_tab[127]
+#define __pyx_n_u_dtype_is_object __pyx_string_tab[128]
+#define __pyx_n_u_encode __pyx_string_tab[129]
+#define __pyx_n_u_encode_body __pyx_string_tab[130]
+#define __pyx_n_u_encode_table __pyx_string_tab[131]
+#define __pyx_n_u_entries __pyx_string_tab[132]
+#define __pyx_n_u_enumerate __pyx_string_tab[133]
+#define __pyx_n_u_eq __pyx_string_tab[134]
+#define __pyx_n_u_error __pyx_string_tab[135]
+#define __pyx_n_u_field __pyx_string_tab[136]
+#define __pyx_n_u_field_type __pyx_string_tab[137]
+#define __pyx_n_u_file __pyx_string_tab[138]
+#define __pyx_n_u_flags __pyx_string_tab[139]
+#define __pyx_n_u_format __pyx_string_tab[140]
+#define __pyx_n_u_fortran __pyx_string_tab[141]
+#define __pyx_n_u_frozen __pyx_string_tab[142]
+#define __pyx_n_u_func __pyx_string_tab[143]
+#define __pyx_n_u_getstate __pyx_string_tab[144]
+#define __pyx_n_u_hash __pyx_string_tab[145]
+#define __pyx_n_u_header __pyx_string_tab[146]
+#define __pyx_n_u_id __pyx_string_tab[147]
+#define __pyx_n_u_import __pyx_string_tab[148]
+#define __pyx_n_u_in_file __pyx_string_tab[149]
+#define __pyx_n_u_index __pyx_string_tab[150]
+#define __pyx_n_u_init __pyx_string_tab[151]
+#define __pyx_n_u_is_coroutine __pyx_string_tab[152]
+#define __pyx_n_u_items __pyx_string_tab[153]
+#define __pyx_n_u_itemsize __pyx_string_tab[154]
+#define __pyx_n_u_join __pyx_string_tab[155]
+#define __pyx_n_u_kw_only __pyx_string_tab[156]
+#define __pyx_n_u_main __pyx_string_tab[157]
+#define __pyx_n_u_match_args __pyx_string_tab[158]
+#define __pyx_n_u_match_args_2 __pyx_string_tab[159]
+#define __pyx_n_u_memview __pyx_string_tab[160]
+#define __pyx_n_u_metaclass __pyx_string_tab[161]
+#define __pyx_n_u_metadata __pyx_string_tab[162]
+#define __pyx_n_u_mode __pyx_string_tab[163]
+#define __pyx_n_u_module __pyx_string_tab[164]
+#define __pyx_n_u_mro_entries __pyx_string_tab[165]
+#define __pyx_n_u_name __pyx_string_tab[166]
+#define __pyx_n_u_name_2 __pyx_string_tab[167]
+#define __pyx_n_u_ndim __pyx_string_tab[168]
+#define __pyx_n_u_new __pyx_string_tab[169]
+#define __pyx_n_u_obj __pyx_string_tab[170]
+#define __pyx_n_u_offset __pyx_string_tab[171]
+#define __pyx_n_u_order __pyx_string_tab[172]
+#define __pyx_n_u_out_file __pyx_string_tab[173]
+#define __pyx_n_u_pack __pyx_string_tab[174]
+#define __pyx_n_u_pop __pyx_string_tab[175]
+#define __pyx_n_u_prepare __pyx_string_tab[176]
+#define __pyx_n_u_pyx_checksum __pyx_string_tab[177]
+#define __pyx_n_u_pyx_result __pyx_string_tab[178]
+#define __pyx_n_u_pyx_state __pyx_string_tab[179]
+#define __pyx_n_u_pyx_type __pyx_string_tab[180]
+#define __pyx_n_u_pyx_unpickle_Enum __pyx_string_tab[181]
+#define __pyx_n_u_pyx_unpickle_PackEntry __pyx_string_tab[182]
+#define __pyx_n_u_pyx_vtable __pyx_string_tab[183]
+#define __pyx_n_u_qualname __pyx_string_tab[184]
+#define __pyx_n_u_read __pyx_string_tab[185]
+#define __pyx_n_u_reduce __pyx_string_tab[186]
+#define __pyx_n_u_reduce_cython __pyx_string_tab[187]
+#define __pyx_n_u_reduce_ex __pyx_string_tab[188]
+#define __pyx_n_u_register __pyx_string_tab[189]
+#define __pyx_n_u_replace __pyx_string_tab[190]
+#define __pyx_n_u_replacements __pyx_string_tab[191]
+#define __pyx_n_u_repr __pyx_string_tab[192]
+#define __pyx_n_u_seek __pyx_string_tab[193]
+#define __pyx_n_u_self __pyx_string_tab[194]
+#define __pyx_n_u_set_name __pyx_string_tab[195]
+#define __pyx_n_u_setdefault __pyx_string_tab[196]
+#define __pyx_n_u_setstate __pyx_string_tab[197]
+#define __pyx_n_u_setstate_cython __pyx_string_tab[198]
+#define __pyx_n_u_shape __pyx_string_tab[199]
+#define __pyx_n_u_shirotsume_tools_archive_crypt __pyx_string_tab[200]
+#define __pyx_n_u_size __pyx_string_tab[201]
+#define __pyx_n_u_slots __pyx_string_tab[202]
+#define __pyx_n_u_split __pyx_string_tab[203]
+#define __pyx_n_u_start __pyx_string_tab[204]
+#define __pyx_n_u_state __pyx_string_tab[205]
+#define __pyx_n_u_step __pyx_string_tab[206]
+#define __pyx_n_u_stop __pyx_string_tab[207]
+#define __pyx_n_u_str __pyx_string_tab[208]
+#define __pyx_n_u_struct __pyx_string_tab[209]
+#define __pyx_n_u_test __pyx_string_tab[210]
+#define __pyx_n_u_type __pyx_string_tab[211]
+#define __pyx_n_u_uint8_t __pyx_string_tab[212]
+#define __pyx_n_u_unpack __pyx_string_tab[213]
+#define __pyx_n_u_unpack_from __pyx_string_tab[214]
+#define __pyx_n_u_unsafe_hash __pyx_string_tab[215]
+#define __pyx_n_u_update __pyx_string_tab[216]
+#define __pyx_n_u_use_setstate __pyx_string_tab[217]
+#define __pyx_n_u_values __pyx_string_tab[218]
+#define __pyx_n_u_weakref_slot __pyx_string_tab[219]
+#define __pyx_n_u_write __pyx_string_tab[220]
+#define __pyx_n_u_x __pyx_string_tab[221]
+#define __pyx_kp_b_T __pyx_string_tab[222]
+#define __pyx_kp_b__12 __pyx_string_tab[223]
+#define __pyx_kp_b__6 __pyx_string_tab[224]
+#define __pyx_kp_b__7 __pyx_string_tab[225]
+#define __pyx_kp_b__8 __pyx_string_tab[226]
+#define __pyx_kp_b__9 __pyx_string_tab[227]
+#define __pyx_kp_b_iso88591_1_q_Q_q_a_A_vS_c_Cq_Rq_AQ_ha_2Q __pyx_string_tab[228]
+#define __pyx_kp_b_iso88591_9F_1_z_Q_z_q_t3a_Rq_5_4q_nAU_V1 __pyx_string_tab[229]
+#define __pyx_kp_b_iso88591_A_a_Q_a_1D_T_q_AXQa_IQa_1A_E_aq __pyx_string_tab[230]
+#define __pyx_kp_b_iso88591_A_q_G6_1_q_ay_2WAQ __pyx_string_tab[231]
+#define __pyx_kp_b_iso88591_A_t7 __pyx_string_tab[232]
+#define __pyx_kp_b_iso88591_Q __pyx_string_tab[233]
+#define __pyx_kp_b_iso88591_T_d_Q_G1F_a_vWE_Q_q_t6_S_F_q_aw __pyx_string_tab[234]
+#define __pyx_kp_b_iso88591_WWX_V1A_q_s_1_m6_Q_q_A_Cq_xs_9C __pyx_string_tab[235]
+#define __pyx_kp_b_iso88591_hhaq_Ya_U_1_s_Cq_nAQ_l_69RRUUVV __pyx_string_tab[236]
+#define __pyx_kp_b_iso88591_q_0_kQR_9HAQ_7_1L_a_1 __pyx_string_tab[237]
+#define __pyx_kp_b_iso88591_q_Q_at4vQd_5_e_A_1A_Rz_R_q __pyx_string_tab[238]
+#define __pyx_kp_b_iso88591_q_a __pyx_string_tab[239]
+#define __pyx_kp_b_iso88591_s_1_vQfBa_q_A_t3a_5_6_1_E_aq_Jg __pyx_string_tab[240]
+#define __pyx_n_b_O __pyx_string_tab[241]
 #define __pyx_int_0 __pyx_number_tab[0]
 #define __pyx_int_neg_1 __pyx_number_tab[1]
 #define __pyx_int_1 __pyx_number_tab[2]
@@ -3630,9 +3672,9 @@ static CYTHON_SMALL_CODE int __pyx_m_clear(PyObject *m) {
   Py_CLEAR(clear_module_state->__pyx_memoryviewslice_type);
   Py_CLEAR(clear_module_state->__pyx_type___pyx_memoryviewslice);
   for (int i=0; i<1; ++i) { Py_CLEAR(clear_module_state->__pyx_slice[i]); }
-  for (int i=0; i<3; ++i) { Py_CLEAR(clear_module_state->__pyx_tuple[i]); }
+  for (int i=0; i<5; ++i) { Py_CLEAR(clear_module_state->__pyx_tuple[i]); }
   for (int i=0; i<19; ++i) { Py_CLEAR(clear_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<229; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<242; ++i) { Py_CLEAR(clear_module_state->__pyx_string_tab[i]); }
   for (int i=0; i<8; ++i) { Py_CLEAR(clear_module_state->__pyx_number_tab[i]); }
 /* #### Code section: module_state_clear_contents ### */
 /* CommonTypesMetaclass.module_state_clear */
@@ -3671,9 +3713,9 @@ static CYTHON_SMALL_CODE int __pyx_m_traverse(PyObject *m, visitproc visit, void
   Py_VISIT(traverse_module_state->__pyx_memoryviewslice_type);
   Py_VISIT(traverse_module_state->__pyx_type___pyx_memoryviewslice);
   for (int i=0; i<1; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_slice[i]); }
-  for (int i=0; i<3; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_tuple[i]); }
+  for (int i=0; i<5; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_tuple[i]); }
   for (int i=0; i<19; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_codeobj_tab[i]); }
-  for (int i=0; i<229; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
+  for (int i=0; i<242; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_string_tab[i]); }
   for (int i=0; i<8; ++i) { __Pyx_VISIT_CONST(traverse_module_state->__pyx_number_tab[i]); }
 /* #### Code section: module_state_traverse_contents ### */
 /* CommonTypesMetaclass.module_state_traverse */
@@ -16175,6 +16217,362 @@ static PyObject *__pyx_unpickle_Enum__set_state(struct __pyx_MemviewEnum_obj *__
   return __pyx_r;
 }
 
+/* "BufferFormatFromTypeInfo":1355
+ * 
+ * 
+ * @cname('__pyx_format_from_typeinfo')             # <<<<<<<<<<<<<<
+ * cdef bytes format_from_typeinfo(const __Pyx_TypeInfo *type):
+ *     cdef const __Pyx_StructField *field
+*/
+
+static PyObject *__pyx_format_from_typeinfo(__Pyx_TypeInfo const *__pyx_v_type) {
+  __Pyx_StructField const *__pyx_v_field;
+  struct __pyx_typeinfo_string __pyx_v_fmt;
+  PyObject *__pyx_v_part = 0;
+  PyObject *__pyx_v_result = 0;
+  PyObject *__pyx_v_alignment = NULL;
+  PyObject *__pyx_v_parts = NULL;
+  PyObject *__pyx_v_extents = NULL;
+  Py_ssize_t __pyx_7genexpr__pyx_v_i;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  int __pyx_t_1;
+  PyObject *__pyx_t_2 = NULL;
+  __Pyx_StructField const *__pyx_t_3;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  int __pyx_t_6;
+  int __pyx_t_7;
+  int __pyx_t_8;
+  Py_ssize_t __pyx_t_9;
+  PyObject *__pyx_t_10[3];
+  int __pyx_lineno = 0;
+  const char *__pyx_filename = NULL;
+  int __pyx_clineno = 0;
+  __Pyx_RefNannySetupContext("format_from_typeinfo", 0);
+
+  /* "BufferFormatFromTypeInfo":1362
+ *     cdef Py_ssize_t i
+ * 
+ *     if type.typegroup == 'S':             # <<<<<<<<<<<<<<
+ *         assert type.fields != NULL
+ *         assert type.fields.type != NULL
+*/
+  __pyx_t_1 = (__pyx_v_type->typegroup == 'S');
+  if (__pyx_t_1) {
+
+    /* "BufferFormatFromTypeInfo":1363
+ * 
+ *     if type.typegroup == 'S':
+ *         assert type.fields != NULL             # <<<<<<<<<<<<<<
+ *         assert type.fields.type != NULL
+ * 
+*/
+    #ifndef CYTHON_WITHOUT_ASSERTIONS
+    if (unlikely(__pyx_assertions_enabled())) {
+      __pyx_t_1 = (__pyx_v_type->fields != NULL);
+      if (unlikely(!__pyx_t_1)) {
+        __Pyx_Raise(((PyObject *)(((PyTypeObject*)PyExc_AssertionError))), 0, 0, 0);
+        __PYX_ERR(1, 1363, __pyx_L1_error)
+      }
+    }
+    #else
+    if ((1)); else __PYX_ERR(1, 1363, __pyx_L1_error)
+    #endif
+
+    /* "BufferFormatFromTypeInfo":1364
+ *     if type.typegroup == 'S':
+ *         assert type.fields != NULL
+ *         assert type.fields.type != NULL             # <<<<<<<<<<<<<<
+ * 
+ *         if type.flags & __PYX_BUF_FLAGS_PACKED_STRUCT:
+*/
+    #ifndef CYTHON_WITHOUT_ASSERTIONS
+    if (unlikely(__pyx_assertions_enabled())) {
+      __pyx_t_1 = (__pyx_v_type->fields->type != NULL);
+      if (unlikely(!__pyx_t_1)) {
+        __Pyx_Raise(((PyObject *)(((PyTypeObject*)PyExc_AssertionError))), 0, 0, 0);
+        __PYX_ERR(1, 1364, __pyx_L1_error)
+      }
+    }
+    #else
+    if ((1)); else __PYX_ERR(1, 1364, __pyx_L1_error)
+    #endif
+
+    /* "BufferFormatFromTypeInfo":1366
+ *         assert type.fields.type != NULL
+ * 
+ *         if type.flags & __PYX_BUF_FLAGS_PACKED_STRUCT:             # <<<<<<<<<<<<<<
+ *             alignment = b'^'
+ *         else:
+*/
+    __pyx_t_1 = ((__pyx_v_type->flags & __PYX_BUF_FLAGS_PACKED_STRUCT) != 0);
+    if (__pyx_t_1) {
+
+      /* "BufferFormatFromTypeInfo":1367
+ * 
+ *         if type.flags & __PYX_BUF_FLAGS_PACKED_STRUCT:
+ *             alignment = b'^'             # <<<<<<<<<<<<<<
+ *         else:
+ *             alignment = b''
+*/
+      __Pyx_INCREF(__pyx_mstate_global->__pyx_kp_b__6);
+      __pyx_v_alignment = __pyx_mstate_global->__pyx_kp_b__6;
+
+      /* "BufferFormatFromTypeInfo":1366
+ *         assert type.fields.type != NULL
+ * 
+ *         if type.flags & __PYX_BUF_FLAGS_PACKED_STRUCT:             # <<<<<<<<<<<<<<
+ *             alignment = b'^'
+ *         else:
+*/
+      goto __pyx_L4;
+    }
+
+    /* "BufferFormatFromTypeInfo":1369
+ *             alignment = b'^'
+ *         else:
+ *             alignment = b''             # <<<<<<<<<<<<<<
+ * 
+ *         parts = [b"T{"]
+*/
+    /*else*/ {
+      __Pyx_INCREF(__pyx_mstate_global->__pyx_kp_b__7);
+      __pyx_v_alignment = __pyx_mstate_global->__pyx_kp_b__7;
+    }
+    __pyx_L4:;
+
+    /* "BufferFormatFromTypeInfo":1371
+ *             alignment = b''
+ * 
+ *         parts = [b"T{"]             # <<<<<<<<<<<<<<
+ *         field = type.fields
+ * 
+*/
+    __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1371, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_2);
+    __Pyx_INCREF(__pyx_mstate_global->__pyx_kp_b_T);
+    __Pyx_GIVEREF(__pyx_mstate_global->__pyx_kp_b_T);
+    if (__Pyx_PyList_SET_ITEM(__pyx_t_2, 0, __pyx_mstate_global->__pyx_kp_b_T) != (0)) __PYX_ERR(1, 1371, __pyx_L1_error);
+    __pyx_v_parts = ((PyObject*)__pyx_t_2);
+    __pyx_t_2 = 0;
+
+    /* "BufferFormatFromTypeInfo":1372
+ * 
+ *         parts = [b"T{"]
+ *         field = type.fields             # <<<<<<<<<<<<<<
+ * 
+ *         while field.type:
+*/
+    __pyx_t_3 = __pyx_v_type->fields;
+    __pyx_v_field = __pyx_t_3;
+
+    /* "BufferFormatFromTypeInfo":1374
+ *         field = type.fields
+ * 
+ *         while field.type:             # <<<<<<<<<<<<<<
+ *             part = format_from_typeinfo(field.type)
+ *             parts.append(part + b':' + field.name + b':')
+*/
+    while (1) {
+      __pyx_t_1 = (__pyx_v_field->type != 0);
+      if (!__pyx_t_1) break;
+
+      /* "BufferFormatFromTypeInfo":1375
+ * 
+ *         while field.type:
+ *             part = format_from_typeinfo(field.type)             # <<<<<<<<<<<<<<
+ *             parts.append(part + b':' + field.name + b':')
+ *             field += 1
+*/
+      __pyx_t_2 = __pyx_format_from_typeinfo(__pyx_v_field->type); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1375, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __Pyx_XDECREF_SET(__pyx_v_part, ((PyObject*)__pyx_t_2));
+      __pyx_t_2 = 0;
+
+      /* "BufferFormatFromTypeInfo":1376
+ *         while field.type:
+ *             part = format_from_typeinfo(field.type)
+ *             parts.append(part + b':' + field.name + b':')             # <<<<<<<<<<<<<<
+ *             field += 1
+ * 
+*/
+      __pyx_t_2 = PyNumber_Add(__pyx_v_part, __pyx_mstate_global->__pyx_kp_b__8); if (unlikely(!__pyx_t_2)) __PYX_ERR(1, 1376, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_2);
+      __pyx_t_4 = __Pyx_PyBytes_FromString(__pyx_v_field->name); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 1376, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_5 = PyNumber_Add(__pyx_t_2, __pyx_t_4); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1376, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_t_4 = PyNumber_Add(__pyx_t_5, __pyx_mstate_global->__pyx_kp_b__8); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 1376, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __pyx_t_6 = __Pyx_PyList_Append(__pyx_v_parts, __pyx_t_4); if (unlikely(__pyx_t_6 == ((int)-1))) __PYX_ERR(1, 1376, __pyx_L1_error)
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+      /* "BufferFormatFromTypeInfo":1377
+ *             part = format_from_typeinfo(field.type)
+ *             parts.append(part + b':' + field.name + b':')
+ *             field += 1             # <<<<<<<<<<<<<<
+ * 
+ *         result = alignment.join(parts) + b'}'
+*/
+      __pyx_v_field = (__pyx_v_field + 1);
+    }
+
+    /* "BufferFormatFromTypeInfo":1379
+ *             field += 1
+ * 
+ *         result = alignment.join(parts) + b'}'             # <<<<<<<<<<<<<<
+ *     else:
+ *         fmt = __Pyx_TypeInfoToFormat(type)
+*/
+    __pyx_t_4 = __Pyx_PyBytes_Join(__pyx_v_alignment, __pyx_v_parts); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 1379, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_5 = PyNumber_Add(__pyx_t_4, __pyx_mstate_global->__pyx_kp_b__9); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1379, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+    __pyx_v_result = ((PyObject*)__pyx_t_5);
+    __pyx_t_5 = 0;
+
+    /* "BufferFormatFromTypeInfo":1362
+ *     cdef Py_ssize_t i
+ * 
+ *     if type.typegroup == 'S':             # <<<<<<<<<<<<<<
+ *         assert type.fields != NULL
+ *         assert type.fields.type != NULL
+*/
+    goto __pyx_L3;
+  }
+
+  /* "BufferFormatFromTypeInfo":1381
+ *         result = alignment.join(parts) + b'}'
+ *     else:
+ *         fmt = __Pyx_TypeInfoToFormat(type)             # <<<<<<<<<<<<<<
+ *         result = fmt.string
+ *         if type.arraysize[0]:
+*/
+  /*else*/ {
+    __pyx_v_fmt = __Pyx_TypeInfoToFormat(__pyx_v_type);
+
+    /* "BufferFormatFromTypeInfo":1382
+ *     else:
+ *         fmt = __Pyx_TypeInfoToFormat(type)
+ *         result = fmt.string             # <<<<<<<<<<<<<<
+ *         if type.arraysize[0]:
+ *             extents = [f"{type.arraysize[i]}" for i in range(type.ndim)]
+*/
+    __pyx_t_5 = __Pyx_PyBytes_FromString(__pyx_v_fmt.string); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1382, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_v_result = ((PyObject*)__pyx_t_5);
+    __pyx_t_5 = 0;
+
+    /* "BufferFormatFromTypeInfo":1383
+ *         fmt = __Pyx_TypeInfoToFormat(type)
+ *         result = fmt.string
+ *         if type.arraysize[0]:             # <<<<<<<<<<<<<<
+ *             extents = [f"{type.arraysize[i]}" for i in range(type.ndim)]
+ *             result = f"({u','.join(extents)})".encode('ascii') + result
+*/
+    __pyx_t_1 = ((__pyx_v_type->arraysize[0]) != 0);
+    if (__pyx_t_1) {
+
+      /* "BufferFormatFromTypeInfo":1384
+ *         result = fmt.string
+ *         if type.arraysize[0]:
+ *             extents = [f"{type.arraysize[i]}" for i in range(type.ndim)]             # <<<<<<<<<<<<<<
+ *             result = f"({u','.join(extents)})".encode('ascii') + result
+ * 
+*/
+      { /* enter inner scope */
+        __pyx_t_5 = PyList_New(0); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1384, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_5);
+        __pyx_t_7 = __pyx_v_type->ndim;
+        __pyx_t_8 = __pyx_t_7;
+        for (__pyx_t_9 = 0; __pyx_t_9 < __pyx_t_8; __pyx_t_9+=1) {
+          __pyx_7genexpr__pyx_v_i = __pyx_t_9;
+          __pyx_t_4 = __Pyx_PyUnicode_From_size_t((__pyx_v_type->arraysize[__pyx_7genexpr__pyx_v_i]), 0, ' ', 'd'); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 1384, __pyx_L1_error)
+          __Pyx_GOTREF(__pyx_t_4);
+          if (unlikely(__Pyx_ListComp_Append(__pyx_t_5, (PyObject*)__pyx_t_4))) __PYX_ERR(1, 1384, __pyx_L1_error)
+          __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        }
+      } /* exit inner scope */
+      __pyx_v_extents = ((PyObject*)__pyx_t_5);
+      __pyx_t_5 = 0;
+
+      /* "BufferFormatFromTypeInfo":1385
+ *         if type.arraysize[0]:
+ *             extents = [f"{type.arraysize[i]}" for i in range(type.ndim)]
+ *             result = f"({u','.join(extents)})".encode('ascii') + result             # <<<<<<<<<<<<<<
+ * 
+ *     return result
+*/
+      __pyx_t_5 = PyUnicode_Join(__pyx_mstate_global->__pyx_kp_u__11, __pyx_v_extents); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1385, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_10[0] = __pyx_mstate_global->__pyx_kp_u__10;
+      __pyx_t_10[1] = __pyx_t_5;
+      __pyx_t_10[2] = __pyx_mstate_global->__pyx_kp_u__5;
+      __pyx_t_4 = __Pyx_PyUnicode_Join(__pyx_t_10, 3, 1 * 2 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_5), 127 | __Pyx_PyUnicode_MAX_CHAR_VALUE(__pyx_t_5));
+      if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 1385, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __pyx_t_5 = PyUnicode_AsASCIIString(((PyObject*)__pyx_t_4)); if (unlikely(!__pyx_t_5)) __PYX_ERR(1, 1385, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_t_4 = PyNumber_Add(__pyx_t_5, __pyx_v_result); if (unlikely(!__pyx_t_4)) __PYX_ERR(1, 1385, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_DECREF_SET(__pyx_v_result, ((PyObject*)__pyx_t_4));
+      __pyx_t_4 = 0;
+
+      /* "BufferFormatFromTypeInfo":1383
+ *         fmt = __Pyx_TypeInfoToFormat(type)
+ *         result = fmt.string
+ *         if type.arraysize[0]:             # <<<<<<<<<<<<<<
+ *             extents = [f"{type.arraysize[i]}" for i in range(type.ndim)]
+ *             result = f"({u','.join(extents)})".encode('ascii') + result
+*/
+    }
+  }
+  __pyx_L3:;
+
+  /* "BufferFormatFromTypeInfo":1387
+ *             result = f"({u','.join(extents)})".encode('ascii') + result
+ * 
+ *     return result             # <<<<<<<<<<<<<<
+*/
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_result);
+  __pyx_r = __pyx_v_result;
+  goto __pyx_L0;
+
+  /* "BufferFormatFromTypeInfo":1355
+ * 
+ * 
+ * @cname('__pyx_format_from_typeinfo')             # <<<<<<<<<<<<<<
+ * cdef bytes format_from_typeinfo(const __Pyx_TypeInfo *type):
+ *     cdef const __Pyx_StructField *field
+*/
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_AddTraceback("BufferFormatFromTypeInfo.format_from_typeinfo", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_part);
+  __Pyx_XDECREF(__pyx_v_result);
+  __Pyx_XDECREF(__pyx_v_alignment);
+  __Pyx_XDECREF(__pyx_v_parts);
+  __Pyx_XDECREF(__pyx_v_extents);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
 /* "shirotsume_tools/archive/crypt.pyx":39
  * 
  * 
@@ -16663,7 +17061,7 @@ static PyObject *__pyx_f_16shirotsume_tools_7archive_5crypt_8RawEntry_name(struc
  *     cpdef uint32_t offset(self):
 */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_4 = __Pyx_CallUnboundCMethod2(&__pyx_mstate_global->__pyx_umethod_PyBytes_Type__split, __pyx_v_b, __pyx_mstate_global->__pyx_kp_b__6, __pyx_mstate_global->__pyx_int_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 64, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CallUnboundCMethod2(&__pyx_mstate_global->__pyx_umethod_PyBytes_Type__split, __pyx_v_b, __pyx_mstate_global->__pyx_kp_b__12, __pyx_mstate_global->__pyx_int_1); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   __pyx_t_3 = __Pyx_GetItemInt_List(__pyx_t_4, 0, long, 1, __Pyx_PyLong_From_long, 1, 0, 1, 1, __Pyx_ReferenceSharing_OwnStrongReference); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 64, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_3);
@@ -18363,7 +18761,7 @@ static Py_hash_t __pyx_pf_16shirotsume_tools_7archive_5crypt_9PackEntry_6__hash_
   return __pyx_r;
 }
 
-/* "shirotsume_tools/archive/crypt.pxd":43
+/* "shirotsume_tools/archive/crypt.pxd":46
  * 
  * cdef class PackEntry:
  *     cdef public str name             # <<<<<<<<<<<<<<
@@ -18427,7 +18825,7 @@ static int __pyx_pf_16shirotsume_tools_7archive_5crypt_9PackEntry_4name_2__set__
   __Pyx_RefNannySetupContext("__set__", 0);
   __pyx_t_1 = __pyx_v_value;
   __Pyx_INCREF(__pyx_t_1);
-  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(2, 43, __pyx_L1_error)
+  if (!(likely(PyUnicode_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("str", __pyx_t_1))) __PYX_ERR(2, 46, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->name);
   __Pyx_DECREF(__pyx_v_self->name);
@@ -18477,7 +18875,7 @@ static int __pyx_pf_16shirotsume_tools_7archive_5crypt_9PackEntry_4name_4__del__
   return __pyx_r;
 }
 
-/* "shirotsume_tools/archive/crypt.pxd":44
+/* "shirotsume_tools/archive/crypt.pxd":47
  * cdef class PackEntry:
  *     cdef public str name
  *     cdef public bytes data             # <<<<<<<<<<<<<<
@@ -18540,7 +18938,7 @@ static int __pyx_pf_16shirotsume_tools_7archive_5crypt_9PackEntry_4data_2__set__
   __Pyx_RefNannySetupContext("__set__", 0);
   __pyx_t_1 = __pyx_v_value;
   __Pyx_INCREF(__pyx_t_1);
-  if (!(likely(PyBytes_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_1))) __PYX_ERR(2, 44, __pyx_L1_error)
+  if (!(likely(PyBytes_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_1))) __PYX_ERR(2, 47, __pyx_L1_error)
   __Pyx_GIVEREF(__pyx_t_1);
   __Pyx_GOTREF(__pyx_v_self->data);
   __Pyx_DECREF(__pyx_v_self->data);
@@ -18590,7 +18988,7 @@ static int __pyx_pf_16shirotsume_tools_7archive_5crypt_9PackEntry_4data_4__del__
   return __pyx_r;
 }
 
-/* "shirotsume_tools/archive/crypt.pxd":45
+/* "shirotsume_tools/archive/crypt.pxd":48
  *     cdef public str name
  *     cdef public bytes data
  *     cdef public uint8_t crypt_type             # <<<<<<<<<<<<<<
@@ -18620,7 +19018,7 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_9PackEntry_10crypt_
   int __pyx_clineno = 0;
   __Pyx_RefNannySetupContext("__get__", 0);
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __Pyx_PyLong_From_uint8_t(__pyx_v_self->crypt_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 45, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_From_uint8_t(__pyx_v_self->crypt_type); if (unlikely(!__pyx_t_1)) __PYX_ERR(2, 48, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
@@ -18658,7 +19056,7 @@ static int __pyx_pf_16shirotsume_tools_7archive_5crypt_9PackEntry_10crypt_type_2
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
-  __pyx_t_1 = __Pyx_PyLong_As_uint8_t(__pyx_v_value); if (unlikely((__pyx_t_1 == ((uint8_t)-1)) && PyErr_Occurred())) __PYX_ERR(2, 45, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyLong_As_uint8_t(__pyx_v_value); if (unlikely((__pyx_t_1 == ((uint8_t)-1)) && PyErr_Occurred())) __PYX_ERR(2, 48, __pyx_L1_error)
   __pyx_v_self->crypt_type = __pyx_t_1;
 
   /* function exit code */
@@ -20465,7 +20863,7 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_4decode_body(CYTHON
 /* "shirotsume_tools/archive/crypt.pyx":165
  * 
  * 
- * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True):             # <<<<<<<<<<<<<<
+ * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True, uint8_t crypt_type_in=0):             # <<<<<<<<<<<<<<
  *     cdef:
  *         uint8_t *out = NULL
 */
@@ -20479,6 +20877,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 ); /*proto*/
 static PyObject *__pyx_f_16shirotsume_tools_7archive_5crypt_encode_body(__Pyx_memviewslice __pyx_v_data, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_16shirotsume_tools_7archive_5crypt_encode_body *__pyx_optional_args) {
   int __pyx_v_compress = ((int)1);
+  uint8_t __pyx_v_crypt_type_in = ((uint8_t)0);
   uint8_t *__pyx_v_out;
   size_t __pyx_v_out_len;
   uint8_t __pyx_v_crypt_type;
@@ -20507,11 +20906,14 @@ static PyObject *__pyx_f_16shirotsume_tools_7archive_5crypt_encode_body(__Pyx_me
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
       __pyx_v_compress = __pyx_optional_args->compress;
+      if (__pyx_optional_args->__pyx_n > 1) {
+        __pyx_v_crypt_type_in = __pyx_optional_args->crypt_type_in;
+      }
     }
   }
 
   /* "shirotsume_tools/archive/crypt.pyx":167
- * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True):
+ * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True, uint8_t crypt_type_in=0):
  *     cdef:
  *         uint8_t *out = NULL             # <<<<<<<<<<<<<<
  *         size_t out_len = 0
@@ -20541,7 +20943,7 @@ static PyObject *__pyx_f_16shirotsume_tools_7archive_5crypt_encode_body(__Pyx_me
  *         rp_error_t err
  * 
  *     err = rp_encode_body(&data[0], data.shape[0], &out, &out_len,             # <<<<<<<<<<<<<<
- *                          &crypt_type, 1 if compress else 0)
+ *                          &crypt_type, 1 if compress else 0, crypt_type_in)
  *     _raise_on_error(err)
 */
   __pyx_t_1 = 0;
@@ -20558,7 +20960,7 @@ static PyObject *__pyx_f_16shirotsume_tools_7archive_5crypt_encode_body(__Pyx_me
   /* "shirotsume_tools/archive/crypt.pyx":173
  * 
  *     err = rp_encode_body(&data[0], data.shape[0], &out, &out_len,
- *                          &crypt_type, 1 if compress else 0)             # <<<<<<<<<<<<<<
+ *                          &crypt_type, 1 if compress else 0, crypt_type_in)             # <<<<<<<<<<<<<<
  *     _raise_on_error(err)
  *     try:
 */
@@ -20572,14 +20974,14 @@ static PyObject *__pyx_f_16shirotsume_tools_7archive_5crypt_encode_body(__Pyx_me
  *         rp_error_t err
  * 
  *     err = rp_encode_body(&data[0], data.shape[0], &out, &out_len,             # <<<<<<<<<<<<<<
- *                          &crypt_type, 1 if compress else 0)
+ *                          &crypt_type, 1 if compress else 0, crypt_type_in)
  *     _raise_on_error(err)
 */
-  __pyx_v_err = rp_encode_body((&(*((uint8_t const  *) ( /* dim=0 */ ((char *) (((uint8_t const  *) __pyx_v_data.data) + __pyx_t_1)) )))), (__pyx_v_data.shape[0]), (&__pyx_v_out), (&__pyx_v_out_len), (&__pyx_v_crypt_type), __pyx_t_2);
+  __pyx_v_err = rp_encode_body((&(*((uint8_t const  *) ( /* dim=0 */ ((char *) (((uint8_t const  *) __pyx_v_data.data) + __pyx_t_1)) )))), (__pyx_v_data.shape[0]), (&__pyx_v_out), (&__pyx_v_out_len), (&__pyx_v_crypt_type), __pyx_t_2, __pyx_v_crypt_type_in);
 
   /* "shirotsume_tools/archive/crypt.pyx":174
  *     err = rp_encode_body(&data[0], data.shape[0], &out, &out_len,
- *                          &crypt_type, 1 if compress else 0)
+ *                          &crypt_type, 1 if compress else 0, crypt_type_in)
  *     _raise_on_error(err)             # <<<<<<<<<<<<<<
  *     try:
  *         return (bytes((<uint8_t*>out)[:out_len]), crypt_type)
@@ -20587,7 +20989,7 @@ static PyObject *__pyx_f_16shirotsume_tools_7archive_5crypt_encode_body(__Pyx_me
   __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 174, __pyx_L1_error)
 
   /* "shirotsume_tools/archive/crypt.pyx":175
- *                          &crypt_type, 1 if compress else 0)
+ *                          &crypt_type, 1 if compress else 0, crypt_type_in)
  *     _raise_on_error(err)
  *     try:             # <<<<<<<<<<<<<<
  *         return (bytes((<uint8_t*>out)[:out_len]), crypt_type)
@@ -20683,7 +21085,7 @@ static PyObject *__pyx_f_16shirotsume_tools_7archive_5crypt_encode_body(__Pyx_me
   /* "shirotsume_tools/archive/crypt.pyx":165
  * 
  * 
- * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True):             # <<<<<<<<<<<<<<
+ * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True, uint8_t crypt_type_in=0):             # <<<<<<<<<<<<<<
  *     cdef:
  *         uint8_t *out = NULL
 */
@@ -20719,11 +21121,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 ) {
   __Pyx_memviewslice __pyx_v_data = { 0, 0, { 0 }, { 0 }, { 0 } };
   int __pyx_v_compress;
+  uint8_t __pyx_v_crypt_type_in;
   #if !CYTHON_METH_FASTCALL
   CYTHON_UNUSED Py_ssize_t __pyx_nargs;
   #endif
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
-  PyObject* values[2] = {0,0};
+  PyObject* values[3] = {0,0,0};
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -20739,11 +21142,15 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   #endif
   __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
   {
-    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_data,&__pyx_mstate_global->__pyx_n_u_compress,0};
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_data,&__pyx_mstate_global->__pyx_n_u_compress,&__pyx_mstate_global->__pyx_n_u_crypt_type_in,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
     if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 165, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
+        case  3:
+        values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 165, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
         if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 165, __pyx_L3_error)
@@ -20758,10 +21165,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
       if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "encode_body", 0) < (0)) __PYX_ERR(0, 165, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 1; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("encode_body", 0, 1, 2, i); __PYX_ERR(0, 165, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("encode_body", 0, 1, 3, i); __PYX_ERR(0, 165, __pyx_L3_error) }
       }
     } else {
       switch (__pyx_nargs) {
+        case  3:
+        values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 165, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
         if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 165, __pyx_L3_error)
@@ -20779,10 +21190,15 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
     } else {
       __pyx_v_compress = ((int)1);
     }
+    if (values[2]) {
+      __pyx_v_crypt_type_in = __Pyx_PyLong_As_uint8_t(values[2]); if (unlikely((__pyx_v_crypt_type_in == ((uint8_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 165, __pyx_L3_error)
+    } else {
+      __pyx_v_crypt_type_in = ((uint8_t)0);
+    }
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("encode_body", 0, 1, 2, __pyx_nargs); __PYX_ERR(0, 165, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("encode_body", 0, 1, 3, __pyx_nargs); __PYX_ERR(0, 165, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -20794,7 +21210,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  __pyx_r = __pyx_pf_16shirotsume_tools_7archive_5crypt_6encode_body(__pyx_self, __pyx_v_data, __pyx_v_compress);
+  __pyx_r = __pyx_pf_16shirotsume_tools_7archive_5crypt_6encode_body(__pyx_self, __pyx_v_data, __pyx_v_compress, __pyx_v_crypt_type_in);
 
   /* function exit code */
   for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
@@ -20805,7 +21221,7 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_6encode_body(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_data, int __pyx_v_compress) {
+static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_6encode_body(CYTHON_UNUSED PyObject *__pyx_self, __Pyx_memviewslice __pyx_v_data, int __pyx_v_compress, uint8_t __pyx_v_crypt_type_in) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
@@ -20816,8 +21232,9 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_6encode_body(CYTHON
   __Pyx_RefNannySetupContext("encode_body", 0);
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_data.memview)) { __Pyx_RaiseUnboundLocalError("data"); __PYX_ERR(0, 165, __pyx_L1_error) }
-  __pyx_t_2.__pyx_n = 1;
+  __pyx_t_2.__pyx_n = 2;
   __pyx_t_2.compress = __pyx_v_compress;
+  __pyx_t_2.crypt_type_in = __pyx_v_crypt_type_in;
   __pyx_t_1 = __pyx_f_16shirotsume_tools_7archive_5crypt_encode_body(__pyx_v_data, 1, &__pyx_t_2); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 165, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
@@ -21197,6 +21614,8 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_4__next__
   size_t __pyx_t_7;
   __Pyx_memviewslice __pyx_t_8 = { 0, 0, { 0 }, { 0 }, { 0 } };
   uint8_t __pyx_t_9;
+  PyObject *__pyx_t_10 = NULL;
+  PyObject *__pyx_t_11 = NULL;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -21336,7 +21755,7 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_4__next__
  *         if <size_t>len(comp_data) != raw.comp_size():
  *             raise ShortReadError("unexpected end of file")             # <<<<<<<<<<<<<<
  *         data = decode_body(comp_data, raw.size(), raw.crypt_type())
- *         return PackEntry(raw.name(), data)
+ *         return PackEntry(raw.name(), data, crypt_type=raw.crypt_type())
 */
     __pyx_t_1 = NULL;
     __Pyx_GetModuleGlobalName(__pyx_t_6, __pyx_mstate_global->__pyx_n_u_ShortReadError); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 219, __pyx_L1_error)
@@ -21378,7 +21797,7 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_4__next__
  *         if <size_t>len(comp_data) != raw.comp_size():
  *             raise ShortReadError("unexpected end of file")
  *         data = decode_body(comp_data, raw.size(), raw.crypt_type())             # <<<<<<<<<<<<<<
- *         return PackEntry(raw.name(), data)
+ *         return PackEntry(raw.name(), data, crypt_type=raw.crypt_type())
  * 
 */
   __pyx_t_8 = __Pyx_PyObject_to_MemoryviewSlice_dc_nn_uint8_t__const__(__pyx_v_comp_data, 0); if (unlikely(!__pyx_t_8.memview)) __PYX_ERR(0, 220, __pyx_L1_error)
@@ -21394,7 +21813,7 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_4__next__
   /* "shirotsume_tools/archive/crypt.pyx":221
  *             raise ShortReadError("unexpected end of file")
  *         data = decode_body(comp_data, raw.size(), raw.crypt_type())
- *         return PackEntry(raw.name(), data)             # <<<<<<<<<<<<<<
+ *         return PackEntry(raw.name(), data, crypt_type=raw.crypt_type())             # <<<<<<<<<<<<<<
  * 
  * 
 */
@@ -21402,12 +21821,20 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_4__next__
   __pyx_t_6 = NULL;
   __pyx_t_1 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->name(__pyx_v_raw, 0); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 221, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
+  __pyx_t_9 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->crypt_type(__pyx_v_raw, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 221, __pyx_L1_error)
+  __pyx_t_10 = __Pyx_PyLong_From_uint8_t(__pyx_t_9); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 221, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_10);
   __pyx_t_7 = 1;
   {
-    PyObject *__pyx_callargs[3] = {__pyx_t_6, __pyx_t_1, __pyx_v_data};
-    __pyx_t_4 = __Pyx_PyObject_FastCall((PyObject*)__pyx_mstate_global->__pyx_ptype_16shirotsume_tools_7archive_5crypt_PackEntry, __pyx_callargs+__pyx_t_7, (3-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+    PyObject *__pyx_callargs[3 + ((CYTHON_VECTORCALL) ? 1 : 0)] = {__pyx_t_6, __pyx_t_1, __pyx_v_data};
+    __pyx_t_11 = __Pyx_MakeVectorcallBuilderKwds(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 221, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    if (__Pyx_VectorcallBuilder_AddArg(__pyx_mstate_global->__pyx_n_u_crypt_type, __pyx_t_10, __pyx_t_11, __pyx_callargs+3, 0) < (0)) __PYX_ERR(0, 221, __pyx_L1_error)
+    __pyx_t_4 = __Pyx_Object_Vectorcall_CallFromBuilder((PyObject*)__pyx_mstate_global->__pyx_ptype_16shirotsume_tools_7archive_5crypt_PackEntry, __pyx_callargs+__pyx_t_7, (3-__pyx_t_7) | (__pyx_t_7*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET), __pyx_t_11);
     __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
     __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
+    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
     if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 221, __pyx_L1_error)
     __Pyx_GOTREF((PyObject *)__pyx_t_4);
   }
@@ -21429,6 +21856,8 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8Unpacker_4__next__
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_6);
   __PYX_XCLEAR_MEMVIEW(&__pyx_t_8, 1);
+  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_11);
   if (!__pyx_error_without_exception) {
     __Pyx_AddTraceback("shirotsume_tools.archive.crypt.Unpacker.__next__", __pyx_clineno, __pyx_lineno, __pyx_filename);
   }
@@ -22368,9 +22797,9 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_8unpack(CYTHON_UNUS
 /* "shirotsume_tools/archive/crypt.pyx":257
  * 
  * 
- * cpdef void pack(object file, const uint8_t[::1] header, list entries, bint compress=True) except *:             # <<<<<<<<<<<<<<
+ * cpdef void pack(object file, const uint8_t[::1] header, object entries,             # <<<<<<<<<<<<<<
+ *                 bint compress=True, object count=None) except *:
  *     cdef:
- *         size_t count = len(entries)
 */
 
 static PyObject *__pyx_pw_16shirotsume_tools_7archive_5crypt_11pack(PyObject *__pyx_self, 
@@ -22381,50 +22810,69 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
 #endif
 ); /*proto*/
 static void __pyx_f_16shirotsume_tools_7archive_5crypt_pack(PyObject *__pyx_v_file, __Pyx_memviewslice __pyx_v_header, PyObject *__pyx_v_entries, CYTHON_UNUSED int __pyx_skip_dispatch, struct __pyx_opt_args_16shirotsume_tools_7archive_5crypt_pack *__pyx_optional_args) {
+
+  /* "shirotsume_tools/archive/crypt.pyx":258
+ * 
+ * cpdef void pack(object file, const uint8_t[::1] header, object entries,
+ *                 bint compress=True, object count=None) except *:             # <<<<<<<<<<<<<<
+ *     cdef:
+ *         size_t entry_count
+*/
   int __pyx_v_compress = ((int)1);
-  size_t __pyx_v_count;
+  PyObject *__pyx_v_count = ((PyObject *)Py_None);
+  size_t __pyx_v_entry_count;
   rp_entry_t *__pyx_v_raw;
   struct __pyx_obj_16shirotsume_tools_7archive_5crypt_PackEntry *__pyx_v_entry = 0;
-  size_t __pyx_v_i;
   size_t __pyx_v_data_offset;
   size_t __pyx_v_offset;
+  size_t __pyx_v_table_offset;
   uint8_t *__pyx_v_encrypted_body;
   size_t __pyx_v_encrypted_len;
   uint8_t __pyx_v_crypt_type;
   uint8_t *__pyx_v_full_header;
   size_t __pyx_v_full_header_len;
+  uint8_t *__pyx_v_full_table;
+  size_t __pyx_v_full_table_len;
   uint8_t const *__pyx_v_header_ptr;
   rp_error_t __pyx_v_err;
   PyObject *__pyx_v_name_bytes = 0;
   PyObject *__pyx_v_body_data = 0;
+  PyObject *__pyx_v_py_entry = 0;
+  PyObject *__pyx_v_count_obj = 0;
+  CYTHON_UNUSED Py_ssize_t __pyx_v_view_len;
+  size_t __pyx_v_seen;
+  __Pyx_memviewslice __pyx_v__mv = { 0, 0, { 0 }, { 0 }, { 0 } };
   __Pyx_RefNannyDeclarations
-  Py_ssize_t __pyx_t_1;
-  int __pyx_t_2;
-  size_t __pyx_t_3;
-  size_t __pyx_t_4;
+  int __pyx_t_1;
+  Py_ssize_t __pyx_t_2;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
   size_t __pyx_t_5;
-  PyObject *__pyx_t_6 = NULL;
-  PyObject *__pyx_t_7 = NULL;
-  PyObject *__pyx_t_8 = NULL;
-  PyObject *__pyx_t_9 = NULL;
-  size_t __pyx_t_10;
-  char const *__pyx_t_11;
-  Py_ssize_t __pyx_t_12;
-  int __pyx_t_13;
+  Py_ssize_t __pyx_t_6;
+  int __pyx_t_7;
+  struct __pyx_array_obj *__pyx_t_8 = NULL;
+  char *__pyx_t_9;
+  __Pyx_memviewslice __pyx_t_10 = { 0, 0, { 0 }, { 0 }, { 0 } };
+  PyObject *__pyx_t_11 = NULL;
+  int __pyx_t_12;
+  char const *__pyx_t_13;
   PyObject *__pyx_t_14 = NULL;
-  int __pyx_t_15;
-  char const *__pyx_t_16;
+  PyObject *__pyx_t_15 = NULL;
+  PyObject *__pyx_t_16 = NULL;
   PyObject *__pyx_t_17 = NULL;
   PyObject *__pyx_t_18 = NULL;
   PyObject *__pyx_t_19 = NULL;
-  PyObject *__pyx_t_20 = NULL;
-  PyObject *__pyx_t_21 = NULL;
+  PyObject *(*__pyx_t_20)(PyObject *);
+  int __pyx_t_21;
   PyObject *__pyx_t_22 = NULL;
-  uint8_t const *__pyx_t_23;
-  char const *__pyx_t_24;
-  uint8_t __pyx_t_25;
-  char const *__pyx_t_26;
+  PyObject *__pyx_t_23 = NULL;
+  Py_ssize_t __pyx_t_24;
+  char const *__pyx_t_25;
+  uint8_t const *__pyx_t_26;
   char const *__pyx_t_27;
+  PyObject *__pyx_t_28[4];
+  char const *__pyx_t_29;
+  char const *__pyx_t_30;
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -22432,43 +22880,32 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_pack(PyObject *__pyx_v_fi
   if (__pyx_optional_args) {
     if (__pyx_optional_args->__pyx_n > 0) {
       __pyx_v_compress = __pyx_optional_args->compress;
+      if (__pyx_optional_args->__pyx_n > 1) {
+        __pyx_v_count = __pyx_optional_args->count;
+      }
     }
   }
 
-  /* "shirotsume_tools/archive/crypt.pyx":259
- * cpdef void pack(object file, const uint8_t[::1] header, list entries, bint compress=True) except *:
+  /* "shirotsume_tools/archive/crypt.pyx":261
  *     cdef:
- *         size_t count = len(entries)             # <<<<<<<<<<<<<<
- *         rp_entry_t *raw = <rp_entry_t*>malloc(count * sizeof(rp_entry_t))
+ *         size_t entry_count
+ *         rp_entry_t *raw = NULL             # <<<<<<<<<<<<<<
  *         PackEntry entry
-*/
-  if (unlikely(__pyx_v_entries == Py_None)) {
-    PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 259, __pyx_L1_error)
-  }
-  __pyx_t_1 = __Pyx_PyList_GET_SIZE(__pyx_v_entries); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 259, __pyx_L1_error)
-  __pyx_v_count = __pyx_t_1;
-
-  /* "shirotsume_tools/archive/crypt.pyx":260
- *     cdef:
- *         size_t count = len(entries)
- *         rp_entry_t *raw = <rp_entry_t*>malloc(count * sizeof(rp_entry_t))             # <<<<<<<<<<<<<<
- *         PackEntry entry
- *         size_t i
-*/
-  __pyx_v_raw = ((rp_entry_t *)malloc((__pyx_v_count * (sizeof(rp_entry_t)))));
-
-  /* "shirotsume_tools/archive/crypt.pyx":265
  *         size_t data_offset
+*/
+  __pyx_v_raw = NULL;
+
+  /* "shirotsume_tools/archive/crypt.pyx":266
  *         size_t offset
+ *         size_t table_offset
  *         uint8_t *encrypted_body = NULL             # <<<<<<<<<<<<<<
  *         size_t encrypted_len = 0
  *         uint8_t crypt_type = 0
 */
   __pyx_v_encrypted_body = NULL;
 
-  /* "shirotsume_tools/archive/crypt.pyx":266
- *         size_t offset
+  /* "shirotsume_tools/archive/crypt.pyx":267
+ *         size_t table_offset
  *         uint8_t *encrypted_body = NULL
  *         size_t encrypted_len = 0             # <<<<<<<<<<<<<<
  *         uint8_t crypt_type = 0
@@ -22476,7 +22913,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_pack(PyObject *__pyx_v_fi
 */
   __pyx_v_encrypted_len = 0;
 
-  /* "shirotsume_tools/archive/crypt.pyx":267
+  /* "shirotsume_tools/archive/crypt.pyx":268
  *         uint8_t *encrypted_body = NULL
  *         size_t encrypted_len = 0
  *         uint8_t crypt_type = 0             # <<<<<<<<<<<<<<
@@ -22485,319 +22922,390 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_pack(PyObject *__pyx_v_fi
 */
   __pyx_v_crypt_type = 0;
 
-  /* "shirotsume_tools/archive/crypt.pyx":268
+  /* "shirotsume_tools/archive/crypt.pyx":269
  *         size_t encrypted_len = 0
  *         uint8_t crypt_type = 0
  *         uint8_t *full_header = NULL             # <<<<<<<<<<<<<<
  *         size_t full_header_len = 0
- *         const uint8_t *header_ptr = NULL
+ *         uint8_t *full_table = NULL
 */
   __pyx_v_full_header = NULL;
 
-  /* "shirotsume_tools/archive/crypt.pyx":269
+  /* "shirotsume_tools/archive/crypt.pyx":270
  *         uint8_t crypt_type = 0
  *         uint8_t *full_header = NULL
  *         size_t full_header_len = 0             # <<<<<<<<<<<<<<
- *         const uint8_t *header_ptr = NULL
- *         rp_error_t err
+ *         uint8_t *full_table = NULL
+ *         size_t full_table_len = 0
 */
   __pyx_v_full_header_len = 0;
 
-  /* "shirotsume_tools/archive/crypt.pyx":270
+  /* "shirotsume_tools/archive/crypt.pyx":271
  *         uint8_t *full_header = NULL
  *         size_t full_header_len = 0
+ *         uint8_t *full_table = NULL             # <<<<<<<<<<<<<<
+ *         size_t full_table_len = 0
+ *         const uint8_t *header_ptr = NULL
+*/
+  __pyx_v_full_table = NULL;
+
+  /* "shirotsume_tools/archive/crypt.pyx":272
+ *         size_t full_header_len = 0
+ *         uint8_t *full_table = NULL
+ *         size_t full_table_len = 0             # <<<<<<<<<<<<<<
+ *         const uint8_t *header_ptr = NULL
+ *         rp_error_t err
+*/
+  __pyx_v_full_table_len = 0;
+
+  /* "shirotsume_tools/archive/crypt.pyx":273
+ *         uint8_t *full_table = NULL
+ *         size_t full_table_len = 0
  *         const uint8_t *header_ptr = NULL             # <<<<<<<<<<<<<<
  *         rp_error_t err
  *         bytes name_bytes
 */
   __pyx_v_header_ptr = NULL;
 
-  /* "shirotsume_tools/archive/crypt.pyx":275
- *         bytes body_data
+  /* "shirotsume_tools/archive/crypt.pyx":283
+ *         uint8_t[:] _mv
  * 
- *     if raw is NULL:             # <<<<<<<<<<<<<<
- *         raise MemoryError()
- *     memset(raw, 0, count * sizeof(rp_entry_t))
+ *     if count is None:             # <<<<<<<<<<<<<<
+ *         entry_count = len(entries)
+ *     else:
 */
-  __pyx_t_2 = (__pyx_v_raw == NULL);
-  if (unlikely(__pyx_t_2)) {
+  __pyx_t_1 = (__pyx_v_count == Py_None);
+  if (__pyx_t_1) {
 
-    /* "shirotsume_tools/archive/crypt.pyx":276
+    /* "shirotsume_tools/archive/crypt.pyx":284
  * 
- *     if raw is NULL:
- *         raise MemoryError()             # <<<<<<<<<<<<<<
- *     memset(raw, 0, count * sizeof(rp_entry_t))
+ *     if count is None:
+ *         entry_count = len(entries)             # <<<<<<<<<<<<<<
+ *     else:
+ *         count_obj = int(count)
+*/
+    __pyx_t_2 = PyObject_Length(__pyx_v_entries); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 284, __pyx_L1_error)
+    __pyx_v_entry_count = __pyx_t_2;
+
+    /* "shirotsume_tools/archive/crypt.pyx":283
+ *         uint8_t[:] _mv
+ * 
+ *     if count is None:             # <<<<<<<<<<<<<<
+ *         entry_count = len(entries)
+ *     else:
+*/
+    goto __pyx_L3;
+  }
+
+  /* "shirotsume_tools/archive/crypt.pyx":286
+ *         entry_count = len(entries)
+ *     else:
+ *         count_obj = int(count)             # <<<<<<<<<<<<<<
+ *         if count_obj < 0:
+ *             raise ValueError("count must be non-negative")
+*/
+  /*else*/ {
+    __pyx_t_3 = __Pyx_PyNumber_Int(__pyx_v_count); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 286, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_v_count_obj = __pyx_t_3;
+    __pyx_t_3 = 0;
+
+    /* "shirotsume_tools/archive/crypt.pyx":287
+ *     else:
+ *         count_obj = int(count)
+ *         if count_obj < 0:             # <<<<<<<<<<<<<<
+ *             raise ValueError("count must be non-negative")
+ *         entry_count = <size_t>count_obj
+*/
+    __pyx_t_3 = PyObject_RichCompare(__pyx_v_count_obj, __pyx_mstate_global->__pyx_int_0, Py_LT); __Pyx_XGOTREF(__pyx_t_3); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 287, __pyx_L1_error)
+    __pyx_t_1 = __Pyx_PyObject_IsTrue(__pyx_t_3); if (unlikely((__pyx_t_1 < 0))) __PYX_ERR(0, 287, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(__pyx_t_1)) {
+
+      /* "shirotsume_tools/archive/crypt.pyx":288
+ *         count_obj = int(count)
+ *         if count_obj < 0:
+ *             raise ValueError("count must be non-negative")             # <<<<<<<<<<<<<<
+ *         entry_count = <size_t>count_obj
  * 
 */
-    PyErr_NoMemory(); __PYX_ERR(0, 276, __pyx_L1_error)
+      __pyx_t_4 = NULL;
+      __pyx_t_5 = 1;
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_mstate_global->__pyx_kp_u_count_must_be_non_negative};
+        __pyx_t_3 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_ValueError)), __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 288, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+      }
+      __Pyx_Raise(__pyx_t_3, 0, 0, 0);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __PYX_ERR(0, 288, __pyx_L1_error)
 
-    /* "shirotsume_tools/archive/crypt.pyx":275
- *         bytes body_data
+      /* "shirotsume_tools/archive/crypt.pyx":287
+ *     else:
+ *         count_obj = int(count)
+ *         if count_obj < 0:             # <<<<<<<<<<<<<<
+ *             raise ValueError("count must be non-negative")
+ *         entry_count = <size_t>count_obj
+*/
+    }
+
+    /* "shirotsume_tools/archive/crypt.pyx":289
+ *         if count_obj < 0:
+ *             raise ValueError("count must be non-negative")
+ *         entry_count = <size_t>count_obj             # <<<<<<<<<<<<<<
  * 
- *     if raw is NULL:             # <<<<<<<<<<<<<<
- *         raise MemoryError()
- *     memset(raw, 0, count * sizeof(rp_entry_t))
+ *     if entry_count > 0:
+*/
+    __pyx_t_5 = __Pyx_PyLong_As_size_t(__pyx_v_count_obj); if (unlikely((__pyx_t_5 == (size_t)-1) && PyErr_Occurred())) __PYX_ERR(0, 289, __pyx_L1_error)
+    __pyx_v_entry_count = ((size_t)__pyx_t_5);
+  }
+  __pyx_L3:;
+
+  /* "shirotsume_tools/archive/crypt.pyx":291
+ *         entry_count = <size_t>count_obj
+ * 
+ *     if entry_count > 0:             # <<<<<<<<<<<<<<
+ *         raw = <rp_entry_t*>malloc(entry_count * sizeof(rp_entry_t))
+ *         if raw is NULL:
+*/
+  __pyx_t_1 = (__pyx_v_entry_count > 0);
+  if (__pyx_t_1) {
+
+    /* "shirotsume_tools/archive/crypt.pyx":292
+ * 
+ *     if entry_count > 0:
+ *         raw = <rp_entry_t*>malloc(entry_count * sizeof(rp_entry_t))             # <<<<<<<<<<<<<<
+ *         if raw is NULL:
+ *             raise MemoryError()
+*/
+    __pyx_v_raw = ((rp_entry_t *)malloc((__pyx_v_entry_count * (sizeof(rp_entry_t)))));
+
+    /* "shirotsume_tools/archive/crypt.pyx":293
+ *     if entry_count > 0:
+ *         raw = <rp_entry_t*>malloc(entry_count * sizeof(rp_entry_t))
+ *         if raw is NULL:             # <<<<<<<<<<<<<<
+ *             raise MemoryError()
+ *         memset(raw, 0, entry_count * sizeof(rp_entry_t))
+*/
+    __pyx_t_1 = (__pyx_v_raw == NULL);
+    if (unlikely(__pyx_t_1)) {
+
+      /* "shirotsume_tools/archive/crypt.pyx":294
+ *         raw = <rp_entry_t*>malloc(entry_count * sizeof(rp_entry_t))
+ *         if raw is NULL:
+ *             raise MemoryError()             # <<<<<<<<<<<<<<
+ *         memset(raw, 0, entry_count * sizeof(rp_entry_t))
+ * 
+*/
+      PyErr_NoMemory(); __PYX_ERR(0, 294, __pyx_L1_error)
+
+      /* "shirotsume_tools/archive/crypt.pyx":293
+ *     if entry_count > 0:
+ *         raw = <rp_entry_t*>malloc(entry_count * sizeof(rp_entry_t))
+ *         if raw is NULL:             # <<<<<<<<<<<<<<
+ *             raise MemoryError()
+ *         memset(raw, 0, entry_count * sizeof(rp_entry_t))
+*/
+    }
+
+    /* "shirotsume_tools/archive/crypt.pyx":295
+ *         if raw is NULL:
+ *             raise MemoryError()
+ *         memset(raw, 0, entry_count * sizeof(rp_entry_t))             # <<<<<<<<<<<<<<
+ * 
+ *     try:
+*/
+    (void)(memset(__pyx_v_raw, 0, (__pyx_v_entry_count * (sizeof(rp_entry_t)))));
+
+    /* "shirotsume_tools/archive/crypt.pyx":291
+ *         entry_count = <size_t>count_obj
+ * 
+ *     if entry_count > 0:             # <<<<<<<<<<<<<<
+ *         raw = <rp_entry_t*>malloc(entry_count * sizeof(rp_entry_t))
+ *         if raw is NULL:
 */
   }
 
-  /* "shirotsume_tools/archive/crypt.pyx":277
- *     if raw is NULL:
- *         raise MemoryError()
- *     memset(raw, 0, count * sizeof(rp_entry_t))             # <<<<<<<<<<<<<<
- * 
- *     try:
-*/
-  (void)(memset(__pyx_v_raw, 0, (__pyx_v_count * (sizeof(rp_entry_t)))));
-
-  /* "shirotsume_tools/archive/crypt.pyx":279
- *     memset(raw, 0, count * sizeof(rp_entry_t))
+  /* "shirotsume_tools/archive/crypt.pyx":297
+ *         memset(raw, 0, entry_count * sizeof(rp_entry_t))
  * 
  *     try:             # <<<<<<<<<<<<<<
- *         for i in range(count):
- *             entry = <PackEntry>entries[i]
+ *         data_offset = 8 + 4 + 4 + header.shape[0] + 4 + entry_count * 80
+ *         table_offset = data_offset - entry_count * 80
 */
   /*try:*/ {
 
-    /* "shirotsume_tools/archive/crypt.pyx":280
+    /* "shirotsume_tools/archive/crypt.pyx":298
  * 
  *     try:
- *         for i in range(count):             # <<<<<<<<<<<<<<
- *             entry = <PackEntry>entries[i]
- *             name_bytes = entry.name.encode("cp932")
+ *         data_offset = 8 + 4 + 4 + header.shape[0] + 4 + entry_count * 80             # <<<<<<<<<<<<<<
+ *         table_offset = data_offset - entry_count * 80
+ *         offset = data_offset
 */
-    __pyx_t_3 = __pyx_v_count;
-    __pyx_t_4 = __pyx_t_3;
-    for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
-      __pyx_v_i = __pyx_t_5;
+    __pyx_v_data_offset = (((0x10 + (__pyx_v_header.shape[0])) + 4) + (__pyx_v_entry_count * 80));
 
-      /* "shirotsume_tools/archive/crypt.pyx":281
+    /* "shirotsume_tools/archive/crypt.pyx":299
  *     try:
- *         for i in range(count):
- *             entry = <PackEntry>entries[i]             # <<<<<<<<<<<<<<
- *             name_bytes = entry.name.encode("cp932")
- *             if <size_t>len(name_bytes) >= 64:
-*/
-      if (unlikely(__pyx_v_entries == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 281, __pyx_L5_error)
-      }
-      __pyx_t_6 = __Pyx_GetItemInt_List(__pyx_v_entries, __pyx_v_i, size_t, 0, __Pyx_PyLong_FromSize_t, 1, 0, 1, 1, __Pyx_ReferenceSharing_FunctionArgument); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 281, __pyx_L5_error)
-      __Pyx_GOTREF(__pyx_t_6);
-      __pyx_t_7 = __pyx_t_6;
-      __Pyx_INCREF(__pyx_t_7);
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_entry, ((struct __pyx_obj_16shirotsume_tools_7archive_5crypt_PackEntry *)__pyx_t_7));
-      __pyx_t_7 = 0;
-
-      /* "shirotsume_tools/archive/crypt.pyx":282
- *         for i in range(count):
- *             entry = <PackEntry>entries[i]
- *             name_bytes = entry.name.encode("cp932")             # <<<<<<<<<<<<<<
- *             if <size_t>len(name_bytes) >= 64:
- *                 raise ValueError(f"packed name is too long: {entry.name}")
-*/
-      if (unlikely(__pyx_v_entry->name == Py_None)) {
-        PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "encode");
-        __PYX_ERR(0, 282, __pyx_L5_error)
-      }
-      __pyx_t_7 = PyUnicode_AsEncodedString(__pyx_v_entry->name, __pyx_k_cp932, NULL); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 282, __pyx_L5_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __Pyx_XDECREF_SET(__pyx_v_name_bytes, ((PyObject*)__pyx_t_7));
-      __pyx_t_7 = 0;
-
-      /* "shirotsume_tools/archive/crypt.pyx":283
- *             entry = <PackEntry>entries[i]
- *             name_bytes = entry.name.encode("cp932")
- *             if <size_t>len(name_bytes) >= 64:             # <<<<<<<<<<<<<<
- *                 raise ValueError(f"packed name is too long: {entry.name}")
- *             memcpy(raw[i].name, <const char*>name_bytes, len(name_bytes))
-*/
-      __pyx_t_1 = __Pyx_PyBytes_GET_SIZE(__pyx_v_name_bytes); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 283, __pyx_L5_error)
-      __pyx_t_2 = (((size_t)__pyx_t_1) >= 64);
-      if (unlikely(__pyx_t_2)) {
-
-        /* "shirotsume_tools/archive/crypt.pyx":284
- *             name_bytes = entry.name.encode("cp932")
- *             if <size_t>len(name_bytes) >= 64:
- *                 raise ValueError(f"packed name is too long: {entry.name}")             # <<<<<<<<<<<<<<
- *             memcpy(raw[i].name, <const char*>name_bytes, len(name_bytes))
- *             raw[i].size = len(entry.data)
-*/
-        __pyx_t_6 = NULL;
-        __pyx_t_8 = __Pyx_PyUnicode_Unicode(__pyx_v_entry->name); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 284, __pyx_L5_error)
-        __Pyx_GOTREF(__pyx_t_8);
-        __pyx_t_9 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_packed_name_is_too_long, __pyx_t_8); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 284, __pyx_L5_error)
-        __Pyx_GOTREF(__pyx_t_9);
-        __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __pyx_t_10 = 1;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_6, __pyx_t_9};
-          __pyx_t_7 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_ValueError)), __pyx_callargs+__pyx_t_10, (2-__pyx_t_10) | (__pyx_t_10*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 284, __pyx_L5_error)
-          __Pyx_GOTREF(__pyx_t_7);
-        }
-        __Pyx_Raise(__pyx_t_7, 0, 0, 0);
-        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __PYX_ERR(0, 284, __pyx_L5_error)
-
-        /* "shirotsume_tools/archive/crypt.pyx":283
- *             entry = <PackEntry>entries[i]
- *             name_bytes = entry.name.encode("cp932")
- *             if <size_t>len(name_bytes) >= 64:             # <<<<<<<<<<<<<<
- *                 raise ValueError(f"packed name is too long: {entry.name}")
- *             memcpy(raw[i].name, <const char*>name_bytes, len(name_bytes))
-*/
-      }
-
-      /* "shirotsume_tools/archive/crypt.pyx":285
- *             if <size_t>len(name_bytes) >= 64:
- *                 raise ValueError(f"packed name is too long: {entry.name}")
- *             memcpy(raw[i].name, <const char*>name_bytes, len(name_bytes))             # <<<<<<<<<<<<<<
- *             raw[i].size = len(entry.data)
- * 
-*/
-      __pyx_t_11 = __Pyx_PyBytes_AsString(__pyx_v_name_bytes); if (unlikely((!__pyx_t_11) && PyErr_Occurred())) __PYX_ERR(0, 285, __pyx_L5_error)
-      __pyx_t_1 = __Pyx_PyBytes_GET_SIZE(__pyx_v_name_bytes); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 285, __pyx_L5_error)
-      (void)(memcpy((__pyx_v_raw[__pyx_v_i]).name, ((char const *)__pyx_t_11), __pyx_t_1));
-
-      /* "shirotsume_tools/archive/crypt.pyx":286
- *                 raise ValueError(f"packed name is too long: {entry.name}")
- *             memcpy(raw[i].name, <const char*>name_bytes, len(name_bytes))
- *             raw[i].size = len(entry.data)             # <<<<<<<<<<<<<<
- * 
- *         data_offset = 8 + 4 + 4 + header.shape[0] + 4 + count * 80
-*/
-      __pyx_t_7 = __pyx_v_entry->data;
-      __Pyx_INCREF(__pyx_t_7);
-      if (unlikely(__pyx_t_7 == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-        __PYX_ERR(0, 286, __pyx_L5_error)
-      }
-      __pyx_t_1 = __Pyx_PyBytes_GET_SIZE(__pyx_t_7); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 286, __pyx_L5_error)
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      (__pyx_v_raw[__pyx_v_i]).size = __pyx_t_1;
-    }
-
-    /* "shirotsume_tools/archive/crypt.pyx":288
- *             raw[i].size = len(entry.data)
- * 
- *         data_offset = 8 + 4 + 4 + header.shape[0] + 4 + count * 80             # <<<<<<<<<<<<<<
+ *         data_offset = 8 + 4 + 4 + header.shape[0] + 4 + entry_count * 80
+ *         table_offset = data_offset - entry_count * 80             # <<<<<<<<<<<<<<
  *         offset = data_offset
  * 
 */
-    __pyx_v_data_offset = (((0x10 + (__pyx_v_header.shape[0])) + 4) + (__pyx_v_count * 80));
+    __pyx_v_table_offset = (__pyx_v_data_offset - (__pyx_v_entry_count * 80));
 
-    /* "shirotsume_tools/archive/crypt.pyx":289
- * 
- *         data_offset = 8 + 4 + 4 + header.shape[0] + 4 + count * 80
+    /* "shirotsume_tools/archive/crypt.pyx":300
+ *         data_offset = 8 + 4 + 4 + header.shape[0] + 4 + entry_count * 80
+ *         table_offset = data_offset - entry_count * 80
  *         offset = data_offset             # <<<<<<<<<<<<<<
  * 
  *         if header.shape[0] > 0:
 */
     __pyx_v_offset = __pyx_v_data_offset;
 
-    /* "shirotsume_tools/archive/crypt.pyx":291
+    /* "shirotsume_tools/archive/crypt.pyx":302
  *         offset = data_offset
  * 
  *         if header.shape[0] > 0:             # <<<<<<<<<<<<<<
  *             header_ptr = &header[0]
- *         err = rp_encode_header(&full_header, &full_header_len,
+ * 
 */
-    __pyx_t_2 = ((__pyx_v_header.shape[0]) > 0);
-    if (__pyx_t_2) {
+    __pyx_t_1 = ((__pyx_v_header.shape[0]) > 0);
+    if (__pyx_t_1) {
 
-      /* "shirotsume_tools/archive/crypt.pyx":292
+      /* "shirotsume_tools/archive/crypt.pyx":303
  * 
  *         if header.shape[0] > 0:
  *             header_ptr = &header[0]             # <<<<<<<<<<<<<<
+ * 
  *         err = rp_encode_header(&full_header, &full_header_len,
- *                                header_ptr, header.shape[0], raw, count)
 */
-      __pyx_t_12 = 0;
-      __pyx_t_13 = -1;
-      if (__pyx_t_12 < 0) {
-        __pyx_t_12 += __pyx_v_header.shape[0];
-        if (unlikely(__pyx_t_12 < 0)) __pyx_t_13 = 0;
-      } else if (unlikely(__pyx_t_12 >= __pyx_v_header.shape[0])) __pyx_t_13 = 0;
-      if (unlikely(__pyx_t_13 != -1)) {
-        __Pyx_RaiseBufferIndexError(__pyx_t_13);
-        __PYX_ERR(0, 292, __pyx_L5_error)
+      __pyx_t_6 = 0;
+      __pyx_t_7 = -1;
+      if (__pyx_t_6 < 0) {
+        __pyx_t_6 += __pyx_v_header.shape[0];
+        if (unlikely(__pyx_t_6 < 0)) __pyx_t_7 = 0;
+      } else if (unlikely(__pyx_t_6 >= __pyx_v_header.shape[0])) __pyx_t_7 = 0;
+      if (unlikely(__pyx_t_7 != -1)) {
+        __Pyx_RaiseBufferIndexError(__pyx_t_7);
+        __PYX_ERR(0, 303, __pyx_L8_error)
       }
-      __pyx_v_header_ptr = (&(*((uint8_t const  *) ( /* dim=0 */ ((char *) (((uint8_t const  *) __pyx_v_header.data) + __pyx_t_12)) ))));
+      __pyx_v_header_ptr = (&(*((uint8_t const  *) ( /* dim=0 */ ((char *) (((uint8_t const  *) __pyx_v_header.data) + __pyx_t_6)) ))));
 
-      /* "shirotsume_tools/archive/crypt.pyx":291
+      /* "shirotsume_tools/archive/crypt.pyx":302
  *         offset = data_offset
  * 
  *         if header.shape[0] > 0:             # <<<<<<<<<<<<<<
  *             header_ptr = &header[0]
- *         err = rp_encode_header(&full_header, &full_header_len,
+ * 
 */
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":293
- *         if header.shape[0] > 0:
+    /* "shirotsume_tools/archive/crypt.pyx":305
  *             header_ptr = &header[0]
+ * 
  *         err = rp_encode_header(&full_header, &full_header_len,             # <<<<<<<<<<<<<<
- *                                header_ptr, header.shape[0], raw, count)
+ *                                header_ptr, header.shape[0], raw, entry_count)
  *         _raise_on_error(err)
 */
-    __pyx_v_err = rp_encode_header((&__pyx_v_full_header), (&__pyx_v_full_header_len), __pyx_v_header_ptr, (__pyx_v_header.shape[0]), __pyx_v_raw, __pyx_v_count);
+    __pyx_v_err = rp_encode_header((&__pyx_v_full_header), (&__pyx_v_full_header_len), __pyx_v_header_ptr, (__pyx_v_header.shape[0]), __pyx_v_raw, __pyx_v_entry_count);
 
-    /* "shirotsume_tools/archive/crypt.pyx":295
+    /* "shirotsume_tools/archive/crypt.pyx":307
  *         err = rp_encode_header(&full_header, &full_header_len,
- *                                header_ptr, header.shape[0], raw, count)
+ *                                header_ptr, header.shape[0], raw, entry_count)
  *         _raise_on_error(err)             # <<<<<<<<<<<<<<
  *         try:
- *             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
+ *             view_len = <Py_ssize_t>full_header_len
 */
-    __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 295, __pyx_L5_error)
+    __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 307, __pyx_L8_error)
 
-    /* "shirotsume_tools/archive/crypt.pyx":296
- *                                header_ptr, header.shape[0], raw, count)
+    /* "shirotsume_tools/archive/crypt.pyx":308
+ *                                header_ptr, header.shape[0], raw, entry_count)
  *         _raise_on_error(err)
  *         try:             # <<<<<<<<<<<<<<
- *             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
- *         finally:
+ *             view_len = <Py_ssize_t>full_header_len
+ *             _mv = <uint8_t[:view_len]>full_header
 */
     /*try:*/ {
 
-      /* "shirotsume_tools/archive/crypt.pyx":297
+      /* "shirotsume_tools/archive/crypt.pyx":309
  *         _raise_on_error(err)
  *         try:
- *             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))             # <<<<<<<<<<<<<<
+ *             view_len = <Py_ssize_t>full_header_len             # <<<<<<<<<<<<<<
+ *             _mv = <uint8_t[:view_len]>full_header
+ *             file.write(_mv)
+*/
+      __pyx_v_view_len = ((Py_ssize_t)__pyx_v_full_header_len);
+
+      /* "shirotsume_tools/archive/crypt.pyx":310
+ *         try:
+ *             view_len = <Py_ssize_t>full_header_len
+ *             _mv = <uint8_t[:view_len]>full_header             # <<<<<<<<<<<<<<
+ *             file.write(_mv)
+ *             _mv = None
+*/
+      if (!__pyx_v_full_header) {
+        PyErr_SetString(PyExc_ValueError,"Cannot create cython.array from NULL pointer");
+        __PYX_ERR(0, 310, __pyx_L12_error)
+      }
+      __pyx_t_4 = __pyx_format_from_typeinfo(&__Pyx_TypeInfo_nn_uint8_t); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 310, __pyx_L12_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_3 = Py_BuildValue("("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)__pyx_v_view_len)); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 310, __pyx_L12_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      #if CYTHON_COMPILING_IN_LIMITED_API
+      __pyx_t_9 = PyBytes_AsString(__pyx_t_4); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 310, __pyx_L12_error)
+      #else
+      __pyx_t_9 = PyBytes_AS_STRING(__pyx_t_4);
+      #endif
+      __pyx_t_8 = __pyx_array_new(__pyx_t_3, sizeof(uint8_t), __pyx_t_9, "c", (char *) __pyx_v_full_header); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 310, __pyx_L12_error)
+      __Pyx_GOTREF((PyObject *)__pyx_t_8);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __pyx_t_10 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn_uint8_t(((PyObject *)__pyx_t_8), PyBUF_WRITABLE); if (unlikely(!__pyx_t_10.memview)) __PYX_ERR(0, 310, __pyx_L12_error)
+      __Pyx_DECREF((PyObject *)__pyx_t_8); __pyx_t_8 = 0;
+      __pyx_v__mv = __pyx_t_10;
+      __pyx_t_10.memview = NULL;
+      __pyx_t_10.data = NULL;
+
+      /* "shirotsume_tools/archive/crypt.pyx":311
+ *             view_len = <Py_ssize_t>full_header_len
+ *             _mv = <uint8_t[:view_len]>full_header
+ *             file.write(_mv)             # <<<<<<<<<<<<<<
+ *             _mv = None
+ *         finally:
+*/
+      __pyx_t_3 = __pyx_v_file;
+      __Pyx_INCREF(__pyx_t_3);
+      __pyx_t_11 = __pyx_memoryview_fromslice(__pyx_v__mv, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn_uint8_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn_uint8_t, 0);; if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 311, __pyx_L12_error)
+      __Pyx_GOTREF(__pyx_t_11);
+      __pyx_t_5 = 0;
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_t_11};
+        __pyx_t_4 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_write, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 311, __pyx_L12_error)
+        __Pyx_GOTREF(__pyx_t_4);
+      }
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+      /* "shirotsume_tools/archive/crypt.pyx":312
+ *             _mv = <uint8_t[:view_len]>full_header
+ *             file.write(_mv)
+ *             _mv = None             # <<<<<<<<<<<<<<
  *         finally:
  *             rp_free(full_header)
 */
-      __pyx_t_9 = __pyx_v_file;
-      __Pyx_INCREF(__pyx_t_9);
-      __pyx_t_8 = NULL;
-      __pyx_t_14 = __Pyx_PyBytes_FromStringAndSize(((char const *)((uint8_t *)__pyx_v_full_header)) + 0, __pyx_v_full_header_len - 0); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 297, __pyx_L12_error)
-      __Pyx_GOTREF(__pyx_t_14);
-      __pyx_t_3 = 1;
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_8, __pyx_t_14};
-        __pyx_t_6 = __Pyx_PyObject_FastCall((PyObject*)(&PyBytes_Type), __pyx_callargs+__pyx_t_3, (2-__pyx_t_3) | (__pyx_t_3*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 297, __pyx_L12_error)
-        __Pyx_GOTREF(__pyx_t_6);
-      }
-      __pyx_t_3 = 0;
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_t_6};
-        __pyx_t_7 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_write, __pyx_callargs+__pyx_t_3, (2-__pyx_t_3) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 297, __pyx_L12_error)
-        __Pyx_GOTREF(__pyx_t_7);
-      }
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+      __pyx_t_10 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn_uint8_t(Py_None, PyBUF_WRITABLE); if (unlikely(!__pyx_t_10.memview)) __PYX_ERR(0, 312, __pyx_L12_error)
+      __PYX_XCLEAR_MEMVIEW(&__pyx_v__mv, 1);
+      __pyx_v__mv = __pyx_t_10;
+      __pyx_t_10.memview = NULL;
+      __pyx_t_10.data = NULL;
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":299
- *             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
+    /* "shirotsume_tools/archive/crypt.pyx":314
+ *             _mv = None
  *         finally:
  *             rp_free(full_header)             # <<<<<<<<<<<<<<
  *             full_header = NULL
@@ -22807,12 +23315,12 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_pack(PyObject *__pyx_v_fi
       /*normal exit:*/{
         rp_free(__pyx_v_full_header);
 
-        /* "shirotsume_tools/archive/crypt.pyx":300
+        /* "shirotsume_tools/archive/crypt.pyx":315
  *         finally:
  *             rp_free(full_header)
  *             full_header = NULL             # <<<<<<<<<<<<<<
  * 
- *         for i in range(count):
+ *         seen = 0
 */
         __pyx_v_full_header = NULL;
         goto __pyx_L13;
@@ -22821,25 +23329,26 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_pack(PyObject *__pyx_v_fi
       /*exception exit:*/{
         __Pyx_PyThreadState_declare
         __Pyx_PyThreadState_assign
-        __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0;
-        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-         __Pyx_ExceptionSwap(&__pyx_t_20, &__pyx_t_21, &__pyx_t_22);
-        if ( unlikely(__Pyx_GetException(&__pyx_t_17, &__pyx_t_18, &__pyx_t_19) < 0)) __Pyx_ErrFetch(&__pyx_t_17, &__pyx_t_18, &__pyx_t_19);
+        __pyx_t_14 = 0; __pyx_t_15 = 0; __pyx_t_16 = 0; __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0;
+        __PYX_XCLEAR_MEMVIEW(&__pyx_t_10, 1);
+        __pyx_t_10.memview = NULL; __pyx_t_10.data = NULL;
+        __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_XDECREF((PyObject *)__pyx_t_8); __pyx_t_8 = 0;
+         __Pyx_ExceptionSwap(&__pyx_t_17, &__pyx_t_18, &__pyx_t_19);
+        if ( unlikely(__Pyx_GetException(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16) < 0)) __Pyx_ErrFetch(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
+        __Pyx_XGOTREF(__pyx_t_14);
+        __Pyx_XGOTREF(__pyx_t_15);
+        __Pyx_XGOTREF(__pyx_t_16);
         __Pyx_XGOTREF(__pyx_t_17);
         __Pyx_XGOTREF(__pyx_t_18);
         __Pyx_XGOTREF(__pyx_t_19);
-        __Pyx_XGOTREF(__pyx_t_20);
-        __Pyx_XGOTREF(__pyx_t_21);
-        __Pyx_XGOTREF(__pyx_t_22);
-        __pyx_t_13 = __pyx_lineno; __pyx_t_15 = __pyx_clineno; __pyx_t_16 = __pyx_filename;
+        __pyx_t_7 = __pyx_lineno; __pyx_t_12 = __pyx_clineno; __pyx_t_13 = __pyx_filename;
         {
 
-          /* "shirotsume_tools/archive/crypt.pyx":299
- *             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
+          /* "shirotsume_tools/archive/crypt.pyx":314
+ *             _mv = None
  *         finally:
  *             rp_free(full_header)             # <<<<<<<<<<<<<<
  *             full_header = NULL
@@ -22847,166 +23356,452 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_pack(PyObject *__pyx_v_fi
 */
           rp_free(__pyx_v_full_header);
 
-          /* "shirotsume_tools/archive/crypt.pyx":300
+          /* "shirotsume_tools/archive/crypt.pyx":315
  *         finally:
  *             rp_free(full_header)
  *             full_header = NULL             # <<<<<<<<<<<<<<
  * 
- *         for i in range(count):
+ *         seen = 0
 */
           __pyx_v_full_header = NULL;
         }
-        __Pyx_XGIVEREF(__pyx_t_20);
-        __Pyx_XGIVEREF(__pyx_t_21);
-        __Pyx_XGIVEREF(__pyx_t_22);
-        __Pyx_ExceptionReset(__pyx_t_20, __pyx_t_21, __pyx_t_22);
         __Pyx_XGIVEREF(__pyx_t_17);
         __Pyx_XGIVEREF(__pyx_t_18);
         __Pyx_XGIVEREF(__pyx_t_19);
-        __Pyx_ErrRestore(__pyx_t_17, __pyx_t_18, __pyx_t_19);
-        __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0;
-        __pyx_lineno = __pyx_t_13; __pyx_clineno = __pyx_t_15; __pyx_filename = __pyx_t_16;
-        goto __pyx_L5_error;
+        __Pyx_ExceptionReset(__pyx_t_17, __pyx_t_18, __pyx_t_19);
+        __Pyx_XGIVEREF(__pyx_t_14);
+        __Pyx_XGIVEREF(__pyx_t_15);
+        __Pyx_XGIVEREF(__pyx_t_16);
+        __Pyx_ErrRestore(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+        __pyx_t_14 = 0; __pyx_t_15 = 0; __pyx_t_16 = 0; __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0;
+        __pyx_lineno = __pyx_t_7; __pyx_clineno = __pyx_t_12; __pyx_filename = __pyx_t_13;
+        goto __pyx_L8_error;
       }
       __pyx_L13:;
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":302
+    /* "shirotsume_tools/archive/crypt.pyx":317
  *             full_header = NULL
  * 
- *         for i in range(count):             # <<<<<<<<<<<<<<
- *             entry = <PackEntry>entries[i]
- *             body_data = entry.data
+ *         seen = 0             # <<<<<<<<<<<<<<
+ *         for py_entry in entries:
+ *             if seen >= entry_count:
 */
-    __pyx_t_3 = __pyx_v_count;
-    __pyx_t_4 = __pyx_t_3;
-    for (__pyx_t_5 = 0; __pyx_t_5 < __pyx_t_4; __pyx_t_5+=1) {
-      __pyx_v_i = __pyx_t_5;
+    __pyx_v_seen = 0;
 
-      /* "shirotsume_tools/archive/crypt.pyx":303
+    /* "shirotsume_tools/archive/crypt.pyx":318
  * 
- *         for i in range(count):
- *             entry = <PackEntry>entries[i]             # <<<<<<<<<<<<<<
- *             body_data = entry.data
- *             err = rp_encode_body(<const uint8_t*>body_data, len(body_data),
+ *         seen = 0
+ *         for py_entry in entries:             # <<<<<<<<<<<<<<
+ *             if seen >= entry_count:
+ *                 raise ValueError("entries yielded more items than count")
 */
-      if (unlikely(__pyx_v_entries == Py_None)) {
-        PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 303, __pyx_L5_error)
+    if (likely(PyList_CheckExact(__pyx_v_entries)) || PyTuple_CheckExact(__pyx_v_entries)) {
+      __pyx_t_4 = __pyx_v_entries; __Pyx_INCREF(__pyx_t_4);
+      __pyx_t_2 = 0;
+      __pyx_t_20 = NULL;
+    } else {
+      __pyx_t_2 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_v_entries); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 318, __pyx_L8_error)
+      __Pyx_GOTREF(__pyx_t_4);
+      __pyx_t_20 = (CYTHON_COMPILING_IN_LIMITED_API) ? PyIter_Next : __Pyx_PyObject_GetIterNextFunc(__pyx_t_4); if (unlikely(!__pyx_t_20)) __PYX_ERR(0, 318, __pyx_L8_error)
+    }
+    for (;;) {
+      if (likely(!__pyx_t_20)) {
+        if (likely(PyList_CheckExact(__pyx_t_4))) {
+          {
+            Py_ssize_t __pyx_temp = __Pyx_PyList_GET_SIZE(__pyx_t_4);
+            #if !CYTHON_ASSUME_SAFE_SIZE
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 318, __pyx_L8_error)
+            #endif
+            if (__pyx_t_2 >= __pyx_temp) break;
+          }
+          __pyx_t_11 = __Pyx_PyList_GetItemRefFast(__pyx_t_4, __pyx_t_2, __Pyx_ReferenceSharing_OwnStrongReference);
+          ++__pyx_t_2;
+        } else {
+          {
+            Py_ssize_t __pyx_temp = __Pyx_PyTuple_GET_SIZE(__pyx_t_4);
+            #if !CYTHON_ASSUME_SAFE_SIZE
+            if (unlikely((__pyx_temp < 0))) __PYX_ERR(0, 318, __pyx_L8_error)
+            #endif
+            if (__pyx_t_2 >= __pyx_temp) break;
+          }
+          #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+          __pyx_t_11 = __Pyx_NewRef(PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_2));
+          #else
+          __pyx_t_11 = __Pyx_PySequence_ITEM(__pyx_t_4, __pyx_t_2);
+          #endif
+          ++__pyx_t_2;
+        }
+        if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 318, __pyx_L8_error)
+      } else {
+        __pyx_t_11 = __pyx_t_20(__pyx_t_4);
+        if (unlikely(!__pyx_t_11)) {
+          PyObject* exc_type = PyErr_Occurred();
+          if (exc_type) {
+            if (unlikely(!__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) __PYX_ERR(0, 318, __pyx_L8_error)
+            PyErr_Clear();
+          }
+          break;
+        }
       }
-      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_entries, __pyx_v_i, size_t, 0, __Pyx_PyLong_FromSize_t, 1, 0, 1, 1, __Pyx_ReferenceSharing_FunctionArgument); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 303, __pyx_L5_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_6 = __pyx_t_7;
-      __Pyx_INCREF(__pyx_t_6);
-      __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __Pyx_XDECREF_SET(__pyx_v_entry, ((struct __pyx_obj_16shirotsume_tools_7archive_5crypt_PackEntry *)__pyx_t_6));
-      __pyx_t_6 = 0;
+      __Pyx_GOTREF(__pyx_t_11);
+      __Pyx_XDECREF_SET(__pyx_v_py_entry, __pyx_t_11);
+      __pyx_t_11 = 0;
 
-      /* "shirotsume_tools/archive/crypt.pyx":304
- *         for i in range(count):
- *             entry = <PackEntry>entries[i]
+      /* "shirotsume_tools/archive/crypt.pyx":319
+ *         seen = 0
+ *         for py_entry in entries:
+ *             if seen >= entry_count:             # <<<<<<<<<<<<<<
+ *                 raise ValueError("entries yielded more items than count")
+ *             if not isinstance(py_entry, PackEntry):
+*/
+      __pyx_t_1 = (__pyx_v_seen >= __pyx_v_entry_count);
+      if (unlikely(__pyx_t_1)) {
+
+        /* "shirotsume_tools/archive/crypt.pyx":320
+ *         for py_entry in entries:
+ *             if seen >= entry_count:
+ *                 raise ValueError("entries yielded more items than count")             # <<<<<<<<<<<<<<
+ *             if not isinstance(py_entry, PackEntry):
+ *                 raise TypeError(f"expected PackEntry, got {type(py_entry)}")
+*/
+        __pyx_t_3 = NULL;
+        __pyx_t_5 = 1;
+        {
+          PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_mstate_global->__pyx_kp_u_entries_yielded_more_items_than};
+          __pyx_t_11 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_ValueError)), __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 320, __pyx_L8_error)
+          __Pyx_GOTREF(__pyx_t_11);
+        }
+        __Pyx_Raise(__pyx_t_11, 0, 0, 0);
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __PYX_ERR(0, 320, __pyx_L8_error)
+
+        /* "shirotsume_tools/archive/crypt.pyx":319
+ *         seen = 0
+ *         for py_entry in entries:
+ *             if seen >= entry_count:             # <<<<<<<<<<<<<<
+ *                 raise ValueError("entries yielded more items than count")
+ *             if not isinstance(py_entry, PackEntry):
+*/
+      }
+
+      /* "shirotsume_tools/archive/crypt.pyx":321
+ *             if seen >= entry_count:
+ *                 raise ValueError("entries yielded more items than count")
+ *             if not isinstance(py_entry, PackEntry):             # <<<<<<<<<<<<<<
+ *                 raise TypeError(f"expected PackEntry, got {type(py_entry)}")
+ *             entry = <PackEntry>py_entry
+*/
+      __pyx_t_1 = __Pyx_TypeCheck(__pyx_v_py_entry, __pyx_mstate_global->__pyx_ptype_16shirotsume_tools_7archive_5crypt_PackEntry); 
+      __pyx_t_21 = (!__pyx_t_1);
+      if (unlikely(__pyx_t_21)) {
+
+        /* "shirotsume_tools/archive/crypt.pyx":322
+ *                 raise ValueError("entries yielded more items than count")
+ *             if not isinstance(py_entry, PackEntry):
+ *                 raise TypeError(f"expected PackEntry, got {type(py_entry)}")             # <<<<<<<<<<<<<<
+ *             entry = <PackEntry>py_entry
+ * 
+*/
+        __pyx_t_3 = NULL;
+        __pyx_t_22 = __Pyx_PyObject_FormatSimple(((PyObject *)Py_TYPE(__pyx_v_py_entry)), __pyx_mstate_global->__pyx_empty_unicode); if (unlikely(!__pyx_t_22)) __PYX_ERR(0, 322, __pyx_L8_error)
+        __Pyx_GOTREF(__pyx_t_22);
+        __pyx_t_23 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_expected_PackEntry_got, __pyx_t_22); if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 322, __pyx_L8_error)
+        __Pyx_GOTREF(__pyx_t_23);
+        __Pyx_DECREF(__pyx_t_22); __pyx_t_22 = 0;
+        __pyx_t_5 = 1;
+        {
+          PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_t_23};
+          __pyx_t_11 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_TypeError)), __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_DECREF(__pyx_t_23); __pyx_t_23 = 0;
+          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 322, __pyx_L8_error)
+          __Pyx_GOTREF(__pyx_t_11);
+        }
+        __Pyx_Raise(__pyx_t_11, 0, 0, 0);
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __PYX_ERR(0, 322, __pyx_L8_error)
+
+        /* "shirotsume_tools/archive/crypt.pyx":321
+ *             if seen >= entry_count:
+ *                 raise ValueError("entries yielded more items than count")
+ *             if not isinstance(py_entry, PackEntry):             # <<<<<<<<<<<<<<
+ *                 raise TypeError(f"expected PackEntry, got {type(py_entry)}")
+ *             entry = <PackEntry>py_entry
+*/
+      }
+
+      /* "shirotsume_tools/archive/crypt.pyx":323
+ *             if not isinstance(py_entry, PackEntry):
+ *                 raise TypeError(f"expected PackEntry, got {type(py_entry)}")
+ *             entry = <PackEntry>py_entry             # <<<<<<<<<<<<<<
+ * 
+ *             name_bytes = entry.name.encode("cp932")
+*/
+      __pyx_t_11 = __pyx_v_py_entry;
+      __Pyx_INCREF(__pyx_t_11);
+      __Pyx_XDECREF_SET(__pyx_v_entry, ((struct __pyx_obj_16shirotsume_tools_7archive_5crypt_PackEntry *)__pyx_t_11));
+      __pyx_t_11 = 0;
+
+      /* "shirotsume_tools/archive/crypt.pyx":325
+ *             entry = <PackEntry>py_entry
+ * 
+ *             name_bytes = entry.name.encode("cp932")             # <<<<<<<<<<<<<<
+ *             if <size_t>len(name_bytes) >= 64:
+ *                 raise ValueError(f"packed name is too long: {entry.name}")
+*/
+      if (unlikely(__pyx_v_entry->name == Py_None)) {
+        PyErr_Format(PyExc_AttributeError, "'NoneType' object has no attribute '%.30s'", "encode");
+        __PYX_ERR(0, 325, __pyx_L8_error)
+      }
+      __pyx_t_11 = PyUnicode_AsEncodedString(__pyx_v_entry->name, __pyx_k_cp932, NULL); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 325, __pyx_L8_error)
+      __Pyx_GOTREF(__pyx_t_11);
+      __Pyx_XDECREF_SET(__pyx_v_name_bytes, ((PyObject*)__pyx_t_11));
+      __pyx_t_11 = 0;
+
+      /* "shirotsume_tools/archive/crypt.pyx":326
+ * 
+ *             name_bytes = entry.name.encode("cp932")
+ *             if <size_t>len(name_bytes) >= 64:             # <<<<<<<<<<<<<<
+ *                 raise ValueError(f"packed name is too long: {entry.name}")
+ *             memcpy(raw[seen].name, <const char*>name_bytes, len(name_bytes))
+*/
+      __pyx_t_24 = __Pyx_PyBytes_GET_SIZE(__pyx_v_name_bytes); if (unlikely(__pyx_t_24 == ((Py_ssize_t)-1))) __PYX_ERR(0, 326, __pyx_L8_error)
+      __pyx_t_21 = (((size_t)__pyx_t_24) >= 64);
+      if (unlikely(__pyx_t_21)) {
+
+        /* "shirotsume_tools/archive/crypt.pyx":327
+ *             name_bytes = entry.name.encode("cp932")
+ *             if <size_t>len(name_bytes) >= 64:
+ *                 raise ValueError(f"packed name is too long: {entry.name}")             # <<<<<<<<<<<<<<
+ *             memcpy(raw[seen].name, <const char*>name_bytes, len(name_bytes))
+ *             raw[seen].size = len(entry.data)
+*/
+        __pyx_t_23 = NULL;
+        __pyx_t_3 = __Pyx_PyUnicode_Unicode(__pyx_v_entry->name); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 327, __pyx_L8_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_22 = __Pyx_PyUnicode_Concat(__pyx_mstate_global->__pyx_kp_u_packed_name_is_too_long, __pyx_t_3); if (unlikely(!__pyx_t_22)) __PYX_ERR(0, 327, __pyx_L8_error)
+        __Pyx_GOTREF(__pyx_t_22);
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __pyx_t_5 = 1;
+        {
+          PyObject *__pyx_callargs[2] = {__pyx_t_23, __pyx_t_22};
+          __pyx_t_11 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_ValueError)), __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          __Pyx_XDECREF(__pyx_t_23); __pyx_t_23 = 0;
+          __Pyx_DECREF(__pyx_t_22); __pyx_t_22 = 0;
+          if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 327, __pyx_L8_error)
+          __Pyx_GOTREF(__pyx_t_11);
+        }
+        __Pyx_Raise(__pyx_t_11, 0, 0, 0);
+        __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+        __PYX_ERR(0, 327, __pyx_L8_error)
+
+        /* "shirotsume_tools/archive/crypt.pyx":326
+ * 
+ *             name_bytes = entry.name.encode("cp932")
+ *             if <size_t>len(name_bytes) >= 64:             # <<<<<<<<<<<<<<
+ *                 raise ValueError(f"packed name is too long: {entry.name}")
+ *             memcpy(raw[seen].name, <const char*>name_bytes, len(name_bytes))
+*/
+      }
+
+      /* "shirotsume_tools/archive/crypt.pyx":328
+ *             if <size_t>len(name_bytes) >= 64:
+ *                 raise ValueError(f"packed name is too long: {entry.name}")
+ *             memcpy(raw[seen].name, <const char*>name_bytes, len(name_bytes))             # <<<<<<<<<<<<<<
+ *             raw[seen].size = len(entry.data)
+ * 
+*/
+      __pyx_t_25 = __Pyx_PyBytes_AsString(__pyx_v_name_bytes); if (unlikely((!__pyx_t_25) && PyErr_Occurred())) __PYX_ERR(0, 328, __pyx_L8_error)
+      __pyx_t_24 = __Pyx_PyBytes_GET_SIZE(__pyx_v_name_bytes); if (unlikely(__pyx_t_24 == ((Py_ssize_t)-1))) __PYX_ERR(0, 328, __pyx_L8_error)
+      (void)(memcpy((__pyx_v_raw[__pyx_v_seen]).name, ((char const *)__pyx_t_25), __pyx_t_24));
+
+      /* "shirotsume_tools/archive/crypt.pyx":329
+ *                 raise ValueError(f"packed name is too long: {entry.name}")
+ *             memcpy(raw[seen].name, <const char*>name_bytes, len(name_bytes))
+ *             raw[seen].size = len(entry.data)             # <<<<<<<<<<<<<<
+ * 
+ *             body_data = entry.data
+*/
+      __pyx_t_11 = __pyx_v_entry->data;
+      __Pyx_INCREF(__pyx_t_11);
+      if (unlikely(__pyx_t_11 == Py_None)) {
+        PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
+        __PYX_ERR(0, 329, __pyx_L8_error)
+      }
+      __pyx_t_24 = __Pyx_PyBytes_GET_SIZE(__pyx_t_11); if (unlikely(__pyx_t_24 == ((Py_ssize_t)-1))) __PYX_ERR(0, 329, __pyx_L8_error)
+      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      (__pyx_v_raw[__pyx_v_seen]).size = __pyx_t_24;
+
+      /* "shirotsume_tools/archive/crypt.pyx":331
+ *             raw[seen].size = len(entry.data)
+ * 
  *             body_data = entry.data             # <<<<<<<<<<<<<<
  *             err = rp_encode_body(<const uint8_t*>body_data, len(body_data),
  *                                  &encrypted_body, &encrypted_len,
 */
-      __pyx_t_6 = __pyx_v_entry->data;
-      __Pyx_INCREF(__pyx_t_6);
-      __Pyx_XDECREF_SET(__pyx_v_body_data, ((PyObject*)__pyx_t_6));
-      __pyx_t_6 = 0;
+      __pyx_t_11 = __pyx_v_entry->data;
+      __Pyx_INCREF(__pyx_t_11);
+      __Pyx_XDECREF_SET(__pyx_v_body_data, ((PyObject*)__pyx_t_11));
+      __pyx_t_11 = 0;
 
-      /* "shirotsume_tools/archive/crypt.pyx":305
- *             entry = <PackEntry>entries[i]
+      /* "shirotsume_tools/archive/crypt.pyx":332
+ * 
  *             body_data = entry.data
  *             err = rp_encode_body(<const uint8_t*>body_data, len(body_data),             # <<<<<<<<<<<<<<
  *                                  &encrypted_body, &encrypted_len,
- *                                  &crypt_type, 1 if compress else 0)
+ *                                  &crypt_type, 1 if compress else 0,
 */
       if (unlikely(__pyx_v_body_data == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "expected bytes, NoneType found");
-        __PYX_ERR(0, 305, __pyx_L5_error)
+        __PYX_ERR(0, 332, __pyx_L8_error)
       }
-      __pyx_t_23 = __Pyx_PyBytes_AsUString(__pyx_v_body_data); if (unlikely((!__pyx_t_23) && PyErr_Occurred())) __PYX_ERR(0, 305, __pyx_L5_error)
+      __pyx_t_26 = __Pyx_PyBytes_AsUString(__pyx_v_body_data); if (unlikely((!__pyx_t_26) && PyErr_Occurred())) __PYX_ERR(0, 332, __pyx_L8_error)
       if (unlikely(__pyx_v_body_data == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-        __PYX_ERR(0, 305, __pyx_L5_error)
+        __PYX_ERR(0, 332, __pyx_L8_error)
       }
-      __pyx_t_1 = __Pyx_PyBytes_GET_SIZE(__pyx_v_body_data); if (unlikely(__pyx_t_1 == ((Py_ssize_t)-1))) __PYX_ERR(0, 305, __pyx_L5_error)
+      __pyx_t_24 = __Pyx_PyBytes_GET_SIZE(__pyx_v_body_data); if (unlikely(__pyx_t_24 == ((Py_ssize_t)-1))) __PYX_ERR(0, 332, __pyx_L8_error)
 
-      /* "shirotsume_tools/archive/crypt.pyx":307
+      /* "shirotsume_tools/archive/crypt.pyx":334
  *             err = rp_encode_body(<const uint8_t*>body_data, len(body_data),
  *                                  &encrypted_body, &encrypted_len,
- *                                  &crypt_type, 1 if compress else 0)             # <<<<<<<<<<<<<<
+ *                                  &crypt_type, 1 if compress else 0,             # <<<<<<<<<<<<<<
+ *                                  entry.crypt_type)
  *             _raise_on_error(err)
- *             try:
 */
       if (__pyx_v_compress) {
-        __pyx_t_15 = 1;
+        __pyx_t_12 = 1;
       } else {
-        __pyx_t_15 = 0;
+        __pyx_t_12 = 0;
       }
 
-      /* "shirotsume_tools/archive/crypt.pyx":305
- *             entry = <PackEntry>entries[i]
+      /* "shirotsume_tools/archive/crypt.pyx":332
+ * 
  *             body_data = entry.data
  *             err = rp_encode_body(<const uint8_t*>body_data, len(body_data),             # <<<<<<<<<<<<<<
  *                                  &encrypted_body, &encrypted_len,
- *                                  &crypt_type, 1 if compress else 0)
+ *                                  &crypt_type, 1 if compress else 0,
 */
-      __pyx_v_err = rp_encode_body(((uint8_t const *)__pyx_t_23), __pyx_t_1, (&__pyx_v_encrypted_body), (&__pyx_v_encrypted_len), (&__pyx_v_crypt_type), __pyx_t_15);
+      __pyx_v_err = rp_encode_body(((uint8_t const *)__pyx_t_26), __pyx_t_24, (&__pyx_v_encrypted_body), (&__pyx_v_encrypted_len), (&__pyx_v_crypt_type), __pyx_t_12, __pyx_v_entry->crypt_type);
 
-      /* "shirotsume_tools/archive/crypt.pyx":308
- *                                  &encrypted_body, &encrypted_len,
- *                                  &crypt_type, 1 if compress else 0)
+      /* "shirotsume_tools/archive/crypt.pyx":336
+ *                                  &crypt_type, 1 if compress else 0,
+ *                                  entry.crypt_type)
  *             _raise_on_error(err)             # <<<<<<<<<<<<<<
  *             try:
- *                 file.write(bytes((<uint8_t*>encrypted_body)[:encrypted_len]))
+ *                 if encrypted_len > 0:
 */
-      __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 308, __pyx_L5_error)
+      __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 336, __pyx_L8_error)
 
-      /* "shirotsume_tools/archive/crypt.pyx":309
- *                                  &crypt_type, 1 if compress else 0)
+      /* "shirotsume_tools/archive/crypt.pyx":337
+ *                                  entry.crypt_type)
  *             _raise_on_error(err)
  *             try:             # <<<<<<<<<<<<<<
- *                 file.write(bytes((<uint8_t*>encrypted_body)[:encrypted_len]))
- *             finally:
+ *                 if encrypted_len > 0:
+ *                     view_len = <Py_ssize_t>encrypted_len
 */
       /*try:*/ {
 
-        /* "shirotsume_tools/archive/crypt.pyx":310
+        /* "shirotsume_tools/archive/crypt.pyx":338
  *             _raise_on_error(err)
  *             try:
- *                 file.write(bytes((<uint8_t*>encrypted_body)[:encrypted_len]))             # <<<<<<<<<<<<<<
+ *                 if encrypted_len > 0:             # <<<<<<<<<<<<<<
+ *                     view_len = <Py_ssize_t>encrypted_len
+ *                     _mv = <uint8_t[:view_len]>encrypted_body
+*/
+        __pyx_t_21 = (__pyx_v_encrypted_len > 0);
+        if (__pyx_t_21) {
+
+          /* "shirotsume_tools/archive/crypt.pyx":339
+ *             try:
+ *                 if encrypted_len > 0:
+ *                     view_len = <Py_ssize_t>encrypted_len             # <<<<<<<<<<<<<<
+ *                     _mv = <uint8_t[:view_len]>encrypted_body
+ *                     file.write(_mv)
+*/
+          __pyx_v_view_len = ((Py_ssize_t)__pyx_v_encrypted_len);
+
+          /* "shirotsume_tools/archive/crypt.pyx":340
+ *                 if encrypted_len > 0:
+ *                     view_len = <Py_ssize_t>encrypted_len
+ *                     _mv = <uint8_t[:view_len]>encrypted_body             # <<<<<<<<<<<<<<
+ *                     file.write(_mv)
+ *                     _mv = None
+*/
+          if (!__pyx_v_encrypted_body) {
+            PyErr_SetString(PyExc_ValueError,"Cannot create cython.array from NULL pointer");
+            __PYX_ERR(0, 340, __pyx_L24_error)
+          }
+          __pyx_t_22 = __pyx_format_from_typeinfo(&__Pyx_TypeInfo_nn_uint8_t); if (unlikely(!__pyx_t_22)) __PYX_ERR(0, 340, __pyx_L24_error)
+          __Pyx_GOTREF(__pyx_t_22);
+          __pyx_t_11 = Py_BuildValue("("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)__pyx_v_view_len)); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 340, __pyx_L24_error)
+          __Pyx_GOTREF(__pyx_t_11);
+          #if CYTHON_COMPILING_IN_LIMITED_API
+          __pyx_t_9 = PyBytes_AsString(__pyx_t_22); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 340, __pyx_L24_error)
+          #else
+          __pyx_t_9 = PyBytes_AS_STRING(__pyx_t_22);
+          #endif
+          __pyx_t_8 = __pyx_array_new(__pyx_t_11, sizeof(uint8_t), __pyx_t_9, "c", (char *) __pyx_v_encrypted_body); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 340, __pyx_L24_error)
+          __Pyx_GOTREF((PyObject *)__pyx_t_8);
+          __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __Pyx_DECREF(__pyx_t_22); __pyx_t_22 = 0;
+          __pyx_t_10 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn_uint8_t(((PyObject *)__pyx_t_8), PyBUF_WRITABLE); if (unlikely(!__pyx_t_10.memview)) __PYX_ERR(0, 340, __pyx_L24_error)
+          __Pyx_DECREF((PyObject *)__pyx_t_8); __pyx_t_8 = 0;
+          __PYX_XCLEAR_MEMVIEW(&__pyx_v__mv, 1);
+          __pyx_v__mv = __pyx_t_10;
+          __pyx_t_10.memview = NULL;
+          __pyx_t_10.data = NULL;
+
+          /* "shirotsume_tools/archive/crypt.pyx":341
+ *                     view_len = <Py_ssize_t>encrypted_len
+ *                     _mv = <uint8_t[:view_len]>encrypted_body
+ *                     file.write(_mv)             # <<<<<<<<<<<<<<
+ *                     _mv = None
+ *             finally:
+*/
+          __pyx_t_11 = __pyx_v_file;
+          __Pyx_INCREF(__pyx_t_11);
+          __pyx_t_23 = __pyx_memoryview_fromslice(__pyx_v__mv, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn_uint8_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn_uint8_t, 0);; if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 341, __pyx_L24_error)
+          __Pyx_GOTREF(__pyx_t_23);
+          __pyx_t_5 = 0;
+          {
+            PyObject *__pyx_callargs[2] = {__pyx_t_11, __pyx_t_23};
+            __pyx_t_22 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_write, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+            __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+            __Pyx_DECREF(__pyx_t_23); __pyx_t_23 = 0;
+            if (unlikely(!__pyx_t_22)) __PYX_ERR(0, 341, __pyx_L24_error)
+            __Pyx_GOTREF(__pyx_t_22);
+          }
+          __Pyx_DECREF(__pyx_t_22); __pyx_t_22 = 0;
+
+          /* "shirotsume_tools/archive/crypt.pyx":342
+ *                     _mv = <uint8_t[:view_len]>encrypted_body
+ *                     file.write(_mv)
+ *                     _mv = None             # <<<<<<<<<<<<<<
  *             finally:
  *                 rp_free(encrypted_body)
 */
-        __pyx_t_7 = __pyx_v_file;
-        __Pyx_INCREF(__pyx_t_7);
-        __pyx_t_14 = NULL;
-        __pyx_t_8 = __Pyx_PyBytes_FromStringAndSize(((char const *)((uint8_t *)__pyx_v_encrypted_body)) + 0, __pyx_v_encrypted_len - 0); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 310, __pyx_L21_error)
-        __Pyx_GOTREF(__pyx_t_8);
-        __pyx_t_10 = 1;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_14, __pyx_t_8};
-          __pyx_t_9 = __Pyx_PyObject_FastCall((PyObject*)(&PyBytes_Type), __pyx_callargs+__pyx_t_10, (2-__pyx_t_10) | (__pyx_t_10*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-          __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
-          if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 310, __pyx_L21_error)
-          __Pyx_GOTREF(__pyx_t_9);
+          __pyx_t_10 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn_uint8_t(Py_None, PyBUF_WRITABLE); if (unlikely(!__pyx_t_10.memview)) __PYX_ERR(0, 342, __pyx_L24_error)
+          __PYX_XCLEAR_MEMVIEW(&__pyx_v__mv, 1);
+          __pyx_v__mv = __pyx_t_10;
+          __pyx_t_10.memview = NULL;
+          __pyx_t_10.data = NULL;
+
+          /* "shirotsume_tools/archive/crypt.pyx":338
+ *             _raise_on_error(err)
+ *             try:
+ *                 if encrypted_len > 0:             # <<<<<<<<<<<<<<
+ *                     view_len = <Py_ssize_t>encrypted_len
+ *                     _mv = <uint8_t[:view_len]>encrypted_body
+*/
         }
-        __pyx_t_10 = 0;
-        {
-          PyObject *__pyx_callargs[2] = {__pyx_t_7, __pyx_t_9};
-          __pyx_t_6 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_write, __pyx_callargs+__pyx_t_10, (2-__pyx_t_10) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-          if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 310, __pyx_L21_error)
-          __Pyx_GOTREF(__pyx_t_6);
-        }
-        __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
       }
 
-      /* "shirotsume_tools/archive/crypt.pyx":312
- *                 file.write(bytes((<uint8_t*>encrypted_body)[:encrypted_len]))
+      /* "shirotsume_tools/archive/crypt.pyx":344
+ *                     _mv = None
  *             finally:
  *                 rp_free(encrypted_body)             # <<<<<<<<<<<<<<
  *                 encrypted_body = NULL
@@ -23016,39 +23811,41 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_pack(PyObject *__pyx_v_fi
         /*normal exit:*/{
           rp_free(__pyx_v_encrypted_body);
 
-          /* "shirotsume_tools/archive/crypt.pyx":313
+          /* "shirotsume_tools/archive/crypt.pyx":345
  *             finally:
  *                 rp_free(encrypted_body)
  *                 encrypted_body = NULL             # <<<<<<<<<<<<<<
  * 
- *             raw[i].offset = offset
+ *             raw[seen].offset = offset
 */
           __pyx_v_encrypted_body = NULL;
-          goto __pyx_L22;
+          goto __pyx_L25;
         }
-        __pyx_L21_error:;
+        __pyx_L24_error:;
         /*exception exit:*/{
           __Pyx_PyThreadState_declare
           __Pyx_PyThreadState_assign
-          __pyx_t_22 = 0; __pyx_t_21 = 0; __pyx_t_20 = 0; __pyx_t_19 = 0; __pyx_t_18 = 0; __pyx_t_17 = 0;
-          __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-          __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-          __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-          __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-           __Pyx_ExceptionSwap(&__pyx_t_19, &__pyx_t_18, &__pyx_t_17);
-          if ( unlikely(__Pyx_GetException(&__pyx_t_22, &__pyx_t_21, &__pyx_t_20) < 0)) __Pyx_ErrFetch(&__pyx_t_22, &__pyx_t_21, &__pyx_t_20);
-          __Pyx_XGOTREF(__pyx_t_22);
-          __Pyx_XGOTREF(__pyx_t_21);
-          __Pyx_XGOTREF(__pyx_t_20);
+          __pyx_t_19 = 0; __pyx_t_18 = 0; __pyx_t_17 = 0; __pyx_t_16 = 0; __pyx_t_15 = 0; __pyx_t_14 = 0;
+          __PYX_XCLEAR_MEMVIEW(&__pyx_t_10, 1);
+          __pyx_t_10.memview = NULL; __pyx_t_10.data = NULL;
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __Pyx_XDECREF(__pyx_t_22); __pyx_t_22 = 0;
+          __Pyx_XDECREF(__pyx_t_23); __pyx_t_23 = 0;
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_XDECREF((PyObject *)__pyx_t_8); __pyx_t_8 = 0;
+           __Pyx_ExceptionSwap(&__pyx_t_16, &__pyx_t_15, &__pyx_t_14);
+          if ( unlikely(__Pyx_GetException(&__pyx_t_19, &__pyx_t_18, &__pyx_t_17) < 0)) __Pyx_ErrFetch(&__pyx_t_19, &__pyx_t_18, &__pyx_t_17);
           __Pyx_XGOTREF(__pyx_t_19);
           __Pyx_XGOTREF(__pyx_t_18);
           __Pyx_XGOTREF(__pyx_t_17);
-          __pyx_t_15 = __pyx_lineno; __pyx_t_13 = __pyx_clineno; __pyx_t_24 = __pyx_filename;
+          __Pyx_XGOTREF(__pyx_t_16);
+          __Pyx_XGOTREF(__pyx_t_15);
+          __Pyx_XGOTREF(__pyx_t_14);
+          __pyx_t_12 = __pyx_lineno; __pyx_t_7 = __pyx_clineno; __pyx_t_27 = __pyx_filename;
           {
 
-            /* "shirotsume_tools/archive/crypt.pyx":312
- *                 file.write(bytes((<uint8_t*>encrypted_body)[:encrypted_len]))
+            /* "shirotsume_tools/archive/crypt.pyx":344
+ *                     _mv = None
  *             finally:
  *                 rp_free(encrypted_body)             # <<<<<<<<<<<<<<
  *                 encrypted_body = NULL
@@ -23056,204 +23853,363 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_pack(PyObject *__pyx_v_fi
 */
             rp_free(__pyx_v_encrypted_body);
 
-            /* "shirotsume_tools/archive/crypt.pyx":313
+            /* "shirotsume_tools/archive/crypt.pyx":345
  *             finally:
  *                 rp_free(encrypted_body)
  *                 encrypted_body = NULL             # <<<<<<<<<<<<<<
  * 
- *             raw[i].offset = offset
+ *             raw[seen].offset = offset
 */
             __pyx_v_encrypted_body = NULL;
           }
+          __Pyx_XGIVEREF(__pyx_t_16);
+          __Pyx_XGIVEREF(__pyx_t_15);
+          __Pyx_XGIVEREF(__pyx_t_14);
+          __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
           __Pyx_XGIVEREF(__pyx_t_19);
           __Pyx_XGIVEREF(__pyx_t_18);
           __Pyx_XGIVEREF(__pyx_t_17);
-          __Pyx_ExceptionReset(__pyx_t_19, __pyx_t_18, __pyx_t_17);
-          __Pyx_XGIVEREF(__pyx_t_22);
-          __Pyx_XGIVEREF(__pyx_t_21);
-          __Pyx_XGIVEREF(__pyx_t_20);
-          __Pyx_ErrRestore(__pyx_t_22, __pyx_t_21, __pyx_t_20);
-          __pyx_t_22 = 0; __pyx_t_21 = 0; __pyx_t_20 = 0; __pyx_t_19 = 0; __pyx_t_18 = 0; __pyx_t_17 = 0;
-          __pyx_lineno = __pyx_t_15; __pyx_clineno = __pyx_t_13; __pyx_filename = __pyx_t_24;
-          goto __pyx_L5_error;
+          __Pyx_ErrRestore(__pyx_t_19, __pyx_t_18, __pyx_t_17);
+          __pyx_t_19 = 0; __pyx_t_18 = 0; __pyx_t_17 = 0; __pyx_t_16 = 0; __pyx_t_15 = 0; __pyx_t_14 = 0;
+          __pyx_lineno = __pyx_t_12; __pyx_clineno = __pyx_t_7; __pyx_filename = __pyx_t_27;
+          goto __pyx_L8_error;
         }
-        __pyx_L22:;
+        __pyx_L25:;
       }
 
-      /* "shirotsume_tools/archive/crypt.pyx":315
+      /* "shirotsume_tools/archive/crypt.pyx":347
  *                 encrypted_body = NULL
  * 
- *             raw[i].offset = offset             # <<<<<<<<<<<<<<
- *             raw[i].comp_size = encrypted_len
- *             raw[i].crypt_type = entry.crypt_type if entry.crypt_type != 0 else crypt_type
+ *             raw[seen].offset = offset             # <<<<<<<<<<<<<<
+ *             raw[seen].comp_size = encrypted_len
+ *             raw[seen].crypt_type = crypt_type
 */
-      (__pyx_v_raw[__pyx_v_i]).offset = __pyx_v_offset;
+      (__pyx_v_raw[__pyx_v_seen]).offset = __pyx_v_offset;
 
-      /* "shirotsume_tools/archive/crypt.pyx":316
+      /* "shirotsume_tools/archive/crypt.pyx":348
  * 
- *             raw[i].offset = offset
- *             raw[i].comp_size = encrypted_len             # <<<<<<<<<<<<<<
- *             raw[i].crypt_type = entry.crypt_type if entry.crypt_type != 0 else crypt_type
+ *             raw[seen].offset = offset
+ *             raw[seen].comp_size = encrypted_len             # <<<<<<<<<<<<<<
+ *             raw[seen].crypt_type = crypt_type
  *             offset += encrypted_len
 */
-      (__pyx_v_raw[__pyx_v_i]).comp_size = __pyx_v_encrypted_len;
+      (__pyx_v_raw[__pyx_v_seen]).comp_size = __pyx_v_encrypted_len;
 
-      /* "shirotsume_tools/archive/crypt.pyx":317
- *             raw[i].offset = offset
- *             raw[i].comp_size = encrypted_len
- *             raw[i].crypt_type = entry.crypt_type if entry.crypt_type != 0 else crypt_type             # <<<<<<<<<<<<<<
+      /* "shirotsume_tools/archive/crypt.pyx":349
+ *             raw[seen].offset = offset
+ *             raw[seen].comp_size = encrypted_len
+ *             raw[seen].crypt_type = crypt_type             # <<<<<<<<<<<<<<
  *             offset += encrypted_len
- * 
+ *             seen += 1
 */
-      __pyx_t_2 = (__pyx_v_entry->crypt_type != 0);
-      if (__pyx_t_2) {
-        __pyx_t_25 = __pyx_v_entry->crypt_type;
-      } else {
-        __pyx_t_25 = __pyx_v_crypt_type;
-      }
-      (__pyx_v_raw[__pyx_v_i]).crypt_type = __pyx_t_25;
+      (__pyx_v_raw[__pyx_v_seen]).crypt_type = __pyx_v_crypt_type;
 
-      /* "shirotsume_tools/archive/crypt.pyx":318
- *             raw[i].comp_size = encrypted_len
- *             raw[i].crypt_type = entry.crypt_type if entry.crypt_type != 0 else crypt_type
+      /* "shirotsume_tools/archive/crypt.pyx":350
+ *             raw[seen].comp_size = encrypted_len
+ *             raw[seen].crypt_type = crypt_type
  *             offset += encrypted_len             # <<<<<<<<<<<<<<
+ *             seen += 1
  * 
- *         file.seek(0)
 */
       __pyx_v_offset = (__pyx_v_offset + __pyx_v_encrypted_len);
-    }
 
-    /* "shirotsume_tools/archive/crypt.pyx":320
+      /* "shirotsume_tools/archive/crypt.pyx":351
+ *             raw[seen].crypt_type = crypt_type
  *             offset += encrypted_len
+ *             seen += 1             # <<<<<<<<<<<<<<
  * 
- *         file.seek(0)             # <<<<<<<<<<<<<<
- *         err = rp_encode_header(&full_header, &full_header_len,
- *                                header_ptr, header.shape[0], raw, count)
+ *         if seen != entry_count:
 */
-    __pyx_t_9 = __pyx_v_file;
-    __Pyx_INCREF(__pyx_t_9);
-    __pyx_t_3 = 0;
-    {
-      PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_mstate_global->__pyx_int_0};
-      __pyx_t_6 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_seek, __pyx_callargs+__pyx_t_3, (2-__pyx_t_3) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-      __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-      if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 320, __pyx_L5_error)
-      __Pyx_GOTREF(__pyx_t_6);
+      __pyx_v_seen = (__pyx_v_seen + 1);
+
+      /* "shirotsume_tools/archive/crypt.pyx":318
+ * 
+ *         seen = 0
+ *         for py_entry in entries:             # <<<<<<<<<<<<<<
+ *             if seen >= entry_count:
+ *                 raise ValueError("entries yielded more items than count")
+*/
     }
-    __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-    /* "shirotsume_tools/archive/crypt.pyx":321
+    /* "shirotsume_tools/archive/crypt.pyx":353
+ *             seen += 1
  * 
- *         file.seek(0)
- *         err = rp_encode_header(&full_header, &full_header_len,             # <<<<<<<<<<<<<<
- *                                header_ptr, header.shape[0], raw, count)
- *         _raise_on_error(err)
+ *         if seen != entry_count:             # <<<<<<<<<<<<<<
+ *             raise ValueError(f"entries yielded {seen} items, expected {entry_count}")
+ * 
 */
-    __pyx_v_err = rp_encode_header((&__pyx_v_full_header), (&__pyx_v_full_header_len), __pyx_v_header_ptr, (__pyx_v_header.shape[0]), __pyx_v_raw, __pyx_v_count);
+    __pyx_t_21 = (__pyx_v_seen != __pyx_v_entry_count);
+    if (unlikely(__pyx_t_21)) {
 
-    /* "shirotsume_tools/archive/crypt.pyx":323
- *         err = rp_encode_header(&full_header, &full_header_len,
- *                                header_ptr, header.shape[0], raw, count)
- *         _raise_on_error(err)             # <<<<<<<<<<<<<<
- *         try:
- *             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
+      /* "shirotsume_tools/archive/crypt.pyx":354
+ * 
+ *         if seen != entry_count:
+ *             raise ValueError(f"entries yielded {seen} items, expected {entry_count}")             # <<<<<<<<<<<<<<
+ * 
+ *         if entry_count > 0:
 */
-    __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 323, __pyx_L5_error)
-
-    /* "shirotsume_tools/archive/crypt.pyx":324
- *                                header_ptr, header.shape[0], raw, count)
- *         _raise_on_error(err)
- *         try:             # <<<<<<<<<<<<<<
- *             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
- *         finally:
-*/
-    /*try:*/ {
-
-      /* "shirotsume_tools/archive/crypt.pyx":325
- *         _raise_on_error(err)
- *         try:
- *             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))             # <<<<<<<<<<<<<<
- *         finally:
- *             rp_free(full_header)
-*/
-      __pyx_t_9 = __pyx_v_file;
-      __Pyx_INCREF(__pyx_t_9);
-      __pyx_t_8 = NULL;
-      __pyx_t_14 = __Pyx_PyBytes_FromStringAndSize(((char const *)((uint8_t *)__pyx_v_full_header)) + 0, __pyx_v_full_header_len - 0); if (unlikely(!__pyx_t_14)) __PYX_ERR(0, 325, __pyx_L28_error)
-      __Pyx_GOTREF(__pyx_t_14);
-      __pyx_t_3 = 1;
+      __pyx_t_22 = NULL;
+      __pyx_t_23 = __Pyx_PyUnicode_From_size_t(__pyx_v_seen, 0, ' ', 'd'); if (unlikely(!__pyx_t_23)) __PYX_ERR(0, 354, __pyx_L8_error)
+      __Pyx_GOTREF(__pyx_t_23);
+      __pyx_t_11 = __Pyx_PyUnicode_From_size_t(__pyx_v_entry_count, 0, ' ', 'd'); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 354, __pyx_L8_error)
+      __Pyx_GOTREF(__pyx_t_11);
+      __pyx_t_28[0] = __pyx_mstate_global->__pyx_kp_u_entries_yielded;
+      __pyx_t_28[1] = __pyx_t_23;
+      __pyx_t_28[2] = __pyx_mstate_global->__pyx_kp_u_items_expected;
+      __pyx_t_28[3] = __pyx_t_11;
+      __pyx_t_3 = __Pyx_PyUnicode_Join(__pyx_t_28, 4, 16 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_23) + 17 + __Pyx_PyUnicode_GET_LENGTH(__pyx_t_11), 127);
+      if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 354, __pyx_L8_error)
+      __Pyx_GOTREF(__pyx_t_3);
+      __Pyx_DECREF(__pyx_t_23); __pyx_t_23 = 0;
+      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      __pyx_t_5 = 1;
       {
-        PyObject *__pyx_callargs[2] = {__pyx_t_8, __pyx_t_14};
-        __pyx_t_7 = __Pyx_PyObject_FastCall((PyObject*)(&PyBytes_Type), __pyx_callargs+__pyx_t_3, (2-__pyx_t_3) | (__pyx_t_3*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __Pyx_DECREF(__pyx_t_14); __pyx_t_14 = 0;
-        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 325, __pyx_L28_error)
-        __Pyx_GOTREF(__pyx_t_7);
+        PyObject *__pyx_callargs[2] = {__pyx_t_22, __pyx_t_3};
+        __pyx_t_4 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_ValueError)), __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (__pyx_t_5*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_22); __pyx_t_22 = 0;
+        __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 354, __pyx_L8_error)
+        __Pyx_GOTREF(__pyx_t_4);
       }
-      __pyx_t_3 = 0;
-      {
-        PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_t_7};
-        __pyx_t_6 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_write, __pyx_callargs+__pyx_t_3, (2-__pyx_t_3) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 325, __pyx_L28_error)
-        __Pyx_GOTREF(__pyx_t_6);
-      }
-      __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
+      __Pyx_Raise(__pyx_t_4, 0, 0, 0);
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __PYX_ERR(0, 354, __pyx_L8_error)
+
+      /* "shirotsume_tools/archive/crypt.pyx":353
+ *             seen += 1
+ * 
+ *         if seen != entry_count:             # <<<<<<<<<<<<<<
+ *             raise ValueError(f"entries yielded {seen} items, expected {entry_count}")
+ * 
+*/
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":327
- *             file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
- *         finally:
- *             rp_free(full_header)             # <<<<<<<<<<<<<<
+    /* "shirotsume_tools/archive/crypt.pyx":356
+ *             raise ValueError(f"entries yielded {seen} items, expected {entry_count}")
+ * 
+ *         if entry_count > 0:             # <<<<<<<<<<<<<<
+ *             file.seek(table_offset)
+ *             err = rp_encode_table(&full_table, &full_table_len, raw, entry_count)
+*/
+    __pyx_t_21 = (__pyx_v_entry_count > 0);
+    if (__pyx_t_21) {
+
+      /* "shirotsume_tools/archive/crypt.pyx":357
+ * 
+ *         if entry_count > 0:
+ *             file.seek(table_offset)             # <<<<<<<<<<<<<<
+ *             err = rp_encode_table(&full_table, &full_table_len, raw, entry_count)
+ *             _raise_on_error(err)
+*/
+      __pyx_t_3 = __pyx_v_file;
+      __Pyx_INCREF(__pyx_t_3);
+      __pyx_t_22 = __Pyx_PyLong_FromSize_t(__pyx_v_table_offset); if (unlikely(!__pyx_t_22)) __PYX_ERR(0, 357, __pyx_L8_error)
+      __Pyx_GOTREF(__pyx_t_22);
+      __pyx_t_5 = 0;
+      {
+        PyObject *__pyx_callargs[2] = {__pyx_t_3, __pyx_t_22};
+        __pyx_t_4 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_seek, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+        __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+        __Pyx_DECREF(__pyx_t_22); __pyx_t_22 = 0;
+        if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 357, __pyx_L8_error)
+        __Pyx_GOTREF(__pyx_t_4);
+      }
+      __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+      /* "shirotsume_tools/archive/crypt.pyx":358
+ *         if entry_count > 0:
+ *             file.seek(table_offset)
+ *             err = rp_encode_table(&full_table, &full_table_len, raw, entry_count)             # <<<<<<<<<<<<<<
+ *             _raise_on_error(err)
+ *             try:
+*/
+      __pyx_v_err = rp_encode_table((&__pyx_v_full_table), (&__pyx_v_full_table_len), __pyx_v_raw, __pyx_v_entry_count);
+
+      /* "shirotsume_tools/archive/crypt.pyx":359
+ *             file.seek(table_offset)
+ *             err = rp_encode_table(&full_table, &full_table_len, raw, entry_count)
+ *             _raise_on_error(err)             # <<<<<<<<<<<<<<
+ *             try:
+ *                 view_len = <Py_ssize_t>full_table_len
+*/
+      __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 359, __pyx_L8_error)
+
+      /* "shirotsume_tools/archive/crypt.pyx":360
+ *             err = rp_encode_table(&full_table, &full_table_len, raw, entry_count)
+ *             _raise_on_error(err)
+ *             try:             # <<<<<<<<<<<<<<
+ *                 view_len = <Py_ssize_t>full_table_len
+ *                 _mv = <uint8_t[:view_len]>full_table
+*/
+      /*try:*/ {
+
+        /* "shirotsume_tools/archive/crypt.pyx":361
+ *             _raise_on_error(err)
+ *             try:
+ *                 view_len = <Py_ssize_t>full_table_len             # <<<<<<<<<<<<<<
+ *                 _mv = <uint8_t[:view_len]>full_table
+ *                 file.write(_mv)
+*/
+        __pyx_v_view_len = ((Py_ssize_t)__pyx_v_full_table_len);
+
+        /* "shirotsume_tools/archive/crypt.pyx":362
+ *             try:
+ *                 view_len = <Py_ssize_t>full_table_len
+ *                 _mv = <uint8_t[:view_len]>full_table             # <<<<<<<<<<<<<<
+ *                 file.write(_mv)
+ *                 _mv = None
+*/
+        if (!__pyx_v_full_table) {
+          PyErr_SetString(PyExc_ValueError,"Cannot create cython.array from NULL pointer");
+          __PYX_ERR(0, 362, __pyx_L35_error)
+        }
+        __pyx_t_22 = __pyx_format_from_typeinfo(&__Pyx_TypeInfo_nn_uint8_t); if (unlikely(!__pyx_t_22)) __PYX_ERR(0, 362, __pyx_L35_error)
+        __Pyx_GOTREF(__pyx_t_22);
+        __pyx_t_4 = Py_BuildValue("("  __PYX_BUILD_PY_SSIZE_T  ")", ((Py_ssize_t)__pyx_v_view_len)); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 362, __pyx_L35_error)
+        __Pyx_GOTREF(__pyx_t_4);
+        #if CYTHON_COMPILING_IN_LIMITED_API
+        __pyx_t_9 = PyBytes_AsString(__pyx_t_22); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 362, __pyx_L35_error)
+        #else
+        __pyx_t_9 = PyBytes_AS_STRING(__pyx_t_22);
+        #endif
+        __pyx_t_8 = __pyx_array_new(__pyx_t_4, sizeof(uint8_t), __pyx_t_9, "c", (char *) __pyx_v_full_table); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 362, __pyx_L35_error)
+        __Pyx_GOTREF((PyObject *)__pyx_t_8);
+        __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+        __Pyx_DECREF(__pyx_t_22); __pyx_t_22 = 0;
+        __pyx_t_10 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn_uint8_t(((PyObject *)__pyx_t_8), PyBUF_WRITABLE); if (unlikely(!__pyx_t_10.memview)) __PYX_ERR(0, 362, __pyx_L35_error)
+        __Pyx_DECREF((PyObject *)__pyx_t_8); __pyx_t_8 = 0;
+        __PYX_XCLEAR_MEMVIEW(&__pyx_v__mv, 1);
+        __pyx_v__mv = __pyx_t_10;
+        __pyx_t_10.memview = NULL;
+        __pyx_t_10.data = NULL;
+
+        /* "shirotsume_tools/archive/crypt.pyx":363
+ *                 view_len = <Py_ssize_t>full_table_len
+ *                 _mv = <uint8_t[:view_len]>full_table
+ *                 file.write(_mv)             # <<<<<<<<<<<<<<
+ *                 _mv = None
+ *             finally:
+*/
+        __pyx_t_4 = __pyx_v_file;
+        __Pyx_INCREF(__pyx_t_4);
+        __pyx_t_3 = __pyx_memoryview_fromslice(__pyx_v__mv, 1, (PyObject *(*)(char *)) __pyx_memview_get_nn_uint8_t, (int (*)(char *, PyObject *)) __pyx_memview_set_nn_uint8_t, 0);; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 363, __pyx_L35_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        __pyx_t_5 = 0;
+        {
+          PyObject *__pyx_callargs[2] = {__pyx_t_4, __pyx_t_3};
+          __pyx_t_22 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_write, __pyx_callargs+__pyx_t_5, (2-__pyx_t_5) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
+          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+          if (unlikely(!__pyx_t_22)) __PYX_ERR(0, 363, __pyx_L35_error)
+          __Pyx_GOTREF(__pyx_t_22);
+        }
+        __Pyx_DECREF(__pyx_t_22); __pyx_t_22 = 0;
+
+        /* "shirotsume_tools/archive/crypt.pyx":364
+ *                 _mv = <uint8_t[:view_len]>full_table
+ *                 file.write(_mv)
+ *                 _mv = None             # <<<<<<<<<<<<<<
+ *             finally:
+ *                 rp_free(full_table)
+*/
+        __pyx_t_10 = __Pyx_PyObject_to_MemoryviewSlice_ds_nn_uint8_t(Py_None, PyBUF_WRITABLE); if (unlikely(!__pyx_t_10.memview)) __PYX_ERR(0, 364, __pyx_L35_error)
+        __PYX_XCLEAR_MEMVIEW(&__pyx_v__mv, 1);
+        __pyx_v__mv = __pyx_t_10;
+        __pyx_t_10.memview = NULL;
+        __pyx_t_10.data = NULL;
+      }
+
+      /* "shirotsume_tools/archive/crypt.pyx":366
+ *                 _mv = None
+ *             finally:
+ *                 rp_free(full_table)             # <<<<<<<<<<<<<<
+ *                 full_table = NULL
+ *     finally:
+*/
+      /*finally:*/ {
+        /*normal exit:*/{
+          rp_free(__pyx_v_full_table);
+
+          /* "shirotsume_tools/archive/crypt.pyx":367
+ *             finally:
+ *                 rp_free(full_table)
+ *                 full_table = NULL             # <<<<<<<<<<<<<<
  *     finally:
  *         free(raw)
 */
-    /*finally:*/ {
-      /*normal exit:*/{
-        rp_free(__pyx_v_full_header);
-        goto __pyx_L29;
-      }
-      __pyx_L28_error:;
-      /*exception exit:*/{
-        __Pyx_PyThreadState_declare
-        __Pyx_PyThreadState_assign
-        __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0;
-        __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-        __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-        __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-        __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-         __Pyx_ExceptionSwap(&__pyx_t_20, &__pyx_t_21, &__pyx_t_22);
-        if ( unlikely(__Pyx_GetException(&__pyx_t_17, &__pyx_t_18, &__pyx_t_19) < 0)) __Pyx_ErrFetch(&__pyx_t_17, &__pyx_t_18, &__pyx_t_19);
-        __Pyx_XGOTREF(__pyx_t_17);
-        __Pyx_XGOTREF(__pyx_t_18);
-        __Pyx_XGOTREF(__pyx_t_19);
-        __Pyx_XGOTREF(__pyx_t_20);
-        __Pyx_XGOTREF(__pyx_t_21);
-        __Pyx_XGOTREF(__pyx_t_22);
-        __pyx_t_13 = __pyx_lineno; __pyx_t_15 = __pyx_clineno; __pyx_t_26 = __pyx_filename;
-        {
-          rp_free(__pyx_v_full_header);
+          __pyx_v_full_table = NULL;
+          goto __pyx_L36;
         }
-        __Pyx_XGIVEREF(__pyx_t_20);
-        __Pyx_XGIVEREF(__pyx_t_21);
-        __Pyx_XGIVEREF(__pyx_t_22);
-        __Pyx_ExceptionReset(__pyx_t_20, __pyx_t_21, __pyx_t_22);
-        __Pyx_XGIVEREF(__pyx_t_17);
-        __Pyx_XGIVEREF(__pyx_t_18);
-        __Pyx_XGIVEREF(__pyx_t_19);
-        __Pyx_ErrRestore(__pyx_t_17, __pyx_t_18, __pyx_t_19);
-        __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0; __pyx_t_20 = 0; __pyx_t_21 = 0; __pyx_t_22 = 0;
-        __pyx_lineno = __pyx_t_13; __pyx_clineno = __pyx_t_15; __pyx_filename = __pyx_t_26;
-        goto __pyx_L5_error;
+        __pyx_L35_error:;
+        /*exception exit:*/{
+          __Pyx_PyThreadState_declare
+          __Pyx_PyThreadState_assign
+          __pyx_t_14 = 0; __pyx_t_15 = 0; __pyx_t_16 = 0; __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0;
+          __PYX_XCLEAR_MEMVIEW(&__pyx_t_10, 1);
+          __pyx_t_10.memview = NULL; __pyx_t_10.data = NULL;
+          __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+          __Pyx_XDECREF(__pyx_t_22); __pyx_t_22 = 0;
+          __Pyx_XDECREF(__pyx_t_23); __pyx_t_23 = 0;
+          __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+          __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+          __Pyx_XDECREF((PyObject *)__pyx_t_8); __pyx_t_8 = 0;
+           __Pyx_ExceptionSwap(&__pyx_t_17, &__pyx_t_18, &__pyx_t_19);
+          if ( unlikely(__Pyx_GetException(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16) < 0)) __Pyx_ErrFetch(&__pyx_t_14, &__pyx_t_15, &__pyx_t_16);
+          __Pyx_XGOTREF(__pyx_t_14);
+          __Pyx_XGOTREF(__pyx_t_15);
+          __Pyx_XGOTREF(__pyx_t_16);
+          __Pyx_XGOTREF(__pyx_t_17);
+          __Pyx_XGOTREF(__pyx_t_18);
+          __Pyx_XGOTREF(__pyx_t_19);
+          __pyx_t_7 = __pyx_lineno; __pyx_t_12 = __pyx_clineno; __pyx_t_29 = __pyx_filename;
+          {
+
+            /* "shirotsume_tools/archive/crypt.pyx":366
+ *                 _mv = None
+ *             finally:
+ *                 rp_free(full_table)             # <<<<<<<<<<<<<<
+ *                 full_table = NULL
+ *     finally:
+*/
+            rp_free(__pyx_v_full_table);
+
+            /* "shirotsume_tools/archive/crypt.pyx":367
+ *             finally:
+ *                 rp_free(full_table)
+ *                 full_table = NULL             # <<<<<<<<<<<<<<
+ *     finally:
+ *         free(raw)
+*/
+            __pyx_v_full_table = NULL;
+          }
+          __Pyx_XGIVEREF(__pyx_t_17);
+          __Pyx_XGIVEREF(__pyx_t_18);
+          __Pyx_XGIVEREF(__pyx_t_19);
+          __Pyx_ExceptionReset(__pyx_t_17, __pyx_t_18, __pyx_t_19);
+          __Pyx_XGIVEREF(__pyx_t_14);
+          __Pyx_XGIVEREF(__pyx_t_15);
+          __Pyx_XGIVEREF(__pyx_t_16);
+          __Pyx_ErrRestore(__pyx_t_14, __pyx_t_15, __pyx_t_16);
+          __pyx_t_14 = 0; __pyx_t_15 = 0; __pyx_t_16 = 0; __pyx_t_17 = 0; __pyx_t_18 = 0; __pyx_t_19 = 0;
+          __pyx_lineno = __pyx_t_7; __pyx_clineno = __pyx_t_12; __pyx_filename = __pyx_t_29;
+          goto __pyx_L8_error;
+        }
+        __pyx_L36:;
       }
-      __pyx_L29:;
+
+      /* "shirotsume_tools/archive/crypt.pyx":356
+ *             raise ValueError(f"entries yielded {seen} items, expected {entry_count}")
+ * 
+ *         if entry_count > 0:             # <<<<<<<<<<<<<<
+ *             file.seek(table_offset)
+ *             err = rp_encode_table(&full_table, &full_table_len, raw, entry_count)
+*/
     }
   }
 
-  /* "shirotsume_tools/archive/crypt.pyx":329
- *             rp_free(full_header)
+  /* "shirotsume_tools/archive/crypt.pyx":369
+ *                 full_table = NULL
  *     finally:
  *         free(raw)             # <<<<<<<<<<<<<<
  * 
@@ -23262,66 +24218,74 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_pack(PyObject *__pyx_v_fi
   /*finally:*/ {
     /*normal exit:*/{
       free(__pyx_v_raw);
-      goto __pyx_L6;
+      goto __pyx_L9;
     }
-    __pyx_L5_error:;
+    __pyx_L8_error:;
     /*exception exit:*/{
       __Pyx_PyThreadState_declare
       __Pyx_PyThreadState_assign
-      __pyx_t_22 = 0; __pyx_t_21 = 0; __pyx_t_20 = 0; __pyx_t_19 = 0; __pyx_t_18 = 0; __pyx_t_17 = 0;
-      __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-      __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-      __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __Pyx_XDECREF(__pyx_t_8); __pyx_t_8 = 0;
-      __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-       __Pyx_ExceptionSwap(&__pyx_t_19, &__pyx_t_18, &__pyx_t_17);
-      if ( unlikely(__Pyx_GetException(&__pyx_t_22, &__pyx_t_21, &__pyx_t_20) < 0)) __Pyx_ErrFetch(&__pyx_t_22, &__pyx_t_21, &__pyx_t_20);
-      __Pyx_XGOTREF(__pyx_t_22);
-      __Pyx_XGOTREF(__pyx_t_21);
-      __Pyx_XGOTREF(__pyx_t_20);
+      __pyx_t_19 = 0; __pyx_t_18 = 0; __pyx_t_17 = 0; __pyx_t_16 = 0; __pyx_t_15 = 0; __pyx_t_14 = 0;
+      __PYX_XCLEAR_MEMVIEW(&__pyx_t_10, 1);
+      __pyx_t_10.memview = NULL; __pyx_t_10.data = NULL;
+      __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
+      __Pyx_XDECREF(__pyx_t_22); __pyx_t_22 = 0;
+      __Pyx_XDECREF(__pyx_t_23); __pyx_t_23 = 0;
+      __Pyx_XDECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __Pyx_XDECREF(__pyx_t_4); __pyx_t_4 = 0;
+      __Pyx_XDECREF((PyObject *)__pyx_t_8); __pyx_t_8 = 0;
+       __Pyx_ExceptionSwap(&__pyx_t_16, &__pyx_t_15, &__pyx_t_14);
+      if ( unlikely(__Pyx_GetException(&__pyx_t_19, &__pyx_t_18, &__pyx_t_17) < 0)) __Pyx_ErrFetch(&__pyx_t_19, &__pyx_t_18, &__pyx_t_17);
       __Pyx_XGOTREF(__pyx_t_19);
       __Pyx_XGOTREF(__pyx_t_18);
       __Pyx_XGOTREF(__pyx_t_17);
-      __pyx_t_15 = __pyx_lineno; __pyx_t_13 = __pyx_clineno; __pyx_t_27 = __pyx_filename;
+      __Pyx_XGOTREF(__pyx_t_16);
+      __Pyx_XGOTREF(__pyx_t_15);
+      __Pyx_XGOTREF(__pyx_t_14);
+      __pyx_t_12 = __pyx_lineno; __pyx_t_7 = __pyx_clineno; __pyx_t_30 = __pyx_filename;
       {
         free(__pyx_v_raw);
       }
+      __Pyx_XGIVEREF(__pyx_t_16);
+      __Pyx_XGIVEREF(__pyx_t_15);
+      __Pyx_XGIVEREF(__pyx_t_14);
+      __Pyx_ExceptionReset(__pyx_t_16, __pyx_t_15, __pyx_t_14);
       __Pyx_XGIVEREF(__pyx_t_19);
       __Pyx_XGIVEREF(__pyx_t_18);
       __Pyx_XGIVEREF(__pyx_t_17);
-      __Pyx_ExceptionReset(__pyx_t_19, __pyx_t_18, __pyx_t_17);
-      __Pyx_XGIVEREF(__pyx_t_22);
-      __Pyx_XGIVEREF(__pyx_t_21);
-      __Pyx_XGIVEREF(__pyx_t_20);
-      __Pyx_ErrRestore(__pyx_t_22, __pyx_t_21, __pyx_t_20);
-      __pyx_t_22 = 0; __pyx_t_21 = 0; __pyx_t_20 = 0; __pyx_t_19 = 0; __pyx_t_18 = 0; __pyx_t_17 = 0;
-      __pyx_lineno = __pyx_t_15; __pyx_clineno = __pyx_t_13; __pyx_filename = __pyx_t_27;
+      __Pyx_ErrRestore(__pyx_t_19, __pyx_t_18, __pyx_t_17);
+      __pyx_t_19 = 0; __pyx_t_18 = 0; __pyx_t_17 = 0; __pyx_t_16 = 0; __pyx_t_15 = 0; __pyx_t_14 = 0;
+      __pyx_lineno = __pyx_t_12; __pyx_clineno = __pyx_t_7; __pyx_filename = __pyx_t_30;
       goto __pyx_L1_error;
     }
-    __pyx_L6:;
+    __pyx_L9:;
   }
 
   /* "shirotsume_tools/archive/crypt.pyx":257
  * 
  * 
- * cpdef void pack(object file, const uint8_t[::1] header, list entries, bint compress=True) except *:             # <<<<<<<<<<<<<<
+ * cpdef void pack(object file, const uint8_t[::1] header, object entries,             # <<<<<<<<<<<<<<
+ *                 bint compress=True, object count=None) except *:
  *     cdef:
- *         size_t count = len(entries)
 */
 
   /* function exit code */
   goto __pyx_L0;
   __pyx_L1_error:;
-  __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_XDECREF(__pyx_t_8);
-  __Pyx_XDECREF(__pyx_t_9);
-  __Pyx_XDECREF(__pyx_t_14);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF((PyObject *)__pyx_t_8);
+  __PYX_XCLEAR_MEMVIEW(&__pyx_t_10, 1);
+  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_XDECREF(__pyx_t_22);
+  __Pyx_XDECREF(__pyx_t_23);
   __Pyx_AddTraceback("shirotsume_tools.archive.crypt.pack", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_L0:;
   __Pyx_XDECREF((PyObject *)__pyx_v_entry);
   __Pyx_XDECREF(__pyx_v_name_bytes);
   __Pyx_XDECREF(__pyx_v_body_data);
+  __Pyx_XDECREF(__pyx_v_py_entry);
+  __Pyx_XDECREF(__pyx_v_count_obj);
+  __PYX_XCLEAR_MEMVIEW(&__pyx_v__mv, 1);
   __Pyx_RefNannyFinishContext();
 }
 
@@ -23345,11 +24309,12 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_memviewslice __pyx_v_header = { 0, 0, { 0 }, { 0 }, { 0 } };
   PyObject *__pyx_v_entries = 0;
   int __pyx_v_compress;
+  PyObject *__pyx_v_count = 0;
   #if !CYTHON_METH_FASTCALL
   CYTHON_UNUSED Py_ssize_t __pyx_nargs;
   #endif
   CYTHON_UNUSED PyObject *const *__pyx_kwvalues;
-  PyObject* values[4] = {0,0,0,0};
+  PyObject* values[5] = {0,0,0,0,0};
   int __pyx_lineno = 0;
   const char *__pyx_filename = NULL;
   int __pyx_clineno = 0;
@@ -23365,11 +24330,15 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   #endif
   __pyx_kwvalues = __Pyx_KwValues_FASTCALL(__pyx_args, __pyx_nargs);
   {
-    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_file,&__pyx_mstate_global->__pyx_n_u_header,&__pyx_mstate_global->__pyx_n_u_entries,&__pyx_mstate_global->__pyx_n_u_compress,0};
+    PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_file,&__pyx_mstate_global->__pyx_n_u_header,&__pyx_mstate_global->__pyx_n_u_entries,&__pyx_mstate_global->__pyx_n_u_compress,&__pyx_mstate_global->__pyx_n_u_count,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
     if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 257, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
+        case  5:
+        values[4] = __Pyx_ArgRef_FASTCALL(__pyx_args, 4);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 257, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
         case  4:
         values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
         if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 257, __pyx_L3_error)
@@ -23391,11 +24360,24 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
       if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "pack", 0) < (0)) __PYX_ERR(0, 257, __pyx_L3_error)
+
+      /* "shirotsume_tools/archive/crypt.pyx":258
+ * 
+ * cpdef void pack(object file, const uint8_t[::1] header, object entries,
+ *                 bint compress=True, object count=None) except *:             # <<<<<<<<<<<<<<
+ *     cdef:
+ *         size_t entry_count
+*/
+      if (!values[4]) values[4] = __Pyx_NewRef(((PyObject *)Py_None));
       for (Py_ssize_t i = __pyx_nargs; i < 3; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("pack", 0, 3, 4, i); __PYX_ERR(0, 257, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("pack", 0, 3, 5, i); __PYX_ERR(0, 257, __pyx_L3_error) }
       }
     } else {
       switch (__pyx_nargs) {
+        case  5:
+        values[4] = __Pyx_ArgRef_FASTCALL(__pyx_args, 4);
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[4])) __PYX_ERR(0, 257, __pyx_L3_error)
+        CYTHON_FALLTHROUGH;
         case  4:
         values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
         if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 257, __pyx_L3_error)
@@ -23410,19 +24392,21 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
         break;
         default: goto __pyx_L5_argtuple_error;
       }
+      if (!values[4]) values[4] = __Pyx_NewRef(((PyObject *)Py_None));
     }
     __pyx_v_file = values[0];
     __pyx_v_header = __Pyx_PyObject_to_MemoryviewSlice_dc_nn_uint8_t__const__(values[1], 0); if (unlikely(!__pyx_v_header.memview)) __PYX_ERR(0, 257, __pyx_L3_error)
-    __pyx_v_entries = ((PyObject*)values[2]);
+    __pyx_v_entries = values[2];
     if (values[3]) {
-      __pyx_v_compress = __Pyx_PyObject_IsTrue(values[3]); if (unlikely((__pyx_v_compress == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L3_error)
+      __pyx_v_compress = __Pyx_PyObject_IsTrue(values[3]); if (unlikely((__pyx_v_compress == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 258, __pyx_L3_error)
     } else {
       __pyx_v_compress = ((int)1);
     }
+    __pyx_v_count = values[4];
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("pack", 0, 3, 4, __pyx_nargs); __PYX_ERR(0, 257, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("pack", 0, 3, 5, __pyx_nargs); __PYX_ERR(0, 257, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -23434,28 +24418,26 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_entries), (&PyList_Type), 1, "entries", 1))) __PYX_ERR(0, 257, __pyx_L1_error)
-  __pyx_r = __pyx_pf_16shirotsume_tools_7archive_5crypt_10pack(__pyx_self, __pyx_v_file, __pyx_v_header, __pyx_v_entries, __pyx_v_compress);
+  __pyx_r = __pyx_pf_16shirotsume_tools_7archive_5crypt_10pack(__pyx_self, __pyx_v_file, __pyx_v_header, __pyx_v_entries, __pyx_v_compress, __pyx_v_count);
+
+  /* "shirotsume_tools/archive/crypt.pyx":257
+ * 
+ * 
+ * cpdef void pack(object file, const uint8_t[::1] header, object entries,             # <<<<<<<<<<<<<<
+ *                 bint compress=True, object count=None) except *:
+ *     cdef:
+*/
 
   /* function exit code */
-  goto __pyx_L0;
-  __pyx_L1_error:;
-  __pyx_r = NULL;
   for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
     Py_XDECREF(values[__pyx_temp]);
   }
-  goto __pyx_L7_cleaned_up;
-  __pyx_L0:;
-  for (Py_ssize_t __pyx_temp=0; __pyx_temp < (Py_ssize_t)(sizeof(values)/sizeof(values[0])); ++__pyx_temp) {
-    Py_XDECREF(values[__pyx_temp]);
-  }
-  __pyx_L7_cleaned_up:;
   __PYX_XCLEAR_MEMVIEW(&__pyx_v_header, 1);
   __Pyx_RefNannyFinishContext();
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_10pack(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_file, __Pyx_memviewslice __pyx_v_header, PyObject *__pyx_v_entries, int __pyx_v_compress) {
+static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_10pack(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_file, __Pyx_memviewslice __pyx_v_header, PyObject *__pyx_v_entries, int __pyx_v_compress, PyObject *__pyx_v_count) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   struct __pyx_opt_args_16shirotsume_tools_7archive_5crypt_pack __pyx_t_1;
@@ -23466,8 +24448,9 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_10pack(CYTHON_UNUSE
   __Pyx_RefNannySetupContext("pack", 0);
   __Pyx_XDECREF(__pyx_r);
   if (unlikely(!__pyx_v_header.memview)) { __Pyx_RaiseUnboundLocalError("header"); __PYX_ERR(0, 257, __pyx_L1_error) }
-  __pyx_t_1.__pyx_n = 1;
+  __pyx_t_1.__pyx_n = 2;
   __pyx_t_1.compress = __pyx_v_compress;
+  __pyx_t_1.count = __pyx_v_count;
   __pyx_f_16shirotsume_tools_7archive_5crypt_pack(__pyx_v_file, __pyx_v_header, __pyx_v_entries, 1, &__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 257, __pyx_L1_error)
   __pyx_t_2 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 257, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
@@ -23486,7 +24469,7 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_10pack(CYTHON_UNUSE
   return __pyx_r;
 }
 
-/* "shirotsume_tools/archive/crypt.pyx":332
+/* "shirotsume_tools/archive/crypt.pyx":372
  * 
  * 
  * cpdef void replace(object in_file, object out_file, object replacements, bint compress=True) except *:             # <<<<<<<<<<<<<<
@@ -23549,8 +24532,8 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
   size_t __pyx_t_22;
   uint32_t __pyx_t_23;
   __Pyx_memviewslice __pyx_t_24 = { 0, 0, { 0 }, { 0 }, { 0 } };
-  struct __pyx_opt_args_16shirotsume_tools_7archive_5crypt_encode_body __pyx_t_25;
-  uint8_t __pyx_t_26;
+  uint8_t __pyx_t_25;
+  struct __pyx_opt_args_16shirotsume_tools_7archive_5crypt_encode_body __pyx_t_26;
   char const *__pyx_t_27;
   char const *__pyx_t_28;
   int __pyx_lineno = 0;
@@ -23563,32 +24546,32 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
     }
   }
 
-  /* "shirotsume_tools/archive/crypt.pyx":334
+  /* "shirotsume_tools/archive/crypt.pyx":374
  * cpdef void replace(object in_file, object out_file, object replacements, bint compress=True) except *:
  *     cdef:
  *         Unpacker u = unpack(in_file)             # <<<<<<<<<<<<<<
  *         list entries = u.entries
  *         RawEntry raw
 */
-  __pyx_t_1 = ((PyObject *)__pyx_f_16shirotsume_tools_7archive_5crypt_unpack(__pyx_v_in_file, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 334, __pyx_L1_error)
+  __pyx_t_1 = ((PyObject *)__pyx_f_16shirotsume_tools_7archive_5crypt_unpack(__pyx_v_in_file, 0)); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 374, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_v_u = ((struct __pyx_obj_16shirotsume_tools_7archive_5crypt_Unpacker *)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "shirotsume_tools/archive/crypt.pyx":335
+  /* "shirotsume_tools/archive/crypt.pyx":375
  *     cdef:
  *         Unpacker u = unpack(in_file)
  *         list entries = u.entries             # <<<<<<<<<<<<<<
  *         RawEntry raw
  *         size_t i
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_u), __pyx_mstate_global->__pyx_n_u_entries); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 335, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_u), __pyx_mstate_global->__pyx_n_u_entries); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 375, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_1))) __PYX_ERR(0, 335, __pyx_L1_error)
+  if (!(likely(PyList_CheckExact(__pyx_t_1))||((__pyx_t_1) == Py_None) || __Pyx_RaiseUnexpectedTypeError("list", __pyx_t_1))) __PYX_ERR(0, 375, __pyx_L1_error)
   __pyx_v_entries = ((PyObject*)__pyx_t_1);
   __pyx_t_1 = 0;
 
-  /* "shirotsume_tools/archive/crypt.pyx":338
+  /* "shirotsume_tools/archive/crypt.pyx":378
  *         RawEntry raw
  *         size_t i
  *         size_t count = len(entries)             # <<<<<<<<<<<<<<
@@ -23597,12 +24580,12 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
   if (unlikely(__pyx_v_entries == Py_None)) {
     PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-    __PYX_ERR(0, 338, __pyx_L1_error)
+    __PYX_ERR(0, 378, __pyx_L1_error)
   }
-  __pyx_t_2 = __Pyx_PyList_GET_SIZE(__pyx_v_entries); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 338, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_PyList_GET_SIZE(__pyx_v_entries); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 378, __pyx_L1_error)
   __pyx_v_count = __pyx_t_2;
 
-  /* "shirotsume_tools/archive/crypt.pyx":339
+  /* "shirotsume_tools/archive/crypt.pyx":379
  *         size_t i
  *         size_t count = len(entries)
  *         rp_entry_t *raw_arr = <rp_entry_t*>malloc(count * sizeof(rp_entry_t))             # <<<<<<<<<<<<<<
@@ -23611,7 +24594,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
   __pyx_v_raw_arr = ((rp_entry_t *)malloc((__pyx_v_count * (sizeof(rp_entry_t)))));
 
-  /* "shirotsume_tools/archive/crypt.pyx":343
+  /* "shirotsume_tools/archive/crypt.pyx":383
  *         bytes new_data
  *         bytes encrypted
  *         uint8_t crypt_type = 0             # <<<<<<<<<<<<<<
@@ -23620,7 +24603,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
   __pyx_v_crypt_type = 0;
 
-  /* "shirotsume_tools/archive/crypt.pyx":346
+  /* "shirotsume_tools/archive/crypt.pyx":386
  *         size_t offset
  *         size_t data_offset
  *         uint8_t *full_header = NULL             # <<<<<<<<<<<<<<
@@ -23629,7 +24612,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
   __pyx_v_full_header = NULL;
 
-  /* "shirotsume_tools/archive/crypt.pyx":347
+  /* "shirotsume_tools/archive/crypt.pyx":387
  *         size_t data_offset
  *         uint8_t *full_header = NULL
  *         size_t full_header_len = 0             # <<<<<<<<<<<<<<
@@ -23638,7 +24621,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
   __pyx_v_full_header_len = 0;
 
-  /* "shirotsume_tools/archive/crypt.pyx":348
+  /* "shirotsume_tools/archive/crypt.pyx":388
  *         uint8_t *full_header = NULL
  *         size_t full_header_len = 0
  *         const uint8_t *header_ptr = NULL             # <<<<<<<<<<<<<<
@@ -23647,20 +24630,20 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
   __pyx_v_header_ptr = NULL;
 
-  /* "shirotsume_tools/archive/crypt.pyx":349
+  /* "shirotsume_tools/archive/crypt.pyx":389
  *         size_t full_header_len = 0
  *         const uint8_t *header_ptr = NULL
  *         size_t header_len = len(u.header)             # <<<<<<<<<<<<<<
  *         rp_error_t err
  *         object enc_result
 */
-  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_u), __pyx_mstate_global->__pyx_n_u_header); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 349, __pyx_L1_error)
+  __pyx_t_1 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_u), __pyx_mstate_global->__pyx_n_u_header); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 389, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 349, __pyx_L1_error)
+  __pyx_t_2 = PyObject_Length(__pyx_t_1); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 389, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
   __pyx_v_header_len = __pyx_t_2;
 
-  /* "shirotsume_tools/archive/crypt.pyx":356
+  /* "shirotsume_tools/archive/crypt.pyx":396
  *         bint is_callable
  * 
  *     if raw_arr is NULL:             # <<<<<<<<<<<<<<
@@ -23670,16 +24653,16 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
   __pyx_t_3 = (__pyx_v_raw_arr == NULL);
   if (unlikely(__pyx_t_3)) {
 
-    /* "shirotsume_tools/archive/crypt.pyx":357
+    /* "shirotsume_tools/archive/crypt.pyx":397
  * 
  *     if raw_arr is NULL:
  *         raise MemoryError()             # <<<<<<<<<<<<<<
  *     memset(raw_arr, 0, count * sizeof(rp_entry_t))
  * 
 */
-    PyErr_NoMemory(); __PYX_ERR(0, 357, __pyx_L1_error)
+    PyErr_NoMemory(); __PYX_ERR(0, 397, __pyx_L1_error)
 
-    /* "shirotsume_tools/archive/crypt.pyx":356
+    /* "shirotsume_tools/archive/crypt.pyx":396
  *         bint is_callable
  * 
  *     if raw_arr is NULL:             # <<<<<<<<<<<<<<
@@ -23688,7 +24671,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
   }
 
-  /* "shirotsume_tools/archive/crypt.pyx":358
+  /* "shirotsume_tools/archive/crypt.pyx":398
  *     if raw_arr is NULL:
  *         raise MemoryError()
  *     memset(raw_arr, 0, count * sizeof(rp_entry_t))             # <<<<<<<<<<<<<<
@@ -23697,7 +24680,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
   (void)(memset(__pyx_v_raw_arr, 0, (__pyx_v_count * (sizeof(rp_entry_t)))));
 
-  /* "shirotsume_tools/archive/crypt.pyx":360
+  /* "shirotsume_tools/archive/crypt.pyx":400
  *     memset(raw_arr, 0, count * sizeof(rp_entry_t))
  * 
  *     try:             # <<<<<<<<<<<<<<
@@ -23706,7 +24689,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
   /*try:*/ {
 
-    /* "shirotsume_tools/archive/crypt.pyx":361
+    /* "shirotsume_tools/archive/crypt.pyx":401
  * 
  *     try:
  *         for i in range(count):             # <<<<<<<<<<<<<<
@@ -23718,7 +24701,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
 
-      /* "shirotsume_tools/archive/crypt.pyx":362
+      /* "shirotsume_tools/archive/crypt.pyx":402
  *     try:
  *         for i in range(count):
  *             raw = <RawEntry>entries[i]             # <<<<<<<<<<<<<<
@@ -23727,9 +24710,9 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
       if (unlikely(__pyx_v_entries == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 362, __pyx_L5_error)
+        __PYX_ERR(0, 402, __pyx_L5_error)
       }
-      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_entries, __pyx_v_i, size_t, 0, __Pyx_PyLong_FromSize_t, 1, 0, 1, 1, __Pyx_ReferenceSharing_OwnStrongReference); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 362, __pyx_L5_error)
+      __pyx_t_1 = __Pyx_GetItemInt_List(__pyx_v_entries, __pyx_v_i, size_t, 0, __Pyx_PyLong_FromSize_t, 1, 0, 1, 1, __Pyx_ReferenceSharing_OwnStrongReference); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 402, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_1);
       __pyx_t_7 = __pyx_t_1;
       __Pyx_INCREF(__pyx_t_7);
@@ -23737,7 +24720,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       __Pyx_XDECREF_SET(__pyx_v_raw, ((struct __pyx_obj_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_t_7));
       __pyx_t_7 = 0;
 
-      /* "shirotsume_tools/archive/crypt.pyx":363
+      /* "shirotsume_tools/archive/crypt.pyx":403
  *         for i in range(count):
  *             raw = <RawEntry>entries[i]
  *             memcpy(&raw_arr[i], &raw._entry, sizeof(rp_entry_t))             # <<<<<<<<<<<<<<
@@ -23747,7 +24730,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       (void)(memcpy((&(__pyx_v_raw_arr[__pyx_v_i])), (&__pyx_v_raw->_entry), (sizeof(rp_entry_t))));
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":365
+    /* "shirotsume_tools/archive/crypt.pyx":405
  *             memcpy(&raw_arr[i], &raw._entry, sizeof(rp_entry_t))
  * 
  *         data_offset = 8 + 4 + 4 + header_len + 4 + count * 80             # <<<<<<<<<<<<<<
@@ -23756,7 +24739,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
     __pyx_v_data_offset = (((0x10 + __pyx_v_header_len) + 4) + (__pyx_v_count * 80));
 
-    /* "shirotsume_tools/archive/crypt.pyx":366
+    /* "shirotsume_tools/archive/crypt.pyx":406
  * 
  *         data_offset = 8 + 4 + 4 + header_len + 4 + count * 80
  *         offset = data_offset             # <<<<<<<<<<<<<<
@@ -23765,7 +24748,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
     __pyx_v_offset = __pyx_v_data_offset;
 
-    /* "shirotsume_tools/archive/crypt.pyx":368
+    /* "shirotsume_tools/archive/crypt.pyx":408
  *         offset = data_offset
  * 
  *         if header_len > 0:             # <<<<<<<<<<<<<<
@@ -23775,20 +24758,20 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
     __pyx_t_3 = (__pyx_v_header_len > 0);
     if (__pyx_t_3) {
 
-      /* "shirotsume_tools/archive/crypt.pyx":369
+      /* "shirotsume_tools/archive/crypt.pyx":409
  * 
  *         if header_len > 0:
  *             header_ptr = <const uint8_t*>u.header             # <<<<<<<<<<<<<<
  *         err = rp_encode_header(&full_header, &full_header_len,
  *                                header_ptr, header_len,
 */
-      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_u), __pyx_mstate_global->__pyx_n_u_header); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 369, __pyx_L5_error)
+      __pyx_t_7 = __Pyx_PyObject_GetAttrStr(((PyObject *)__pyx_v_u), __pyx_mstate_global->__pyx_n_u_header); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 409, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_8 = __Pyx_PyObject_AsUString(__pyx_t_7); if (unlikely((!__pyx_t_8) && PyErr_Occurred())) __PYX_ERR(0, 369, __pyx_L5_error)
+      __pyx_t_8 = __Pyx_PyObject_AsUString(__pyx_t_7); if (unlikely((!__pyx_t_8) && PyErr_Occurred())) __PYX_ERR(0, 409, __pyx_L5_error)
       __pyx_v_header_ptr = ((uint8_t const *)__pyx_t_8);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "shirotsume_tools/archive/crypt.pyx":368
+      /* "shirotsume_tools/archive/crypt.pyx":408
  *         offset = data_offset
  * 
  *         if header_len > 0:             # <<<<<<<<<<<<<<
@@ -23797,7 +24780,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":370
+    /* "shirotsume_tools/archive/crypt.pyx":410
  *         if header_len > 0:
  *             header_ptr = <const uint8_t*>u.header
  *         err = rp_encode_header(&full_header, &full_header_len,             # <<<<<<<<<<<<<<
@@ -23806,16 +24789,16 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
     __pyx_v_err = rp_encode_header((&__pyx_v_full_header), (&__pyx_v_full_header_len), __pyx_v_header_ptr, __pyx_v_header_len, __pyx_v_raw_arr, __pyx_v_count);
 
-    /* "shirotsume_tools/archive/crypt.pyx":373
+    /* "shirotsume_tools/archive/crypt.pyx":413
  *                                header_ptr, header_len,
  *                                raw_arr, count)
  *         _raise_on_error(err)             # <<<<<<<<<<<<<<
  *         try:
  *             out_file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
 */
-    __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 373, __pyx_L5_error)
+    __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 413, __pyx_L5_error)
 
-    /* "shirotsume_tools/archive/crypt.pyx":374
+    /* "shirotsume_tools/archive/crypt.pyx":414
  *                                raw_arr, count)
  *         _raise_on_error(err)
  *         try:             # <<<<<<<<<<<<<<
@@ -23824,7 +24807,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
     /*try:*/ {
 
-      /* "shirotsume_tools/archive/crypt.pyx":375
+      /* "shirotsume_tools/archive/crypt.pyx":415
  *         _raise_on_error(err)
  *         try:
  *             out_file.write(bytes((<uint8_t*>full_header)[:full_header_len]))             # <<<<<<<<<<<<<<
@@ -23834,7 +24817,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       __pyx_t_1 = __pyx_v_out_file;
       __Pyx_INCREF(__pyx_t_1);
       __pyx_t_10 = NULL;
-      __pyx_t_11 = __Pyx_PyBytes_FromStringAndSize(((char const *)((uint8_t *)__pyx_v_full_header)) + 0, __pyx_v_full_header_len - 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 375, __pyx_L11_error)
+      __pyx_t_11 = __Pyx_PyBytes_FromStringAndSize(((char const *)((uint8_t *)__pyx_v_full_header)) + 0, __pyx_v_full_header_len - 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 415, __pyx_L11_error)
       __Pyx_GOTREF(__pyx_t_11);
       __pyx_t_4 = 1;
       {
@@ -23842,7 +24825,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
         __pyx_t_9 = __Pyx_PyObject_FastCall((PyObject*)(&PyBytes_Type), __pyx_callargs+__pyx_t_4, (2-__pyx_t_4) | (__pyx_t_4*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_10); __pyx_t_10 = 0;
         __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-        if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 375, __pyx_L11_error)
+        if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 415, __pyx_L11_error)
         __Pyx_GOTREF(__pyx_t_9);
       }
       __pyx_t_4 = 0;
@@ -23851,13 +24834,13 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
         __pyx_t_7 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_write, __pyx_callargs+__pyx_t_4, (2-__pyx_t_4) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 375, __pyx_L11_error)
+        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 415, __pyx_L11_error)
         __Pyx_GOTREF(__pyx_t_7);
       }
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":377
+    /* "shirotsume_tools/archive/crypt.pyx":417
  *             out_file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
  *         finally:
  *             rp_free(full_header)             # <<<<<<<<<<<<<<
@@ -23868,7 +24851,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       /*normal exit:*/{
         rp_free(__pyx_v_full_header);
 
-        /* "shirotsume_tools/archive/crypt.pyx":378
+        /* "shirotsume_tools/archive/crypt.pyx":418
  *         finally:
  *             rp_free(full_header)
  *             full_header = NULL             # <<<<<<<<<<<<<<
@@ -23899,7 +24882,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
         __pyx_t_12 = __pyx_lineno; __pyx_t_13 = __pyx_clineno; __pyx_t_14 = __pyx_filename;
         {
 
-          /* "shirotsume_tools/archive/crypt.pyx":377
+          /* "shirotsume_tools/archive/crypt.pyx":417
  *             out_file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
  *         finally:
  *             rp_free(full_header)             # <<<<<<<<<<<<<<
@@ -23908,7 +24891,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
           rp_free(__pyx_v_full_header);
 
-          /* "shirotsume_tools/archive/crypt.pyx":378
+          /* "shirotsume_tools/archive/crypt.pyx":418
  *         finally:
  *             rp_free(full_header)
  *             full_header = NULL             # <<<<<<<<<<<<<<
@@ -23932,30 +24915,30 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       __pyx_L12:;
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":380
+    /* "shirotsume_tools/archive/crypt.pyx":420
  *             full_header = NULL
  * 
  *         is_mapping = isinstance(replacements, Mapping)             # <<<<<<<<<<<<<<
  *         is_callable = callable(replacements)
  *         if not is_mapping and not is_callable:
 */
-    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_Mapping); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 380, __pyx_L5_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_mstate_global->__pyx_n_u_Mapping); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 420, __pyx_L5_error)
     __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_3 = PyObject_IsInstance(__pyx_v_replacements, __pyx_t_7); if (unlikely(__pyx_t_3 == ((int)-1))) __PYX_ERR(0, 380, __pyx_L5_error)
+    __pyx_t_3 = PyObject_IsInstance(__pyx_v_replacements, __pyx_t_7); if (unlikely(__pyx_t_3 == ((int)-1))) __PYX_ERR(0, 420, __pyx_L5_error)
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     __pyx_v_is_mapping = __pyx_t_3;
 
-    /* "shirotsume_tools/archive/crypt.pyx":381
+    /* "shirotsume_tools/archive/crypt.pyx":421
  * 
  *         is_mapping = isinstance(replacements, Mapping)
  *         is_callable = callable(replacements)             # <<<<<<<<<<<<<<
  *         if not is_mapping and not is_callable:
  *             raise TypeError("replacements must be a mapping or a callable")
 */
-    __pyx_t_3 = __Pyx_PyCallable_Check(__pyx_v_replacements); if (unlikely(__pyx_t_3 == ((int)-1))) __PYX_ERR(0, 381, __pyx_L5_error)
+    __pyx_t_3 = __Pyx_PyCallable_Check(__pyx_v_replacements); if (unlikely(__pyx_t_3 == ((int)-1))) __PYX_ERR(0, 421, __pyx_L5_error)
     __pyx_v_is_callable = __pyx_t_3;
 
-    /* "shirotsume_tools/archive/crypt.pyx":382
+    /* "shirotsume_tools/archive/crypt.pyx":422
  *         is_mapping = isinstance(replacements, Mapping)
  *         is_callable = callable(replacements)
  *         if not is_mapping and not is_callable:             # <<<<<<<<<<<<<<
@@ -23973,7 +24956,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
     __pyx_L16_bool_binop_done:;
     if (unlikely(__pyx_t_3)) {
 
-      /* "shirotsume_tools/archive/crypt.pyx":383
+      /* "shirotsume_tools/archive/crypt.pyx":423
  *         is_callable = callable(replacements)
  *         if not is_mapping and not is_callable:
  *             raise TypeError("replacements must be a mapping or a callable")             # <<<<<<<<<<<<<<
@@ -23986,14 +24969,14 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
         PyObject *__pyx_callargs[2] = {__pyx_t_9, __pyx_mstate_global->__pyx_kp_u_replacements_must_be_a_mapping_o};
         __pyx_t_7 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_TypeError)), __pyx_callargs+__pyx_t_4, (2-__pyx_t_4) | (__pyx_t_4*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
-        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 383, __pyx_L5_error)
+        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 423, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_7);
       }
       __Pyx_Raise(__pyx_t_7, 0, 0, 0);
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __PYX_ERR(0, 383, __pyx_L5_error)
+      __PYX_ERR(0, 423, __pyx_L5_error)
 
-      /* "shirotsume_tools/archive/crypt.pyx":382
+      /* "shirotsume_tools/archive/crypt.pyx":422
  *         is_mapping = isinstance(replacements, Mapping)
  *         is_callable = callable(replacements)
  *         if not is_mapping and not is_callable:             # <<<<<<<<<<<<<<
@@ -24002,7 +24985,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":385
+    /* "shirotsume_tools/archive/crypt.pyx":425
  *             raise TypeError("replacements must be a mapping or a callable")
  * 
  *         for i in range(count):             # <<<<<<<<<<<<<<
@@ -24014,7 +24997,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
     for (__pyx_t_6 = 0; __pyx_t_6 < __pyx_t_5; __pyx_t_6+=1) {
       __pyx_v_i = __pyx_t_6;
 
-      /* "shirotsume_tools/archive/crypt.pyx":386
+      /* "shirotsume_tools/archive/crypt.pyx":426
  * 
  *         for i in range(count):
  *             raw = <RawEntry>entries[i]             # <<<<<<<<<<<<<<
@@ -24023,9 +25006,9 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
       if (unlikely(__pyx_v_entries == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "'NoneType' object is not subscriptable");
-        __PYX_ERR(0, 386, __pyx_L5_error)
+        __PYX_ERR(0, 426, __pyx_L5_error)
       }
-      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_entries, __pyx_v_i, size_t, 0, __Pyx_PyLong_FromSize_t, 1, 0, 1, 1, __Pyx_ReferenceSharing_OwnStrongReference); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 386, __pyx_L5_error)
+      __pyx_t_7 = __Pyx_GetItemInt_List(__pyx_v_entries, __pyx_v_i, size_t, 0, __Pyx_PyLong_FromSize_t, 1, 0, 1, 1, __Pyx_ReferenceSharing_OwnStrongReference); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 426, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_7);
       __pyx_t_9 = __pyx_t_7;
       __Pyx_INCREF(__pyx_t_9);
@@ -24033,7 +25016,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       __Pyx_XDECREF_SET(__pyx_v_raw, ((struct __pyx_obj_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_t_9));
       __pyx_t_9 = 0;
 
-      /* "shirotsume_tools/archive/crypt.pyx":387
+      /* "shirotsume_tools/archive/crypt.pyx":427
  *         for i in range(count):
  *             raw = <RawEntry>entries[i]
  *             repl = None             # <<<<<<<<<<<<<<
@@ -24043,7 +25026,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       __Pyx_INCREF(Py_None);
       __Pyx_XDECREF_SET(__pyx_v_repl, Py_None);
 
-      /* "shirotsume_tools/archive/crypt.pyx":388
+      /* "shirotsume_tools/archive/crypt.pyx":428
  *             raw = <RawEntry>entries[i]
  *             repl = None
  *             if is_mapping:             # <<<<<<<<<<<<<<
@@ -24052,35 +25035,35 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
       if (__pyx_v_is_mapping) {
 
-        /* "shirotsume_tools/archive/crypt.pyx":389
+        /* "shirotsume_tools/archive/crypt.pyx":429
  *             repl = None
  *             if is_mapping:
  *                 if raw.name() in replacements:             # <<<<<<<<<<<<<<
  *                     repl = replacements[raw.name()]
  *             elif is_callable:
 */
-        __pyx_t_9 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->name(__pyx_v_raw, 0); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 389, __pyx_L5_error)
+        __pyx_t_9 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->name(__pyx_v_raw, 0); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 429, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_9);
-        __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_t_9, __pyx_v_replacements, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 389, __pyx_L5_error)
+        __pyx_t_3 = (__Pyx_PySequence_ContainsTF(__pyx_t_9, __pyx_v_replacements, Py_EQ)); if (unlikely((__pyx_t_3 < 0))) __PYX_ERR(0, 429, __pyx_L5_error)
         __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
         if (__pyx_t_3) {
 
-          /* "shirotsume_tools/archive/crypt.pyx":390
+          /* "shirotsume_tools/archive/crypt.pyx":430
  *             if is_mapping:
  *                 if raw.name() in replacements:
  *                     repl = replacements[raw.name()]             # <<<<<<<<<<<<<<
  *             elif is_callable:
  *                 repl = replacements(raw.name())
 */
-          __pyx_t_9 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->name(__pyx_v_raw, 0); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 390, __pyx_L5_error)
+          __pyx_t_9 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->name(__pyx_v_raw, 0); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 430, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_9);
-          __pyx_t_7 = __Pyx_PyObject_Dict_GetItem(__pyx_v_replacements, __pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 390, __pyx_L5_error)
+          __pyx_t_7 = __Pyx_PyObject_Dict_GetItem(__pyx_v_replacements, __pyx_t_9); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 430, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_7);
           __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
           __Pyx_DECREF_SET(__pyx_v_repl, __pyx_t_7);
           __pyx_t_7 = 0;
 
-          /* "shirotsume_tools/archive/crypt.pyx":389
+          /* "shirotsume_tools/archive/crypt.pyx":429
  *             repl = None
  *             if is_mapping:
  *                 if raw.name() in replacements:             # <<<<<<<<<<<<<<
@@ -24089,7 +25072,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
         }
 
-        /* "shirotsume_tools/archive/crypt.pyx":388
+        /* "shirotsume_tools/archive/crypt.pyx":428
  *             raw = <RawEntry>entries[i]
  *             repl = None
  *             if is_mapping:             # <<<<<<<<<<<<<<
@@ -24099,7 +25082,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
         goto __pyx_L20;
       }
 
-      /* "shirotsume_tools/archive/crypt.pyx":391
+      /* "shirotsume_tools/archive/crypt.pyx":431
  *                 if raw.name() in replacements:
  *                     repl = replacements[raw.name()]
  *             elif is_callable:             # <<<<<<<<<<<<<<
@@ -24108,7 +25091,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
       if (__pyx_v_is_callable) {
 
-        /* "shirotsume_tools/archive/crypt.pyx":392
+        /* "shirotsume_tools/archive/crypt.pyx":432
  *                     repl = replacements[raw.name()]
  *             elif is_callable:
  *                 repl = replacements(raw.name())             # <<<<<<<<<<<<<<
@@ -24118,7 +25101,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
         __pyx_t_9 = NULL;
         __Pyx_INCREF(__pyx_v_replacements);
         __pyx_t_1 = __pyx_v_replacements; 
-        __pyx_t_11 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->name(__pyx_v_raw, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 392, __pyx_L5_error)
+        __pyx_t_11 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->name(__pyx_v_raw, 0); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 432, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_11);
         __pyx_t_22 = 1;
         #if CYTHON_UNPACK_METHODS
@@ -24138,13 +25121,13 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
           __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
           __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 392, __pyx_L5_error)
+          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 432, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_7);
         }
         __Pyx_DECREF_SET(__pyx_v_repl, __pyx_t_7);
         __pyx_t_7 = 0;
 
-        /* "shirotsume_tools/archive/crypt.pyx":391
+        /* "shirotsume_tools/archive/crypt.pyx":431
  *                 if raw.name() in replacements:
  *                     repl = replacements[raw.name()]
  *             elif is_callable:             # <<<<<<<<<<<<<<
@@ -24154,7 +25137,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       }
       __pyx_L20:;
 
-      /* "shirotsume_tools/archive/crypt.pyx":394
+      /* "shirotsume_tools/archive/crypt.pyx":434
  *                 repl = replacements(raw.name())
  * 
  *             if repl is None:             # <<<<<<<<<<<<<<
@@ -24164,7 +25147,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       __pyx_t_3 = (__pyx_v_repl == Py_None);
       if (__pyx_t_3) {
 
-        /* "shirotsume_tools/archive/crypt.pyx":395
+        /* "shirotsume_tools/archive/crypt.pyx":435
  * 
  *             if repl is None:
  *                 in_file.seek(raw.offset())             # <<<<<<<<<<<<<<
@@ -24173,8 +25156,8 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
         __pyx_t_1 = __pyx_v_in_file;
         __Pyx_INCREF(__pyx_t_1);
-        __pyx_t_23 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->offset(__pyx_v_raw, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 395, __pyx_L5_error)
-        __pyx_t_11 = __Pyx_PyLong_From_uint32_t(__pyx_t_23); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 395, __pyx_L5_error)
+        __pyx_t_23 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->offset(__pyx_v_raw, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 435, __pyx_L5_error)
+        __pyx_t_11 = __Pyx_PyLong_From_uint32_t(__pyx_t_23); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 435, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_11);
         __pyx_t_22 = 0;
         {
@@ -24182,12 +25165,12 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
           __pyx_t_7 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_seek, __pyx_callargs+__pyx_t_22, (2-__pyx_t_22) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
           __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 395, __pyx_L5_error)
+          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 435, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_7);
         }
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-        /* "shirotsume_tools/archive/crypt.pyx":396
+        /* "shirotsume_tools/archive/crypt.pyx":436
  *             if repl is None:
  *                 in_file.seek(raw.offset())
  *                 comp_data = in_file.read(raw.comp_size())             # <<<<<<<<<<<<<<
@@ -24196,8 +25179,8 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
         __pyx_t_11 = __pyx_v_in_file;
         __Pyx_INCREF(__pyx_t_11);
-        __pyx_t_23 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->comp_size(__pyx_v_raw, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 396, __pyx_L5_error)
-        __pyx_t_1 = __Pyx_PyLong_From_uint32_t(__pyx_t_23); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 396, __pyx_L5_error)
+        __pyx_t_23 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->comp_size(__pyx_v_raw, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 436, __pyx_L5_error)
+        __pyx_t_1 = __Pyx_PyLong_From_uint32_t(__pyx_t_23); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 436, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_1);
         __pyx_t_22 = 0;
         {
@@ -24205,14 +25188,14 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
           __pyx_t_7 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_read, __pyx_callargs+__pyx_t_22, (2-__pyx_t_22) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
           __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 396, __pyx_L5_error)
+          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 436, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_7);
         }
-        if (!(likely(PyBytes_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_7))) __PYX_ERR(0, 396, __pyx_L5_error)
+        if (!(likely(PyBytes_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_7))) __PYX_ERR(0, 436, __pyx_L5_error)
         __Pyx_XDECREF_SET(__pyx_v_comp_data, ((PyObject*)__pyx_t_7));
         __pyx_t_7 = 0;
 
-        /* "shirotsume_tools/archive/crypt.pyx":397
+        /* "shirotsume_tools/archive/crypt.pyx":437
  *                 in_file.seek(raw.offset())
  *                 comp_data = in_file.read(raw.comp_size())
  *                 if <size_t>len(comp_data) != raw.comp_size():             # <<<<<<<<<<<<<<
@@ -24221,14 +25204,14 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
         if (unlikely(__pyx_v_comp_data == Py_None)) {
           PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-          __PYX_ERR(0, 397, __pyx_L5_error)
+          __PYX_ERR(0, 437, __pyx_L5_error)
         }
-        __pyx_t_2 = __Pyx_PyBytes_GET_SIZE(__pyx_v_comp_data); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 397, __pyx_L5_error)
-        __pyx_t_23 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->comp_size(__pyx_v_raw, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 397, __pyx_L5_error)
+        __pyx_t_2 = __Pyx_PyBytes_GET_SIZE(__pyx_v_comp_data); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 437, __pyx_L5_error)
+        __pyx_t_23 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->comp_size(__pyx_v_raw, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 437, __pyx_L5_error)
         __pyx_t_3 = (((size_t)__pyx_t_2) != __pyx_t_23);
         if (unlikely(__pyx_t_3)) {
 
-          /* "shirotsume_tools/archive/crypt.pyx":398
+          /* "shirotsume_tools/archive/crypt.pyx":438
  *                 comp_data = in_file.read(raw.comp_size())
  *                 if <size_t>len(comp_data) != raw.comp_size():
  *                     raise ShortReadError("unexpected end of file")             # <<<<<<<<<<<<<<
@@ -24236,7 +25219,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
  *                 out_file.write(comp_data)
 */
           __pyx_t_1 = NULL;
-          __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_ShortReadError); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 398, __pyx_L5_error)
+          __Pyx_GetModuleGlobalName(__pyx_t_11, __pyx_mstate_global->__pyx_n_u_ShortReadError); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 438, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_11);
           __pyx_t_22 = 1;
           #if CYTHON_UNPACK_METHODS
@@ -24255,14 +25238,14 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
             __pyx_t_7 = __Pyx_PyObject_FastCall((PyObject*)__pyx_t_11, __pyx_callargs+__pyx_t_22, (2-__pyx_t_22) | (__pyx_t_22*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
             __Pyx_XDECREF(__pyx_t_1); __pyx_t_1 = 0;
             __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 398, __pyx_L5_error)
+            if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 438, __pyx_L5_error)
             __Pyx_GOTREF(__pyx_t_7);
           }
           __Pyx_Raise(__pyx_t_7, 0, 0, 0);
           __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-          __PYX_ERR(0, 398, __pyx_L5_error)
+          __PYX_ERR(0, 438, __pyx_L5_error)
 
-          /* "shirotsume_tools/archive/crypt.pyx":397
+          /* "shirotsume_tools/archive/crypt.pyx":437
  *                 in_file.seek(raw.offset())
  *                 comp_data = in_file.read(raw.comp_size())
  *                 if <size_t>len(comp_data) != raw.comp_size():             # <<<<<<<<<<<<<<
@@ -24271,7 +25254,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
         }
 
-        /* "shirotsume_tools/archive/crypt.pyx":399
+        /* "shirotsume_tools/archive/crypt.pyx":439
  *                 if <size_t>len(comp_data) != raw.comp_size():
  *                     raise ShortReadError("unexpected end of file")
  *                 raw_arr[i].offset = offset             # <<<<<<<<<<<<<<
@@ -24280,7 +25263,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
         (__pyx_v_raw_arr[__pyx_v_i]).offset = __pyx_v_offset;
 
-        /* "shirotsume_tools/archive/crypt.pyx":400
+        /* "shirotsume_tools/archive/crypt.pyx":440
  *                     raise ShortReadError("unexpected end of file")
  *                 raw_arr[i].offset = offset
  *                 out_file.write(comp_data)             # <<<<<<<<<<<<<<
@@ -24294,22 +25277,22 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
           PyObject *__pyx_callargs[2] = {__pyx_t_11, __pyx_v_comp_data};
           __pyx_t_7 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_write, __pyx_callargs+__pyx_t_22, (2-__pyx_t_22) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 400, __pyx_L5_error)
+          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 440, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_7);
         }
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-        /* "shirotsume_tools/archive/crypt.pyx":401
+        /* "shirotsume_tools/archive/crypt.pyx":441
  *                 raw_arr[i].offset = offset
  *                 out_file.write(comp_data)
  *                 offset += raw.comp_size()             # <<<<<<<<<<<<<<
  *                 continue
  * 
 */
-        __pyx_t_23 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->comp_size(__pyx_v_raw, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 401, __pyx_L5_error)
+        __pyx_t_23 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->comp_size(__pyx_v_raw, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 441, __pyx_L5_error)
         __pyx_v_offset = (__pyx_v_offset + __pyx_t_23);
 
-        /* "shirotsume_tools/archive/crypt.pyx":402
+        /* "shirotsume_tools/archive/crypt.pyx":442
  *                 out_file.write(comp_data)
  *                 offset += raw.comp_size()
  *                 continue             # <<<<<<<<<<<<<<
@@ -24318,7 +25301,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
         goto __pyx_L18_continue;
 
-        /* "shirotsume_tools/archive/crypt.pyx":394
+        /* "shirotsume_tools/archive/crypt.pyx":434
  *                 repl = replacements(raw.name())
  * 
  *             if repl is None:             # <<<<<<<<<<<<<<
@@ -24327,7 +25310,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
       }
 
-      /* "shirotsume_tools/archive/crypt.pyx":404
+      /* "shirotsume_tools/archive/crypt.pyx":444
  *                 continue
  * 
  *             if not isinstance(repl, bytes):             # <<<<<<<<<<<<<<
@@ -24338,12 +25321,12 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       __pyx_t_21 = (!__pyx_t_3);
       if (unlikely(__pyx_t_21)) {
 
-        /* "shirotsume_tools/archive/crypt.pyx":405
+        /* "shirotsume_tools/archive/crypt.pyx":445
  * 
  *             if not isinstance(repl, bytes):
  *                 raise TypeError("replacement must be bytes or None")             # <<<<<<<<<<<<<<
  *             new_data = <bytes>repl
- *             enc_result = encode_body(new_data, compress)
+ *             enc_result = encode_body(new_data, compress, raw.crypt_type())
 */
         __pyx_t_11 = NULL;
         __pyx_t_22 = 1;
@@ -24351,14 +25334,14 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
           PyObject *__pyx_callargs[2] = {__pyx_t_11, __pyx_mstate_global->__pyx_kp_u_replacement_must_be_bytes_or_Non};
           __pyx_t_7 = __Pyx_PyObject_FastCall((PyObject*)(((PyTypeObject*)PyExc_TypeError)), __pyx_callargs+__pyx_t_22, (2-__pyx_t_22) | (__pyx_t_22*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
           __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 405, __pyx_L5_error)
+          if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 445, __pyx_L5_error)
           __Pyx_GOTREF(__pyx_t_7);
         }
         __Pyx_Raise(__pyx_t_7, 0, 0, 0);
         __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-        __PYX_ERR(0, 405, __pyx_L5_error)
+        __PYX_ERR(0, 445, __pyx_L5_error)
 
-        /* "shirotsume_tools/archive/crypt.pyx":404
+        /* "shirotsume_tools/archive/crypt.pyx":444
  *                 continue
  * 
  *             if not isinstance(repl, bytes):             # <<<<<<<<<<<<<<
@@ -24367,11 +25350,11 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
       }
 
-      /* "shirotsume_tools/archive/crypt.pyx":406
+      /* "shirotsume_tools/archive/crypt.pyx":446
  *             if not isinstance(repl, bytes):
  *                 raise TypeError("replacement must be bytes or None")
  *             new_data = <bytes>repl             # <<<<<<<<<<<<<<
- *             enc_result = encode_body(new_data, compress)
+ *             enc_result = encode_body(new_data, compress, raw.crypt_type())
  *             encrypted = enc_result[0]
 */
       __pyx_t_7 = __pyx_v_repl;
@@ -24379,50 +25362,52 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       __Pyx_XDECREF_SET(__pyx_v_new_data, ((PyObject*)__pyx_t_7));
       __pyx_t_7 = 0;
 
-      /* "shirotsume_tools/archive/crypt.pyx":407
+      /* "shirotsume_tools/archive/crypt.pyx":447
  *                 raise TypeError("replacement must be bytes or None")
  *             new_data = <bytes>repl
- *             enc_result = encode_body(new_data, compress)             # <<<<<<<<<<<<<<
+ *             enc_result = encode_body(new_data, compress, raw.crypt_type())             # <<<<<<<<<<<<<<
  *             encrypted = enc_result[0]
  *             crypt_type = enc_result[1]
 */
-      __pyx_t_24 = __Pyx_PyObject_to_MemoryviewSlice_dc_nn_uint8_t__const__(__pyx_v_new_data, 0); if (unlikely(!__pyx_t_24.memview)) __PYX_ERR(0, 407, __pyx_L5_error)
-      __pyx_t_25.__pyx_n = 1;
-      __pyx_t_25.compress = __pyx_v_compress;
-      __pyx_t_7 = __pyx_f_16shirotsume_tools_7archive_5crypt_encode_body(__pyx_t_24, 0, &__pyx_t_25); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 407, __pyx_L5_error)
+      __pyx_t_24 = __Pyx_PyObject_to_MemoryviewSlice_dc_nn_uint8_t__const__(__pyx_v_new_data, 0); if (unlikely(!__pyx_t_24.memview)) __PYX_ERR(0, 447, __pyx_L5_error)
+      __pyx_t_25 = ((struct __pyx_vtabstruct_16shirotsume_tools_7archive_5crypt_RawEntry *)__pyx_v_raw->__pyx_vtab)->crypt_type(__pyx_v_raw, 0); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 447, __pyx_L5_error)
+      __pyx_t_26.__pyx_n = 2;
+      __pyx_t_26.compress = __pyx_v_compress;
+      __pyx_t_26.crypt_type_in = __pyx_t_25;
+      __pyx_t_7 = __pyx_f_16shirotsume_tools_7archive_5crypt_encode_body(__pyx_t_24, 0, &__pyx_t_26); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 447, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_7);
       __PYX_XCLEAR_MEMVIEW(&__pyx_t_24, 1);
       __pyx_t_24.memview = NULL; __pyx_t_24.data = NULL;
       __Pyx_XDECREF_SET(__pyx_v_enc_result, __pyx_t_7);
       __pyx_t_7 = 0;
 
-      /* "shirotsume_tools/archive/crypt.pyx":408
+      /* "shirotsume_tools/archive/crypt.pyx":448
  *             new_data = <bytes>repl
- *             enc_result = encode_body(new_data, compress)
+ *             enc_result = encode_body(new_data, compress, raw.crypt_type())
  *             encrypted = enc_result[0]             # <<<<<<<<<<<<<<
  *             crypt_type = enc_result[1]
  *             raw_arr[i].size = len(new_data)
 */
-      __pyx_t_7 = __Pyx_GetItemInt(__pyx_v_enc_result, 0, long, 1, __Pyx_PyLong_From_long, 0, 0, 1, 1, __Pyx_ReferenceSharing_OwnStrongReference); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 408, __pyx_L5_error)
+      __pyx_t_7 = __Pyx_GetItemInt(__pyx_v_enc_result, 0, long, 1, __Pyx_PyLong_From_long, 0, 0, 1, 1, __Pyx_ReferenceSharing_OwnStrongReference); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 448, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_7);
-      if (!(likely(PyBytes_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_7))) __PYX_ERR(0, 408, __pyx_L5_error)
+      if (!(likely(PyBytes_CheckExact(__pyx_t_7))||((__pyx_t_7) == Py_None) || __Pyx_RaiseUnexpectedTypeError("bytes", __pyx_t_7))) __PYX_ERR(0, 448, __pyx_L5_error)
       __Pyx_XDECREF_SET(__pyx_v_encrypted, ((PyObject*)__pyx_t_7));
       __pyx_t_7 = 0;
 
-      /* "shirotsume_tools/archive/crypt.pyx":409
- *             enc_result = encode_body(new_data, compress)
+      /* "shirotsume_tools/archive/crypt.pyx":449
+ *             enc_result = encode_body(new_data, compress, raw.crypt_type())
  *             encrypted = enc_result[0]
  *             crypt_type = enc_result[1]             # <<<<<<<<<<<<<<
  *             raw_arr[i].size = len(new_data)
  *             raw_arr[i].comp_size = len(encrypted)
 */
-      __pyx_t_7 = __Pyx_GetItemInt(__pyx_v_enc_result, 1, long, 1, __Pyx_PyLong_From_long, 0, 0, 1, 1, __Pyx_ReferenceSharing_OwnStrongReference); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 409, __pyx_L5_error)
+      __pyx_t_7 = __Pyx_GetItemInt(__pyx_v_enc_result, 1, long, 1, __Pyx_PyLong_From_long, 0, 0, 1, 1, __Pyx_ReferenceSharing_OwnStrongReference); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 449, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_26 = __Pyx_PyLong_As_uint8_t(__pyx_t_7); if (unlikely((__pyx_t_26 == ((uint8_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 409, __pyx_L5_error)
+      __pyx_t_25 = __Pyx_PyLong_As_uint8_t(__pyx_t_7); if (unlikely((__pyx_t_25 == ((uint8_t)-1)) && PyErr_Occurred())) __PYX_ERR(0, 449, __pyx_L5_error)
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-      __pyx_v_crypt_type = __pyx_t_26;
+      __pyx_v_crypt_type = __pyx_t_25;
 
-      /* "shirotsume_tools/archive/crypt.pyx":410
+      /* "shirotsume_tools/archive/crypt.pyx":450
  *             encrypted = enc_result[0]
  *             crypt_type = enc_result[1]
  *             raw_arr[i].size = len(new_data)             # <<<<<<<<<<<<<<
@@ -24431,12 +25416,12 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
       if (unlikely(__pyx_v_new_data == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-        __PYX_ERR(0, 410, __pyx_L5_error)
+        __PYX_ERR(0, 450, __pyx_L5_error)
       }
-      __pyx_t_2 = __Pyx_PyBytes_GET_SIZE(__pyx_v_new_data); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 410, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyBytes_GET_SIZE(__pyx_v_new_data); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 450, __pyx_L5_error)
       (__pyx_v_raw_arr[__pyx_v_i]).size = __pyx_t_2;
 
-      /* "shirotsume_tools/archive/crypt.pyx":411
+      /* "shirotsume_tools/archive/crypt.pyx":451
  *             crypt_type = enc_result[1]
  *             raw_arr[i].size = len(new_data)
  *             raw_arr[i].comp_size = len(encrypted)             # <<<<<<<<<<<<<<
@@ -24445,12 +25430,12 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
       if (unlikely(__pyx_v_encrypted == Py_None)) {
         PyErr_SetString(PyExc_TypeError, "object of type 'NoneType' has no len()");
-        __PYX_ERR(0, 411, __pyx_L5_error)
+        __PYX_ERR(0, 451, __pyx_L5_error)
       }
-      __pyx_t_2 = __Pyx_PyBytes_GET_SIZE(__pyx_v_encrypted); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 411, __pyx_L5_error)
+      __pyx_t_2 = __Pyx_PyBytes_GET_SIZE(__pyx_v_encrypted); if (unlikely(__pyx_t_2 == ((Py_ssize_t)-1))) __PYX_ERR(0, 451, __pyx_L5_error)
       (__pyx_v_raw_arr[__pyx_v_i]).comp_size = __pyx_t_2;
 
-      /* "shirotsume_tools/archive/crypt.pyx":412
+      /* "shirotsume_tools/archive/crypt.pyx":452
  *             raw_arr[i].size = len(new_data)
  *             raw_arr[i].comp_size = len(encrypted)
  *             raw_arr[i].crypt_type = crypt_type             # <<<<<<<<<<<<<<
@@ -24459,7 +25444,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
       (__pyx_v_raw_arr[__pyx_v_i]).crypt_type = __pyx_v_crypt_type;
 
-      /* "shirotsume_tools/archive/crypt.pyx":413
+      /* "shirotsume_tools/archive/crypt.pyx":453
  *             raw_arr[i].comp_size = len(encrypted)
  *             raw_arr[i].crypt_type = crypt_type
  *             out_file.write(encrypted)             # <<<<<<<<<<<<<<
@@ -24473,12 +25458,12 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
         PyObject *__pyx_callargs[2] = {__pyx_t_11, __pyx_v_encrypted};
         __pyx_t_7 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_write, __pyx_callargs+__pyx_t_22, (2-__pyx_t_22) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 413, __pyx_L5_error)
+        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 453, __pyx_L5_error)
         __Pyx_GOTREF(__pyx_t_7);
       }
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-      /* "shirotsume_tools/archive/crypt.pyx":415
+      /* "shirotsume_tools/archive/crypt.pyx":455
  *             out_file.write(encrypted)
  * 
  *             raw_arr[i].offset = offset             # <<<<<<<<<<<<<<
@@ -24487,7 +25472,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
       (__pyx_v_raw_arr[__pyx_v_i]).offset = __pyx_v_offset;
 
-      /* "shirotsume_tools/archive/crypt.pyx":416
+      /* "shirotsume_tools/archive/crypt.pyx":456
  * 
  *             raw_arr[i].offset = offset
  *             offset += raw_arr[i].comp_size             # <<<<<<<<<<<<<<
@@ -24498,7 +25483,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       __pyx_L18_continue:;
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":418
+    /* "shirotsume_tools/archive/crypt.pyx":458
  *             offset += raw_arr[i].comp_size
  * 
  *         out_file.seek(0)             # <<<<<<<<<<<<<<
@@ -24512,12 +25497,12 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       PyObject *__pyx_callargs[2] = {__pyx_t_11, __pyx_mstate_global->__pyx_int_0};
       __pyx_t_7 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_seek, __pyx_callargs+__pyx_t_4, (2-__pyx_t_4) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
       __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
-      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 418, __pyx_L5_error)
+      if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 458, __pyx_L5_error)
       __Pyx_GOTREF(__pyx_t_7);
     }
     __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
 
-    /* "shirotsume_tools/archive/crypt.pyx":419
+    /* "shirotsume_tools/archive/crypt.pyx":459
  * 
  *         out_file.seek(0)
  *         err = rp_encode_header(&full_header, &full_header_len,             # <<<<<<<<<<<<<<
@@ -24526,16 +25511,16 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
     __pyx_v_err = rp_encode_header((&__pyx_v_full_header), (&__pyx_v_full_header_len), __pyx_v_header_ptr, __pyx_v_header_len, __pyx_v_raw_arr, __pyx_v_count);
 
-    /* "shirotsume_tools/archive/crypt.pyx":422
+    /* "shirotsume_tools/archive/crypt.pyx":462
  *                                header_ptr, header_len,
  *                                raw_arr, count)
  *         _raise_on_error(err)             # <<<<<<<<<<<<<<
  *         try:
  *             out_file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
 */
-    __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 422, __pyx_L5_error)
+    __pyx_f_16shirotsume_tools_7archive_5crypt__raise_on_error(__pyx_v_err); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 462, __pyx_L5_error)
 
-    /* "shirotsume_tools/archive/crypt.pyx":423
+    /* "shirotsume_tools/archive/crypt.pyx":463
  *                                raw_arr, count)
  *         _raise_on_error(err)
  *         try:             # <<<<<<<<<<<<<<
@@ -24544,7 +25529,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
 */
     /*try:*/ {
 
-      /* "shirotsume_tools/archive/crypt.pyx":424
+      /* "shirotsume_tools/archive/crypt.pyx":464
  *         _raise_on_error(err)
  *         try:
  *             out_file.write(bytes((<uint8_t*>full_header)[:full_header_len]))             # <<<<<<<<<<<<<<
@@ -24554,7 +25539,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
       __pyx_t_11 = __pyx_v_out_file;
       __Pyx_INCREF(__pyx_t_11);
       __pyx_t_9 = NULL;
-      __pyx_t_10 = __Pyx_PyBytes_FromStringAndSize(((char const *)((uint8_t *)__pyx_v_full_header)) + 0, __pyx_v_full_header_len - 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 424, __pyx_L26_error)
+      __pyx_t_10 = __Pyx_PyBytes_FromStringAndSize(((char const *)((uint8_t *)__pyx_v_full_header)) + 0, __pyx_v_full_header_len - 0); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 464, __pyx_L26_error)
       __Pyx_GOTREF(__pyx_t_10);
       __pyx_t_4 = 1;
       {
@@ -24562,7 +25547,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
         __pyx_t_1 = __Pyx_PyObject_FastCall((PyObject*)(&PyBytes_Type), __pyx_callargs+__pyx_t_4, (2-__pyx_t_4) | (__pyx_t_4*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_9); __pyx_t_9 = 0;
         __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 424, __pyx_L26_error)
+        if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 464, __pyx_L26_error)
         __Pyx_GOTREF(__pyx_t_1);
       }
       __pyx_t_4 = 0;
@@ -24571,13 +25556,13 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
         __pyx_t_7 = __Pyx_PyObject_FastCallMethod((PyObject*)__pyx_mstate_global->__pyx_n_u_write, __pyx_callargs+__pyx_t_4, (2-__pyx_t_4) | (1*__Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET));
         __Pyx_XDECREF(__pyx_t_11); __pyx_t_11 = 0;
         __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
-        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 424, __pyx_L26_error)
+        if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 464, __pyx_L26_error)
         __Pyx_GOTREF(__pyx_t_7);
       }
       __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
     }
 
-    /* "shirotsume_tools/archive/crypt.pyx":426
+    /* "shirotsume_tools/archive/crypt.pyx":466
  *             out_file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
  *         finally:
  *             rp_free(full_header)             # <<<<<<<<<<<<<<
@@ -24629,7 +25614,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
     }
   }
 
-  /* "shirotsume_tools/archive/crypt.pyx":428
+  /* "shirotsume_tools/archive/crypt.pyx":468
  *             rp_free(full_header)
  *     finally:
  *         free(raw_arr)             # <<<<<<<<<<<<<<
@@ -24678,7 +25663,7 @@ static void __pyx_f_16shirotsume_tools_7archive_5crypt_replace(PyObject *__pyx_v
     __pyx_L6:;
   }
 
-  /* "shirotsume_tools/archive/crypt.pyx":332
+  /* "shirotsume_tools/archive/crypt.pyx":372
  * 
  * 
  * cpdef void replace(object in_file, object out_file, object replacements, bint compress=True) except *:             # <<<<<<<<<<<<<<
@@ -24750,46 +25735,46 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
   {
     PyObject ** const __pyx_pyargnames[] = {&__pyx_mstate_global->__pyx_n_u_in_file,&__pyx_mstate_global->__pyx_n_u_out_file,&__pyx_mstate_global->__pyx_n_u_replacements,&__pyx_mstate_global->__pyx_n_u_compress,0};
     const Py_ssize_t __pyx_kwds_len = (__pyx_kwds) ? __Pyx_NumKwargs_FASTCALL(__pyx_kwds) : 0;
-    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 332, __pyx_L3_error)
+    if (unlikely(__pyx_kwds_len < 0)) __PYX_ERR(0, 372, __pyx_L3_error)
     if (__pyx_kwds_len > 0) {
       switch (__pyx_nargs) {
         case  4:
         values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 332, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 372, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 332, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 372, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  2:
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 332, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 372, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  1:
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 332, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 372, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  0: break;
         default: goto __pyx_L5_argtuple_error;
       }
       const Py_ssize_t kwd_pos_args = __pyx_nargs;
-      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "replace", 0) < (0)) __PYX_ERR(0, 332, __pyx_L3_error)
+      if (__Pyx_ParseKeywords(__pyx_kwds, __pyx_kwvalues, __pyx_pyargnames, 0, values, kwd_pos_args, __pyx_kwds_len, "replace", 0) < (0)) __PYX_ERR(0, 372, __pyx_L3_error)
       for (Py_ssize_t i = __pyx_nargs; i < 3; i++) {
-        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("replace", 0, 3, 4, i); __PYX_ERR(0, 332, __pyx_L3_error) }
+        if (unlikely(!values[i])) { __Pyx_RaiseArgtupleInvalid("replace", 0, 3, 4, i); __PYX_ERR(0, 372, __pyx_L3_error) }
       }
     } else {
       switch (__pyx_nargs) {
         case  4:
         values[3] = __Pyx_ArgRef_FASTCALL(__pyx_args, 3);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 332, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[3])) __PYX_ERR(0, 372, __pyx_L3_error)
         CYTHON_FALLTHROUGH;
         case  3:
         values[2] = __Pyx_ArgRef_FASTCALL(__pyx_args, 2);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 332, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[2])) __PYX_ERR(0, 372, __pyx_L3_error)
         values[1] = __Pyx_ArgRef_FASTCALL(__pyx_args, 1);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 332, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[1])) __PYX_ERR(0, 372, __pyx_L3_error)
         values[0] = __Pyx_ArgRef_FASTCALL(__pyx_args, 0);
-        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 332, __pyx_L3_error)
+        if (!CYTHON_ASSUME_SAFE_MACROS && unlikely(!values[0])) __PYX_ERR(0, 372, __pyx_L3_error)
         break;
         default: goto __pyx_L5_argtuple_error;
       }
@@ -24798,14 +25783,14 @@ PyObject *__pyx_args, PyObject *__pyx_kwds
     __pyx_v_out_file = values[1];
     __pyx_v_replacements = values[2];
     if (values[3]) {
-      __pyx_v_compress = __Pyx_PyObject_IsTrue(values[3]); if (unlikely((__pyx_v_compress == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 332, __pyx_L3_error)
+      __pyx_v_compress = __Pyx_PyObject_IsTrue(values[3]); if (unlikely((__pyx_v_compress == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 372, __pyx_L3_error)
     } else {
       __pyx_v_compress = ((int)1);
     }
   }
   goto __pyx_L6_skip;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("replace", 0, 3, 4, __pyx_nargs); __PYX_ERR(0, 332, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("replace", 0, 3, 4, __pyx_nargs); __PYX_ERR(0, 372, __pyx_L3_error)
   __pyx_L6_skip:;
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L3_error:;
@@ -24838,8 +25823,8 @@ static PyObject *__pyx_pf_16shirotsume_tools_7archive_5crypt_12replace(CYTHON_UN
   __Pyx_XDECREF(__pyx_r);
   __pyx_t_1.__pyx_n = 1;
   __pyx_t_1.compress = __pyx_v_compress;
-  __pyx_f_16shirotsume_tools_7archive_5crypt_replace(__pyx_v_in_file, __pyx_v_out_file, __pyx_v_replacements, 1, &__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 332, __pyx_L1_error)
-  __pyx_t_2 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 332, __pyx_L1_error)
+  __pyx_f_16shirotsume_tools_7archive_5crypt_replace(__pyx_v_in_file, __pyx_v_out_file, __pyx_v_replacements, 1, &__pyx_t_1); if (unlikely(PyErr_Occurred())) __PYX_ERR(0, 372, __pyx_L1_error)
+  __pyx_t_2 = __Pyx_void_to_None(NULL); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 372, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_2);
   __pyx_r = __pyx_t_2;
   __pyx_t_2 = 0;
@@ -28329,7 +29314,7 @@ __Pyx_RefNannySetupContext("PyInit_crypt", 0);
   /* "shirotsume_tools/archive/crypt.pyx":165
  * 
  * 
- * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True):             # <<<<<<<<<<<<<<
+ * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True, uint8_t crypt_type_in=0):             # <<<<<<<<<<<<<<
  *     cdef:
  *         uint8_t *out = NULL
 */
@@ -28387,33 +29372,33 @@ __Pyx_RefNannySetupContext("PyInit_crypt", 0);
   /* "shirotsume_tools/archive/crypt.pyx":257
  * 
  * 
- * cpdef void pack(object file, const uint8_t[::1] header, list entries, bint compress=True) except *:             # <<<<<<<<<<<<<<
+ * cpdef void pack(object file, const uint8_t[::1] header, object entries,             # <<<<<<<<<<<<<<
+ *                 bint compress=True, object count=None) except *:
  *     cdef:
- *         size_t count = len(entries)
 */
   __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_16shirotsume_tools_7archive_5crypt_11pack, 0, __pyx_mstate_global->__pyx_n_u_pack, NULL, __pyx_mstate_global->__pyx_n_u_shirotsume_tools_archive_crypt, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[16])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 257, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_4);
   #endif
-  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_4, __pyx_mstate_global->__pyx_tuple[2]);
+  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_4, __pyx_mstate_global->__pyx_tuple[3]);
   if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_pack, __pyx_t_4) < (0)) __PYX_ERR(0, 257, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "shirotsume_tools/archive/crypt.pyx":332
+  /* "shirotsume_tools/archive/crypt.pyx":372
  * 
  * 
  * cpdef void replace(object in_file, object out_file, object replacements, bint compress=True) except *:             # <<<<<<<<<<<<<<
  *     cdef:
  *         Unpacker u = unpack(in_file)
 */
-  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_16shirotsume_tools_7archive_5crypt_13replace, 0, __pyx_mstate_global->__pyx_n_u_replace, NULL, __pyx_mstate_global->__pyx_n_u_shirotsume_tools_archive_crypt, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[17])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 332, __pyx_L1_error)
+  __pyx_t_4 = __Pyx_CyFunction_New(&__pyx_mdef_16shirotsume_tools_7archive_5crypt_13replace, 0, __pyx_mstate_global->__pyx_n_u_replace, NULL, __pyx_mstate_global->__pyx_n_u_shirotsume_tools_archive_crypt, __pyx_mstate_global->__pyx_d, ((PyObject *)__pyx_mstate_global->__pyx_codeobj_tab[17])); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 372, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
   #if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030E0000
   PyUnstable_Object_EnableDeferredRefcount(__pyx_t_4);
   #endif
-  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_4, __pyx_mstate_global->__pyx_tuple[2]);
-  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_replace, __pyx_t_4) < (0)) __PYX_ERR(0, 332, __pyx_L1_error)
+  __Pyx_CyFunction_SetDefaultsTuple(__pyx_t_4, __pyx_mstate_global->__pyx_tuple[4]);
+  if (PyDict_SetItem(__pyx_mstate_global->__pyx_d, __pyx_mstate_global->__pyx_n_u_replace, __pyx_t_4) < (0)) __PYX_ERR(0, 372, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
   /* "(tree fragment)":4
@@ -28545,17 +29530,39 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
   /* "shirotsume_tools/archive/crypt.pyx":165
  * 
  * 
- * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True):             # <<<<<<<<<<<<<<
+ * cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True, uint8_t crypt_type_in=0):             # <<<<<<<<<<<<<<
  *     cdef:
  *         uint8_t *out = NULL
 */
-  __pyx_mstate_global->__pyx_tuple[2] = PyTuple_Pack(1, Py_True); if (unlikely(!__pyx_mstate_global->__pyx_tuple[2])) __PYX_ERR(0, 165, __pyx_L1_error)
+  __pyx_mstate_global->__pyx_tuple[2] = PyTuple_Pack(2, Py_True, __pyx_mstate_global->__pyx_int_0); if (unlikely(!__pyx_mstate_global->__pyx_tuple[2])) __PYX_ERR(0, 165, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[2]);
   __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[2]);
+
+  /* "shirotsume_tools/archive/crypt.pyx":257
+ * 
+ * 
+ * cpdef void pack(object file, const uint8_t[::1] header, object entries,             # <<<<<<<<<<<<<<
+ *                 bint compress=True, object count=None) except *:
+ *     cdef:
+*/
+  __pyx_mstate_global->__pyx_tuple[3] = PyTuple_Pack(2, Py_True, Py_None); if (unlikely(!__pyx_mstate_global->__pyx_tuple[3])) __PYX_ERR(0, 257, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[3]);
+  __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[3]);
+
+  /* "shirotsume_tools/archive/crypt.pyx":372
+ * 
+ * 
+ * cpdef void replace(object in_file, object out_file, object replacements, bint compress=True) except *:             # <<<<<<<<<<<<<<
+ *     cdef:
+ *         Unpacker u = unpack(in_file)
+*/
+  __pyx_mstate_global->__pyx_tuple[4] = PyTuple_Pack(1, Py_True); if (unlikely(!__pyx_mstate_global->__pyx_tuple[4])) __PYX_ERR(0, 372, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_mstate_global->__pyx_tuple[4]);
+  __Pyx_GIVEREF(__pyx_mstate_global->__pyx_tuple[4]);
   #if CYTHON_IMMORTAL_CONSTANTS
   {
     PyObject **table = __pyx_mstate->__pyx_tuple;
-    for (Py_ssize_t i=0; i<3; ++i) {
+    for (Py_ssize_t i=0; i<5; ++i) {
       #if PY_VERSION_HEX >= 0x030F0000
       PyUnstable_SetImmortal(table[i]);
       #elif CYTHON_COMPILING_IN_CPYTHON_FREETHREADING
@@ -28609,42 +29616,42 @@ static int __Pyx_InitCachedConstants(__pyx_mstatetype *__pyx_mstate) {
 static int __Pyx_InitConstants(__pyx_mstatetype *__pyx_mstate) {
   CYTHON_UNUSED_VAR(__pyx_mstate);
   {
-    const struct { const unsigned int length: 10; } index[] = {{2},{35},{54},{37},{60},{24},{52},{26},{34},{2},{33},{45},{22},{15},{4},{179},{37},{99},{14},{32},{1},{1},{1},{1},{1},{8},{5},{6},{15},{12},{18},{23},{25},{13},{7},{20},{7},{6},{2},{14},{6},{35},{9},{30},{6},{50},{19},{8},{9},{25},{33},{44},{34},{7},{20},{32},{22},{14},{30},{37},{22},{22},{28},{5},{16},{16},{18},{8},{6},{21},{7},{14},{9},{27},{29},{20},{8},{26},{28},{18},{19},{13},{15},{13},{13},{8},{14},{8},{26},{28},{23},{15},{3},{15},{18},{4},{5},{1},{9},{17},{18},{15},{9},{9},{7},{8},{5},{5},{10},{4},{20},{20},{11},{6},{11},{12},{7},{8},{5},{7},{15},{6},{11},{12},{7},{9},{2},{5},{5},{11},{4},{5},{6},{7},{6},{8},{12},{4},{6},{2},{10},{7},{5},{4},{13},{5},{8},{7},{8},{10},{14},{7},{13},{8},{4},{10},{15},{4},{8},{4},{7},{3},{6},{5},{8},{4},{3},{11},{14},{12},{11},{10},{19},{24},{14},{12},{4},{10},{17},{13},{8},{7},{12},{4},{4},{4},{12},{10},{12},{19},{5},{30},{4},{5},{5},{5},{5},{4},{4},{3},{6},{8},{4},{7},{6},{11},{11},{6},{12},{6},{12},{5},{1},{1},{0},{124},{173},{42},{11},{9},{572},{115},{691},{263},{55},{11},{98},{209},{1}};
-    #if (CYTHON_COMPRESS_STRINGS) == 3 && __PYX_LIMITED_VERSION_HEX >= 0x030e0000 /* compression: zstd (2900 bytes) */
-const char* const cstring = "(\265/\375`,\024UZ\000\032u\224\030H\340\260\270\r0\314\363D\236\306x\234f\010\010\003a \014\314\216\331\021\006\343q=\335\032\275\262\335\"\210K\020Q\222\024\333s\240h\000$\352?\\\004\361\316\356\334g\032\362.cu\352H\355\346\004B\030\2541\362\022\322\001Q\001P\001\225\001\317\322X\257\355\366\033L\335u\233+0t{\260|m\210\227\355;[9\375\031\346mXM=\327\212\266\252\245\256\303\332+\303\274t\333\252\010\025R\210\322\n\273~\333\271\363\347\340}m`\336Uo\nJ\247\252T\036\3145)\357Q\274\301:B?\370}\336V\263\335\257\346\326`\336\367i\211\353\276\316\226\2665\260\303\321\254\213\224\327\264z\267\013\342\r\266(\275\356j\211\317\261$\326\265tW\322\334\257\347}]\275\355\377N\020\303&73K\372\332\335Y\375\235\266\3225>\317\355\326\271\241\303\206\013.P.\346\335Z\376\225\355~\213\371\215Y\374\305,&\207oV\274\274*k\256\220H\223\244\221\246\366+\277a\327\334lWs\356\314\366;c\317\003\365\314\314\013\254\346\\K\027\2676L\233\031s\036\270kKO\330\366\\(;\267\tSF_l\365}\227\335\346\326>[}k\336\244\371\036l\317\326\266:\363\365\333\265.\234\271\357Vu\333\254sa\233x\317\313\262Z\327\022,c\327\273\346\265S\203\030d\331}\2616\265\235\273\266\366j\326\371\273~\326&\254\273x\336\032\243\177\263y\353\371\032{\257\237\033\337\251\037oS\347m\316\314\317q \211\371!\035\257\247\334g\234\372:\372\301\327\340\346\201\317U\nn\332a_\013\322\214\267\366\262\355<\335\351RI\343\374\353\234\177k\313z}\356*\370\345\240\350\005q\264oi\036\245\036\366~\313\230\342\334\201\324\345z\332\322\366\265\325E)\325\301\241.K\351o\365[-][\224\245]\220{\0338s\273\2724\253v\334\367.\360\276~{\237jK5\274m\330\206\177\323\357m\335[\216\262h\360\340i[\313u\365Z\315\233^K)\325^\327\225\376k7\2103\266\332\205\351JK\371ol\256\315V3n\321\274vi\270W\261\240[\2632/\330\256[SZ\332\276\363\\3+>\203\273\322\310\250@\315\224\240\332j\317v\035J{\031\355\252\271\272\220\241\250\230\231\231\030\232\323\0053\316\371\257\016\2768\027\344\360\2274\014\206x-\203X\263\356\265\333\313\\y\301\274\022\206\226\226+\006\335\321w\201z\343l[\272""\353\2526\253W]\263\352\274a\253\375Z\355\274\017\254\213\273\211\347\366\036\314~\315q\230\2338Zua\275WMJ\267\275V\353\252\315\261y_\270\370\202\333\244\3645p\373L\351\334\035X\271\337&\276\031&\314\313\334\366\353Y)S\263r\355:\220\333\001%\302\222\221\262\300IH\210\361\305\225n\032G#\013\004\031\204Q\371\341\371\310\030\362d4\225R\374\203+\230\205\224!\263\020\261\006'\301\301\221\020\021\017\212\004\221\337hb\341AY\0138\020\221\211|:\205\024g\341\000LB\227\231(\024\361\254H\020r\005a\324b\025AD\n23S\212G\340)\241\307\001\222\206X\240'\340Y\303\210\307\206<\221/#\331\307d\244\034\211\272\277\274b\006B8\364\347\010\370\202^\273\016Oa\342$\334%\004\020\266\304F\247.\241\217>\376\240G\020\3201 G\035I\214\234\230\022s\364\314\246FV\323!K\205\026b\003@\345gg\3049\204;%\236\304\027\235\305\243\303@L.\242\211\217\007\340\nv\302o\366!K\242\207\230@\025~\204#!\224\210k!\010\021'\005\350\037\257\034%\024\205\224\251~\352'\370\211\260\244\206\010B\324\354\024\232\302\003\240\262\366T\237\341\rN\312J\246H\030\343i\004\215\237h\"\326\364\222\376\3512\334\304\007\310\010|t\204r\324\320$4Kq\024\356 T\236x\203P9J\305N\261\220\320\254v\022\035\324k\204$B0f T~\370g\032oD\013\335\206\237\370\215\211\204\312\257o\350\243\276\200\177xK8\nIB\312/T\205\037b\004B\345\007\250\024\020*kLCl\357\204>:@r|\304\257\233t\033a\202P\231\"?\214$\243\215~\2013\010\225&q$\226\350\036\370Ih\366\331\t->\341\0273\020*\037\224\237\236\217\307\204\307\205\304!Z\025\020g\225\345h\274\321U!V8\203\005\245\210\374\220-\333\206\276y\025\225b\244\210\016\331\327I\225G\004\207\007UJ\206\303\003\202$0f\230\262\357\263c\212\021\010i|\302\031\035G\021\"\210\001C\006\003%c\341\3011\252\306\026\024\031\312\250k\376\022\006\370\000\225\243\321c\234\321a\244zN=\020zPt\220\321\3509\374\301\007\345$\232\304\357\022:\004\023L\014A\257\341(\240\362\305\215\354\306Ff\243\222\251<\310\\\272\016\322'h\226\222@@6\212i\033\025\320\254\306b\354\264@e\rS}\305\232\231\256\206\356j10\r\020e\234T\256\023&\260\241\t\367!\3342\030""\214\200p\005#\025\270G)*q\006%\345\210\034\020A\274\301k\207:\242\020\017\210\037\261\245\001\r?q\360\003O\"\330cp\224$\242\3623\266\210\000\304\357\244D\343\032\370\037\030)g*\022\370\215\330\206\226\210\014\025\0371\345\201(\022U\026\310>|e\"IH\227,\252R\342L?`\302\324M\220|\\\305s\302\230\320\303(\324\261\227H\216\217\307\314\024w `Dz\220\024F\221K\201\200\233\020Ah\006\343\205\354E\207L\324\223\200\007g\324\221 V0 \373Hd\t\032\361\303\205\357\022\216\n_\304rv\002\254\230B\023\261\020P\231\022KDR\337jb\"\243P\324\023\240\207\206\247\001\211\032i\377\370\370\205\n\263\221\221Y\212d![\210\025Z\002\202s\250\022\253\026eP\241\241\031\021I\222\244\320\0012\020\010\020\310\022M\235\355\003b\0329\353\01042\221\210\210\024$E\251\221\255\003\305h\200\303\221\\\316\234>\027\354\306\021\022\320C7\220\246BF\233\302\354\366\005Q\217\037\206\347\223\032)7x\016U\013\314\231\3117\315\334D\226\007p\301\346\352\031\250\377H^\343\016O\232\017.\245\024.\0206\331U\010\323u\253\304\2315\324\220\323\325m\352a2!Y\230\037\366=%yj\260\330\255\351@ti\214I\305\364\033\231\211\025\363\030%Z\326\222\247RiN\031\242\323\230\266L5\024su\341\024{YNu\334X\206\337>\200\3541]So\021\276\317\300)\365\326L'\272\340\342\001\304\003J]\035G?\211\226\016\343\315\004\215\301\023\002\020CZ\320\t)}}\020p4\353\252\004\024\300n\342\016\256L\245|jo{\253Z\016\231+\013\367j\240\253\354\361\207\035=\n\322\207$\260\264\340C\030\311Y\212\030\332\007\3014\201\317\016\344\252\022yh;\034\355\347H\221S\026\275\240&\226@\020\300P\004\312g\020<\240\205q\354\260\253\215Mp\257\2066b\263r1\231\217\365\272n\202\3361\006\312 .\"\266)`\260\327&\300\204Z\207\335\332\311\322\276c\350\200\221\367\264\362b\233Xs|\247@\366\261\210a\n\220\302\312\307\222ou\214;\226b\263(\357\245\327'\357\354\216\326\303\321\002\031\363d=\364\004?\312W\257\354\214X\2412\345\203y]\304\362\212\032zkg1L~B\376\006\376\201}\335\250\256,apS\227\026B\340\234Y\001mKe\227|\003\234\020j\276\330\010\261+\266\030wY\224J\032\355\205[\234`\nnS\014\356\373\345X\034V""\210\024\002\301\237\327\3619l\371\376\354<\003\305W-k\017iz\300C\336blL3~he4Xh\360g\030\257z\007\370\250,e{\254\3239\342e\23577\001\204\271\203v=\221o\354\233(\302\360+\006\307\343\275H\002}\357hL_\327\"\300\023\354F\241i$\031u\010P\000EtH\365\203\260\210\234\247\232Pot1\257\312\264%\361W\271DG\023\303\232\244\205\037 \203\322\204\203k\344\350h\345\016\026\236\0168\302\265\203\026\233\371\264\336\234\225\210\317\nL\231\207e,+'\215\023D\344\252\235\024z\257%\214\3501E\204\214:\025{\364I~\342\245\270\246\"\254x\237\037W\301\001%a\rp\224HNTIPz\303\tB\234'\363\000\334\004n\255\224\231\245\010q\237%\207\202\222\317\014n\366\3179\032\250\262\260\267\020\325 m\345\010\223q\243\374n\301`\260\211\304f\304\234\004\304\314s\364\344\373$\017\014\221\027\177\210;v+\261\276\321uZD\351\010a\364\031jk\007\361\273\301\347\003\230\240(\307)\302\005\217,$\024\256q\361\265R,\3157\252\371F\357S&\352\304r\025\014\201\313</\307w\233\213\207)\243\303N\035\212\244u&\216\314\312\032\034\346\376\204o\265\352\363\330\367P\220T\256\237\227\223\207\212\372\256\327Y\r\037e\0051]8\034H\243\347\221\214\252\241\245\203\300[D\277\t\302T\303\213\235\243)Ig\036+\004@LG\316l\304>\206\257Q\352\rz\275\202w\273 \243|\204\325\225\214\334\305\232\036bb@7\326\376\334'o\256\247\341\361D\\\363\n\334eu\353}\362\021\273\232\365e\255\251\021R\315\303.+\243\223\305c\005D\014A\262\333\321\264&$\037}\362\216\371\031\356\254J\031\362K\216\021N\217O#\213d\336\2229_\263\230\241@G\225\220\257\237#\353\326\265D*q\332WTPZ\302\210\017\202;YP].`\342\303\177y\314\013\303>M\305\217\341|\254\274Q\016=\254\361\343\r\254\032\001\245\272\2704N\315S\266\224h\220\317)3\243\364\212\375 \021\014\305o\355\204\207\343J#\032v\240\204r\t\026\373p\275\177u\341i\355\006\332%\214\021F\241f\010\340\273f\321\334OJ\004\037\222\263 \256\227<*Kg\023\033\255U\245\257\322\3108\376\006\265\0277\351\220^D`\034\306i6\2041z\345)\245YA\340R\027\304\371\306\010\206\347\030\252\262\316ae[\203\257\031X\363\370\030\230C\363\243\357m\306\302\247F\213\177""\005\342N\020\224l\245\361\322Hk\211\013z\356\007Bf41\334\006\021{5x4\2422A\377\227\027\017\305\274\230\363\247L<|\274\245\242]\206\375\232*K\256\335P\312\332\017\343\227\323EA\336V\t3\035\372oQ\262c\205R\201\337K\303\354\345\025\013\252\352@\275\245\223\204i\no\203)\207\240\240x%\344\035\004<Q\367\254<\250\267\260\361\224\027\324\233y\375zLQ\212$s\333D\251\315sY]\314\007\270\034\227*\263h\210\251Om";
-    PyObject *data = __Pyx_DecompressString(cstring, 2900, 3);
+    const struct { const unsigned int length: 10; } index[] = {{2},{35},{54},{37},{60},{24},{52},{26},{34},{2},{33},{45},{22},{15},{4},{179},{37},{99},{14},{32},{1},{1},{1},{1},{1},{1},{1},{8},{5},{6},{15},{12},{18},{23},{25},{26},{13},{7},{20},{7},{6},{16},{37},{24},{2},{14},{6},{35},{9},{17},{30},{6},{50},{19},{8},{9},{25},{33},{44},{34},{7},{20},{32},{22},{14},{30},{37},{22},{22},{28},{5},{16},{16},{18},{8},{6},{21},{7},{14},{9},{27},{29},{20},{8},{26},{28},{18},{19},{13},{15},{13},{13},{8},{14},{8},{26},{28},{23},{15},{3},{15},{18},{4},{5},{1},{9},{17},{18},{15},{9},{9},{7},{8},{5},{5},{10},{13},{4},{20},{20},{11},{6},{11},{12},{7},{8},{5},{7},{15},{6},{11},{12},{7},{9},{2},{5},{5},{11},{4},{5},{6},{7},{6},{8},{12},{4},{6},{2},{10},{7},{5},{4},{13},{5},{8},{4},{7},{8},{10},{14},{7},{13},{8},{4},{10},{15},{4},{8},{4},{7},{3},{6},{5},{8},{4},{3},{11},{14},{12},{11},{10},{19},{24},{14},{12},{4},{10},{17},{13},{8},{7},{12},{4},{4},{4},{12},{10},{12},{19},{5},{30},{4},{5},{5},{5},{5},{4},{4},{3},{6},{8},{4},{7},{6},{11},{11},{6},{12},{6},{12},{5},{1},{2},{1},{1},{0},{1},{1},{750},{124},{173},{42},{11},{9},{115},{697},{263},{55},{104},{11},{209},{1}};
+    #if (CYTHON_COMPRESS_STRINGS) == 3 && __PYX_LIMITED_VERSION_HEX >= 0x030e0000 /* compression: zstd (3111 bytes) */
+const char* const cstring = "(\265/\375`z\025\355`\000\272wD\031H\340\3208\0070\314\363D\236\2170\216\301\370\010\003a \014\230\035fG\030\214g\316r\362 Rd\367\312\306$\326:I\024\266\317\001\250e\266\276\346\t8D'3\252\020\\\177U\266\257\311l%\2623\241\331\240[Xn,]\001e\001\231\001\335w\336_\030~}\273\357d\354\266]e\221\331v\010\313\326\365\230\002\006\361\346\360\235\211\351\336\273\266\245?\313\274\214\253\267\360c\341X\366\344y \007d\241\342\255\353\354\212i\346\324\201E\205\005~\277o\335\371}\360\216\314\177\026\253\334\374\330\325\312\217\031\205\312\207\033\270G\353A\377(~\336\227\273\336\263\352\326c\336\370\267S\313{[_\334\346F\257\207\273'T\236\343,\356\360\010\356\321\304\351\265gq\336\347\232\\\370n\333\232\352~]\361k\033v\377\270\216 \254\266r\352I\343\273\275\253\337\343X:\306\347\332a[1h\300@\341\304\315\211\212\363\263\256\367]\315o\260\304c\260Dm\201<$b\200\254\253\262\230L\325\304\231*\367,\337\201_\355\256g}pN\367;\203a8\352\234\234\030\230\315\331\2360\370\3320\256f\260\025\216\333\276t\205\355\360\273\351 T\033\215\301\253\361\177\267\253\233\373|5\266y\233\352\207\260]_\373\376T\240\357\360\375\300\334z\217e\367\315?\024\272\n\356\212]Wk{\202e\360\373\257\342[\365\010\216\256\2731\310U}\353\266\257\315\252\266\376\266\237\271\n\3630X\261\255\321\337\335\274u}\r\206@_7\210\253~\260\253?\177}j\376Vk\244\2510\001\03674~B\200C\300\215\222\211b\220\206\202j\300\300\340\230\201\002\350\267\326\347\036\373?\372\307\327c\027\216\337\262\333\2707\r\033\337q\313\340\326a\276^\250=}\322=\377:\347\337\372\272\200\336\263\243\350s\263\341\261\207\373\027\027n[\010\206\337ep\003\2637n\337\367\333\213\333\370\332o\333\266\237\036|\301\030\333w\267\355;\373\257\227\266\257\315\305\341\261\3652\300\334\332\366\323.\353\265\304\377F\374\033\377\2469\260\333\260\016\374N\177\330\332Z.l\010\271lY\317\331\2747|\267m\343^[\226~|\367\010f\360r\030\246\355v\312\317\263\203w:\233\301\227\316sX\247\365\253\022\233\r\020l\333\255\267\355\324\275\027~9$>\217\333\352\330\214\270\311\301\331\364\325\341""\365\274\033\356m\364g\263=a\263\335\324\344\344\324\350\244\360\230\301\234\037\377\200\270\007\217\035\376\023\007\2163\317\345\021\324.\214o\027SY\200`\341\251\302\213\313\266\202\366\266\377F\275\301|_\332\363,Wmh\277ju\3360\326\177\317Y/\374\\a\\\030\364*X\273\017eZ,3\255z\303_\325m\333\027_\316\263\327g\354\352\266=7v\237\267\255no\264\255\357*\210-T\231\230\332m\240W\251\332\225\255\347\215\255\375.\316\325\303\331\023\372kbYR\242\350#6\036\350G\007\307\350F\312v\232.\242A\231<\345\204\276\303S\034cP\300C\334\305\306.\304v\250\024{I\227\241:adt\n\334d\204\3237\360\223\321,\024\244\212\245f\026\205C\216x\234\250d\0352\0171]\253`IU\211g2F\224Y\031\216\005T,+\240\240(2\000\351\222\262d\t\014\255\277`\241\205\204\010\340\tFBt\t\334\244\244\301SFD\372\014y $\305Q\374$\2026c>\312\324\314\226\006h\003\355\304D\235T\274\203' \315l'\321\341*\310\016\262\346$\2312\375\003\037/\220\232l\347L\2351\032\252\225\272\307p\215k\022\010Uje\206\376\234d&r\021\344\210L<1\234\332\tSQ\221\337P\031\203\2538\014\271c\220%!\006H#b\244\230\001\023R\232\"Q\344\001\322L\263\244\0002\204\224\332\036\002EJ\t\224d7\247\350\024\315\022\363\245\234\220\222\332RU\026\350\"\007AAz\250GP@j\341\001J\310\227Y\211,\215R\224)b\272@ \243\221\221N\226Ic60uiK\001e\204\016\240\333\360\005\243\264C4S\365\226Nc\214\331\002\244T#u\014\203\311*Yz\251\277\360/\006B\266\2204\202\006\210f\226\277R\\\002)BJErE\302\304>\270H\326\220#\243\231\306K\234#KH\235\230O\320\250\203c\344F\252?\030\245\241^G\251\345\014Fi\251k*\2162JE\2362J\265\356\200\000G&B\244\03030JS\322\220\rQV\"{9i\224wE\304]\"\374\305\203\306l\211\335\244\2313\372*5\303\302M\024\244\2453t\272t>\233\333\322)\366\341\242\005\332\242\003\332\201\003\2652\220\014\033V*\264G\306\341\3740-\204\202P\261\017\322E\210l\341\361\020$\311\n\025\250\212\033\264EF\303\\\231.((\212\3265\217!;D\251f\0020[t\025*\033)\033\rl\204\320\200\272\350><\005%U\242\312\357\017z\003\224L\214\244\243\340(\2424\005\017\312\263\203\356\254\320\325\006\364\305\353\002z}\360\201j""1\275\263\022[\021\364\352,\327\014\333~\241\177/\023\224\007O \023q\0368e\224,N,\377i\261\340\016\270IH\210\004\016 -\235\264\323\303A9\203[\r\326\014Q\036(C\245\313\002\035\236\342\343,U\216\275\246\207\244\"\2454d\272\224\001\312\021\216_\340?[y\300g\330\022\244\223\214(%\270\250\244\244\250R\271\242\000U\300:E\316\227\\\256\312\234~\340\003J\344+\356\263!\246\001\201\334\020yMUq\006\004\264\023\300\031\301,}\250\004<$\311h\246\"\005\232\202\003-\331@ \3531\177\036\224\022\014\240bIf:qt\312\216\027\276g#)\006\260\240\310\0171\222(U\225#\245\251w(b \344\204\230\207(\r\005i<\203\252L\225)4\330\007\221\017\340\t\202B\347\251\004P\"X\215n8\230\006\240\220\245\236\352 8\010\022\362F\244\3529|\301IjO\325\251\302L\231\"3\202\314\250B\263\222e\020!\241\031\221$I\322\0302\020\010\020\211\345\2312\213\037R:9)\t\032\222$IJ\nRi\277\003\225\"\340\220\306\244<\244\333acB\223\213\227\213\351\366!\300Y\357c\362\304\251\356i\277\005C\\\277$\215It?\260\201\373o=E\232+\036\257k\305\034!fjn\214\3130\215Fo\322\"V\374\030\3101 j\254\247\313b\013\351\211\264&<N\244U\206\277,\262\343\017\375\351^\2110\273\224\331\313\016\324e\263*w\006\221\315\360\005\3455+\244n\356\013\031\n\342I\343\315\013E\310(\261p\004\277f\\i\336W\032\325\235\034\231\254\223\365\235t\341\016^?9\315\213\3138\371\034\371\323:\201F\252E7\205\253\254\340\320F\314\322\007\347\234\006\227\030k\033(\000~\374>B\214\3340}\256C\t#\206d\323H\004\302\r\304\235Ys_X\363\r\244\n\333(\201`\271\365\010\330h5'H\271*U\216\006\273\313\022m\203\341 \342\354\266!\032\nctX\010N\311\334\362\200\221\241\216<\335\201\250\230%$s\355\224\364\0349\010D\302\357\247U!!\226E&\314,\315Y\322\371\224\373\312\037\013\365&\332\325\017l\252\235nS,D3\353*\356\223Q\010\301\233\220L\026\010\324\237bW\314\302\364C\316\004\233=\261!\216\225\341\263\307G\310\273{^h\020ML\026\200\n_D\251m\324\224\363%\t\032\37049\273\351R\2276\337\2151\006\301\tU\n\031\213\000\372\346\236O\300\037\240\"\204]O\034\353{`\260`\3700\212d\215\250\213\303\253\032\337]\325\r\336@x""\315\217\027\013\341;\207\035\245\004\333\010\231\304\325B\347_g\316\367UvR\273\027\246\372\216c\237\241\032\346\363\361\234\026A\014\227\350&Qc2\346\007:\024\252\236\306;\367\233P\266X9\354A\275\320\210\316N\371\371.\327@m42_\351\367m*\273\340\264\264t\320!\204\351\255\305\017m\001\226\330\203H\3360\247\3262\321$\3675\361\003\310\200\322=V|\203\226\340\364L!9\0147@\335\375\373\013\177\300GI\350\250'\363\205S,\3609\010\256\274\270\315@\377g\345\r\355\243)L\317\022d!\234G\213\366\225\277\306\327\267\333\2320\0309\306\276R\004b#\357\001`\204\253\352\260\211%\252$\312\364\277y(diq\n\311]\344\275D\270R\207\332R\021@-L\344\0271\235\n\344\312\233\206\307\226\177\240\260\3019\262\2122Q^\233\275\346\007\002\335\271Q\217\307_,a\r\025f\346\360~~\257(\367\314Y\2243a\022\311Y.\361P\271\334\3719\032 @P\222\210s\2459\227C\355\3142\327\303\006\301\307\240\311\303WT\004\232\317ta\333^\351\267\317\304Z\026\335K\010\014\316@7\272\336\206 \305B\307\252\3542a\021+\225GQ\360\324\357\252\270k9\n\337\376b\3001\346A\307\307;\240d\325\"\202;4\024~\\&\"d\017\343Z\200\252\315h\364\317]\017b\215o\373?\013\3706\234[\371=\307\221Z\370:9\352\247\316U9\r\021_\253\231\236\265N\017\221E\227\313\231\377_\003i=\037\231\230\302\315J,+\202\335\247\275\246\236\223\3623z\264\200\242?p>\300\315\216F\305ie\032\022\204\271\264\373\336!iV\304\022)S\007\337\374\273Y\313\344\265\212y\016dB\377q\244\343\017$\223\243bD\235<\t\001*I[\315\010H\241\264\224\255bE\353;\357\321Hh\366\327\312\310\300\227\327\273_\023\225\016\0306\324@s\030\024\321\025\340h\210\255\314gb\032Y4\002\270\025\271\270\205e\206OZ\216F\236n\322\035\002\2018\006\305\250\323F\322\027Q\356\t=\364\237\335\306\2255z$\250\023R\332bQ\007\0047X\217\215\377rK$\327\006\340=\245\312\354|oZ_5\360\362Z\254*\235\036\026\273\306\361\010e\334\202\251\274\357\271\002\225\007\"\206\321\271\223\241\031/Do\262\n\254S\235\342G\230\374\362j\326\307D\023,\305O(yaH[<h\2710\253\245\200\206m\177\037\316\201\360VZJu@zB\326\210*\033\004*d\205\\\200\2209$\350\245\256.Vi""\375\352\232@\336{\306\036\216\347a\007\024p\366\002R\017\211\347\220\240k\\\316\244\036IT\203bZ\202$F\206gbV\211/\30285\332\272l\2777b\267\311\334g\343j\030\025\207\306!r\203\300\n(\231\024\300\275\326\350I\332\357\341\017$#bp{F\370\251q\216\370\0056g'|T\273:e\236\375\335$G\025\235\215\336W\214\200\214\031\365\374D\314 \033C\355\032\t\205$\200\335\230\353:\206\365XO\236j\207x\237r\304|\231\024i\244k\250\375J\307\261\274\265>\"V}\267\220T\257(\312\306\335\347\025J&j6\24782\317!\200J49\375C3V\370\230\265&\256\360\367\035A\227%5\346\032\201V\256\210\352^'l\240&,\333\310\300\326\013\252J\364\022>\374\367\300S1zXR\224\306c\330\225%A[\035vd*(\205\263\201\207\225a\375\360\361\005n\324\345q \331\320\303Tf\223\254Ta*co\023\370\245\254\307\240\025Qh\315|\2220\370\212\236 \251\266 |\036\337\210#hVO\203X\217:P|\267\330)-3\027$\350\357`\022]\342\202sBO\373d\211Z\200\025p\035\307,\263\034\020\237\220\255";
+    PyObject *data = __Pyx_DecompressString(cstring, 3111, 3);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (2947 bytes) */
-const char* const cstring = "BZh91AY&SY\373\301$L\000\0027\377\377\377\377\377\377\377\377\377\377\377\377\377\374\277\377\377\374@@@@@@@@@@@@@\000@\000`\013?woa\355\224\275\264\253Oum\014\032j)*\211\003\017\000}|\006\246B%\036&\240\017H\r44<)\263Jm\021\231\251\352oHH\311\246\324\315LG\224\365\036\240\036\240f\223\312zL#i\036\240\304\200&\223&\232\nl\215\032\n\236\247\352\217L\243\324z\206\215\000\320h\000\000\000\000hh\000\320\320\001\240\005!M\001\240\320\000\000\310\323&\201\240\000\000\310\000i\240\320\r\000\000\000\002SB\"d\0056\246\230SzMO\024zd\320\312hh4\320\032\000\000\000\000\000\000\000\r\000\340&\004`\t\264\230\000\004\302`\000\000L\000#F&\010\310\321\200\020\300\000\t\022\232Di2z\020\364\237\252\000\006@\0321\r2\000\003C@4\001\210\0002=CF\232z\010)T-\242\242m\315\245\343cA\365\375,\343\366\213\006\204\022\260\247\t\246\203F\222\2211\243\373y\245\205)\224\240\021\2015I8ro\340\037\320f`\210\031\0035\222\221# \006\303C\030\232<\037\374\004\014!\001(\222\367\213H\013\201\027$\221\t!\260M\266\r\266\206\230\r\2150m61\241]\005\240g\002\215\306\270.\307\005\222Ti\213L\t\220\230d\t&\006\226b\230\213\021\302\352\221I\021\r\014C\302\002 $\222\010!@j\211b\340\314\033\013\300\235\327\215\"\027@E\3412I\242\347\3007\0250(\210\230\241\227N0\t\0230\323\254l\"\004P\024\210\210\302\341`a\010\275*\314DBv\027\310\030\244\201Sf\244\2049\343\010\265\261`\340\214\326\3270\217\205\307\2623\213\336\3738\014'\337\225\240\216\263C\224\n'M\001c\t\010Q\202\373^\331\007\275\277n\247\004F\327v\242\367\251\235\3300\340\025\314-\326\304+\022\270zZ\222\362`\305gN\367l/\205\352\376\035\327\365m\234D<\322\230\021\211\227\201\325\341\237\332\227\313\372\320C\017\233\032\316n\260l\256\305:\346\213;\r,\367\255\"4\203\235\376g\002\243i>8\336\352\344\317\215\007\370\236\353\345KA\367&vQ5\305\351\234\342+\032>\020\322\375S\254\361\363O\016\316\216Q\3117\177\340\333a\3306\215\336ss\333|,\025\226R\220D.{\223\2775N\325\267\245\017l\321\030M\207\245\201\363\255\001\341\210uG_\213\355\364H\rX\317-\320\034\004q\035\320w\226\224q""\303\337\007\037\006u\001\303\034|\226\275\335\027\tz\235C< {\273\263\353\275\207bK\262&\201\335\352\250\265s+\247\204\303\242m\327j\225a\252\306`\260\331Q\260\356\372\023\220\252\365D\312\237T\302r\347U\215l\255\t\023\215\324u\006\035\311nsr\220 C\200\326\315\204\340\353\363m\371u]_\331\336\367\325\205\332\374\013\217!\330\204\356\036\017\275\274\016u\225\376{\002\355\230\375_G\036T\002\362uZ\333s\2349\247\251[\035\335\220H\204\3170]#I\005\254}\333y\267M\377\236\353\232\265\032=Oyw:\211\024\361ux\271\260\367\010$BJ\273\267\273\251\303\230\234\206\334\204\363y\031\302.\322^\3144\372\177\237\246\232a\241\337\242u\250\341\354\030zn;-\317\225\303\327m\371P\235#\353\036\212iN\350\244m\350\325k\263gl\341\014\332\363\021\267Z\325*8\024\207,\334\311y\244\332\335\004dh\306ikty?\177\351\341M\264\023\036\\\276\376\270_\266\036;\263J\"\273\177\207\361\230\321\272\213\\\377\227D\261\307\037\346\374\232\221\371\360\376\230\253\202RX\263\263\031u6tLw\0163?\003\0160\250t\344!Wf|-\254\275\033\325^5\343H\27783\026\241\267\n\254\022R\345\232\342\272\325\2751\\A\307\014Q\225lp\003\230\220wX&\372\335wcl\252\241Jv\007MY|\257\202\006k\320\326+\333\024\311(\277\206\362\212\372\322[O(U\262cOVB\306\357\343\327M\303\263\002\256{\0251U\007^*S\270+J\367IQl<\\\031[\201knk0b\314\007\001\205\017\002\377W^{?[\r\343]\240/m\327\tD\200\373'\216\007\320Dh\033v\005qd\005\220\347s\273\233\245\367\275A\246\276\263W\202/\004l\221v\014\277|\005<\267\324\247q} \214\004`\022\325\331\354O`\320{u\367\201\002G\021\002\220\235p\273\007\365\361\335\205\252\3666l\353\225\232X\327\351F\271\232\301Y\245h\314\201cD\243\260W\212&\251%\277\301\213&\335\264\314\006a\223\225)\\\325\221\270r\372;\"\345\240\270Q\n\030NY\201E\005\304\350l\221\364Y\020:s(\222!'\335\353\225\305.\344\"\274\265:\343.,\372xZ\205\325\343\275\272\3652\030J:d$\204#%\263\023\222%\232nl\306\326]\357\363&\205)\313\343i\364\225\035s\241\265k1\031\253R\270-KF})\245\036\227\tU=\345\325\036\307 \211\022BK\177\005o\251a\200\336Y8\234\272\313ikb\253\360;""\177i&*>@\346\300D\256\315\315\024d\320BD\343g=G\010\274\312\001\312M;s\032\211\324\351\306\2500\362\004^V\232N\272\327D\267\314\036\020Op\225\260\310\004D%\350\273s\320\326U9\265\352\316\n_\363\031o\363\327\034\244\271\2509\257\204\035\014\367a\221\022\334\231\246\006Aw\204\022\"\224\220\250\002\344\326\334\262\202\036\262\356\344<c\2572>\025\374\351L#\333\300\215`i\231\331\244Nl\031\220\317\316\315\320\325q{\264\342 \r7C\302\355\002\243\313\240i\243@\353\265\366A\216\250Z\220\266\262\211(!#g55N\200\327\326!_]\353\215<\351\212\262e3\251$T.\265\346Z\202\003|nG-\206Rpv\324\006\210\r\r\211m^K6\000\t$\024\254\010\326$*\004, \356\235\302\316\256\210\316\035\346\373\345x\204@\033\272{\r\312\003X\270`\306\263\325\305\304t'\036\230j=\214\0264\337\311M\272\332\257a#\202J\t\224K\250g9=\363\353\036\355\300@\356\324 \037\020.lN\313\333,\346\361)\216k\321\247K\300\241A\251P\240L\023G\226k\030\334\261\330\311\265aV\233Y\3651M5\260B@\242\275dD\214\323\016\205\210\351\311v\331\303\224\323W\333g\002l#$a+\306p\256'\302\235Rk\001(!\302\030\347\326\272c\211!\365\254\312\311\255\001\\\005\031\356\253\232\005\035d\024R\261w\230\215~\000/{\001M\315\200\300r\314\363\r\003-\202j6\247\rL%\356\301\321|V#qdq\301\000\271\246:x\246Z\005\301\231\266\325[pXF\205\024/\250A:L\320lcd\204\233\032\026:\213\216\273\273x\030\231\247\347`\037\322\217\005\233?U-\304\240-\341\014\\\244\004\3502zx\023\254\351\324\350\227>\242&\261\"{V\213\210~\376\331\003\026C\211\003\210\007\264\021\334\034\336Y\321\336\245\004\216\225\204\002hA\324{Q\202i\n\330\312\327\246L&I\272\363\010\270\363\235o\020f\3362\347\016\332\010q\031\215\355\035\352\341v\367<\210Z\246\371\246d\271\202\235m\242\3601\226P\233Z7\206Mz0*\263R\016\356\035$\231\204\026\222\030\352\335\246\3030\204\2315zWz\264%\213\344\244;\031,\235\030*?\270:0`\222\213\203\226\201;Z\355\233k:\027\353\033B@nZ\036Z\262\nZ\020W2L6b'1\324\235\252\256\270R\220\205\304\244\002\001\261,\306H\026\030Z\336\344\240\235\361\246\246k\013\345M\374\246\3305\003F\306\265M]Tgdk""\210',b\343\2751\247\343Ra\232^\273r\\\243\217\004_t\331s^\321\305\310\"\210\022\260c\013\230\245\341\004\210\025\262\213E<P\210_\026]\242\2611Uc\254\210\022*p\300J\242js\000APV-`\367\203P\273\321`\000\246-\205\325\006\211\302\265\263\246\347\236(2\033N\321\267l\374\330\212\022\257\014\2345z\361\352\241\214yi\024KR\013\343r\205\355><s\034\264\313\221\361F\362\366F\222?\035\307\r\247i\353\310\317\201\336\346a\322n\323\302\234*jM\210\010f\264\334pZiA\326$4\004\211\372\355p@\3362\347z\033U\311\203\220!{v\001\313\200\307\t\002\036G8\366\\\201\016<\252\211\325\340'Zc\267\035\215\223\366x\361:9\206$o\031\031\013\330\035\304\306\362U\t\370\025\t\332\014m<\220X\241\217\302\306Z\023#\302#\000b\306\277ZM\031\246:#\017\371\353 Y\304rr\202\2614\037\026\330\333\313\021\252\317p\333\313(\377H\211m\000\347\r<\217\226C\t\014\256\315\265\214\250$\006\306\272\334\375\215\002PuZh\314A\006\024\036nX\246\232\031\370\273\202bQ\023\303-,n\310Fq#X\221\307\003\3256\330\356\020~0J_Y\216\035\331\010\264\001IJ\210z\3118\010w[R\007\273sj\\\227\0344\031\030\373\324J\034\200\017X\t\227M\315\362\276K\t0HH)\274G\351\341\233\225{*\330\244\002G\r3I\020(\n2\002\316e\374\265|g\264\245\266\247K\372\323\240\370\323\2664\335\010\301\300e`\255&\207\314\325\200\036\000\365\301Gn\351*\225\246\263\320K\0132n!\300 <%I\201\300dc\362^S\031\365\263\251\323\215\362\243\374i7\214\002K)\027\233\221@\266I\213T\340\311\201\344P\267AA\360Kbu\336\274\371\274\030\030|\017\255\327\2500q1\014\034\264\246\213\332\356\325\236\037\260h}\266\226\267\320\374\354\335A\230'\0210\363\206\233\243\222n\355jU\314\237W\034N\310\255\337\204@\306\256_\201!\252\371:\263a\004\223\230\000q\031\0310{\314RZ\223(\027\262R\004\262\022\345G\226\212\222,\306\321\033z\026J\276\221\216\226\203\3328\361\243\310\222$V\256`\310\243\321\247\357\005\344\270\256\204\206z\010\n#\2561Zz\370\315\305\033\t\274\366\"\013\024\r\203x\007\377\237\343\210\376FAM\260i8F\014\345n0\006h\345\301\031\000:\322\266\\}\242\033-\252u%g\271.\274\354\301\204\201\364\026>""\021#\210rb\342a\312\324\350\345\r,hS\341\361\036\0379f\230\242+Hm-\250\216\032\271\360ZW&@-Y\311c\000\331\230\354hD\230\213h&\245^)\203\006\220\325\013A\311\225^U\336 9+\261\263\213a\245\342)\020;*\245\034\205!\000\304\003\252h\022\341\270\315c\276\311\220Hw\022\264\020\003G\205\261\214\236\003\241\2309\016WI\024\331dAcX*\312\006\357\006f\251\346x\r?\361w$S\205\t\017\274\022D\300";
-    PyObject *data = __Pyx_DecompressString(cstring, 2947, 2);
+    #elif (CYTHON_COMPRESS_STRINGS) == 2 /* compression: bz2 (3099 bytes) */
+const char* const cstring = "BZh91AY&SY\320_/\014\000\002i\377\377\377\377\377\377\377\377\377\377\377\377\377\377\277\377\377\376@@@@@@@@@@@@@\000@\000`\013\375\337\001tz\235\266\224\314\031XC\000\n\024\266\254\274\017\000<\003S\021\0254\331C\324\007\244mCM\032\032h\362i\352z\246\320\324l\324\362iCOQ\350\321\036\246\232i\350\232mF 4\323\323D\365\032mC \323P\002\010\311\244\332\0324\231\t\243F@\206\203j\032\r\000\000\000\000\000d\000\000\000\r4\004\232\024\364\211\017)\352h\323M\006\020\332\200h\000\000\365\r4\000\003@\000\000\001\2404\364\200\221\"*\r\000h\003@\320\365\007\244h\000\000\006\200\000\006\023&OH\000\036\240\3652d\365=!\242\014\230\0010\t\211\223&\000\004\300\230\t\211\202`\000\000\000\004\310\300L\010a\000$H\020L\205<\231O\"S\364jx\251\344\324\323\322~\251\264\324\323\322\000\000\000\000\000\000\000\000\001\240\024\346\355\363\362\266Ln\177\317#\261\0102\026I\372J\311j\t\331T+Ns\201\322K*rV\014\304D\357J\331\251\222\251K j\224\260\204~p\037\350 \220\204\204B\206\345eb\333\000\336\257\002\265/\321A\177\344T\251Z\224\002R(\030\201\213lm\241\266\204\333m\266\233m\014\032\006\306466\233Ip\014\021\264T;W\253\357\316e\324,\"r\2740i\261\261\003M\264\223i\264\246\005\0353\271w\0268\006\026J\225\200\230\302\240\306\330\306\231zF\003A\022c\210#\024Ye\211\244\323:I\300\333)\030\316\204\216\355\242\340\275\210\276S\013\273\332\2526+\210u\306\246\254\205l]\230\261\270\270\325S \245\n\332\2043\031\"\245.\313;\"\243m\016\350\210Y\017\322<m\313g\260\241\201L\316\323(\232<7\0136\302\204ENN\006\217\305\310:\020\274`\214\n$I\0004\244\nY\202\211\362\263\364\007k\363\263O\365\0306\313\024\331j\023\261s\026-\301\376\r\314\241\225\023p\261b\017)\206u\335\342\240d\271,\256\356\030\317\371h\3142\304\304\221\232\037\023\233\270\343\367\300g\\\314\004i\345\315\352\304\266A\2665d\033\025\225ea\246\273\274\035q#\010b\337\334ZP\256R\363\2536\276\302\274\340?\233mgXe\017\211V\330\224\276\245ue\255\004\235\0265\2653\024%\014?\324$'\327\253V\332i\033\377\362n\240P\001\303\221\302\007\022p\001\327\330-\2552\314""\305Wp\207\0252\222\301I\276[\263\310X\323\005\033\272'\0378\0349\020d\206\316g\257|\000\257\014+\333\314\341\244V\027\275\036\204\244\264\025\016\240X\315\265$X\252ni\276\212qj\362)\022\037>\326\340,\022\366e\273B\206\361'y\311\000\276Yq\031\317\013\262e\243m\220g\211\247\254e\323\005p\266\205\347\304\351\254\251\323\021\007\230\342N\350w)J\0319}\032AE\312\342\362\356$H\236_\251\001\206J&C\345\257\234\211\221\010\364\\W#ce\371\255v\277\331\326~\315\r\031'X\241y\316\275\341\276C\241:U\233\334\320\005\346\310;\215a\031\034\225v{]\365}=\332\001\254\014\326\030n\364i\225'\357\255H\210L(1\250\244\214f(.:?o\253\333\341<\376\274\244\022y\205#\350\352M\250\271\004y\326\363n\301\306\010%\001&Yt/b\306p+\025?\022\320b\266\347\262\260\032\245\n\372\337&\271V\334\013\371a)\005+O\013*\353`jd\247M\224\016U\276KeOQ>{\2669\363\322]|\372\227k[9\027 I\033b:\351Z\225uk\252 Ve\336\336\031\305\211\237\244F\024] Fi\265t~\316\276\210\333d\222#\266\351\261\223\331\317\226\"Z#\223\355x\237j\007\023\376\375/\246\233\277\006B\234\214\374y\377\223\203\243\006\253\250\245\017\325\323\034h\202\274\273/b\363(\"/\035\002\204\006\007\200\3401\236\013\362{Z\213\030\265\267\357\277z\035\211\222E\345\373\246g\013K\226\034d\326\352\242\316\231(\344\207I\3215\230\000\2432\007\205\203\3437\277ig2A\016\341\0045Y\306\250\276BX\261Y\342\262\234\311\263\036\314J3\032\322kHQg\223\212&\336Q\037\036\274\220\036\222\r>\243\025E\244\037\2120\266\263t\373?\332\341\230\376O\226z\300\313Y\304\362\305\3408\017g\023\014\277\247&\335\337\242\016'&\212\031Go\022\325A=\016g*\366M\031\233\367\017\025\014.\035\035\037\247\267\202\375\376\202\014\274\230/\037\257\357\245\342\021\353\024\327\226\006\350R~\205*T\241\021:y\032\235\250\252m\352\363\227Q\230u\356\360\203Q\006\240\324$B3\321\201\233\232\255\301<\230\244\235V;\n#\020]\231y\305O\005\370\240\210\204\003I\014#\204\314\n\330\342I\340\346Q\203r\017\035\"8\303D\235\336X\312\210\337-\207\353\2106\264\033\024B!\205\014\000\3459M\224\023Lg\347\202\314\221\016\005@\222\026J""\271<\203 \351ZC\271F7\004=\0132P\223\207\t\337\215Q\271\342\221@\205(AB\204h\312\327l\021\036\351\256:]\\nv\234\002\345F-\302\324\333\350Yc\270\311\320\331\331\237bTM\356O\003\035\363\304,\\\023%q\027\220\264\241\2038$\202OW\204\214dP\300q\216\235\202\213\325\242\311\234\257[\014\233\300\204P\027@\313\242J\022\352\275F\3239B\346Q5d\316Di.\227\212uU\313\r\264\027\026\272k\352\271\n9\300\243\020\032\245\tc:_\236\001\030\253\224X\300\371\360V\001@\327\365Wk\010\306\2069\261\342\261\245\377\346\027\347\3437\326\363\224f\220U\rj\333e\270+@\373J\225\000+\007\200\020J\010\305\342@\t\214\353\265U\255\252O\334\357k\342\033,A\325\243A0\0057nA\214\n\240\233U\210AAJ\"\316,Kn)\221\213\253\013BE\366\273}\224\206\247F\221TT\324\307=\023\221\214\324\031\020\272g\023PBGD\254\026\342\036\253y\013\321\357\367\r4L[\316\261\300\\t6\323\256\214\263V\3320\346\256\206\266oV\264\224\273l4\320\3165\250\333\353\273\231KP\0276;\262\021\274\270\304)\221Iw\270\231K\006iwO\315Yec\"\225\003\211\336\352X\267!s`\220d\371)\004\273\017\0353\336\034\"\310.D\361\347k\300\270E\2071\203(\341\325J\365u\326\234\356\342{i\005\026\375\205\t\3241\215KvQ\332\333t\313\\q\305\233\251\210\024(*T(\023\221:DM+#\256\320\215=4.\032\235\202<|3\245yp\224\242\001\305\271\245)\244\247(c\314\366\3631\353;5\233\3367[\255\255\002l\320\253\262\002\271F\217\213\022u\245\244\023a'\001$vX\257l\201\266G5\332\323W\003\320\027\304\345\0308tP\215\342M7\222\226\344n\342\031N\002\376\021\244\322y\234\213\3169\304\373\244\352.\035\205M\0060\203\330\306Vg[\322A\000\300~#:r\232\250\030\006\265\322\352\272\207\240R\331\023\251\242\301\"tJG>i\261\215f\307\235G\317\311\212\352\346UW9\355\320\023\356\265q\261L\305\031\357B\202s\276\001\013/\002\021\025\260\260\010J\021\333[\221l\220rI\310\273{\317\021O\227\252\302\2543\235\007:\027R\016\260\365\276\017Iy\264&P\213A\355.&\r\022eb\222\2078d\345\032V\r44\332\350\3305%\314\266\314\241\021\304\327\314Kp\211#a\306+\305\342c\306SE4`\262\271\240o\3029\360\3501\0032\324'r\227\200Mb\313\335R\244\217R""P\330\332C\036\261B\333\302\251\305\200\207\250\252W\236I\235\257\303S`B\214\006\305\022\265\271\246,\335\013sT\t5\221'\231v\215\030\356\337\205\327\251\362\033\306\303\266\363\232\214,;f\307\2147\006\355E\327\035\327-\230K\022\373\351LRl\030F\240\210Vb\203N\215\036T\307\021\233F\324\3613\013&\275/KSE\371\2342\345\"\300\010\316\n\006a]\003\032\233IUmb\321\035g\204\342\345\271\366\r\215\336\256\006(\335v\310h \023A\006J3ub\tA\201\241\225\212\271\227\245L\253\017\244\302\252\267F\022\\\202\252E\026\235%\260.kk\000 \340/K\220w\tp\017\020\242\240\002\372\227Ln\023\002\302\367\311\254\316\034\354\206o7\255\373\356\361\352/I\344C\221\263\276\177Vj\257F\262\366\3661\372}\024\311P\276\373\006\272\236\232\323\226\352\021\212)\027\201\343-0dA\220l\255!p\031\326\245\rI5W\010\335!$I\320\002,5L\230\rQ\330\035I$\242xJ\220 \n\005z\030FC\203\202M!\371 $\371\214\215.\311\023\027p\363\372\004It`\322\355pKk\205\245\322mtZy\333\224\204\251\334`v:}l\274mT\302u\227\264/S\0331K\204\360U\300\326q\215\241\342\210\356\006\372\263w\346T\013\t#\204_\302Z7\034\025\335}\037\311X$\r\377}g02H\251\363\r@\333\021]\006\233\366\342\276\\\244\345\253\234\310'\027!\357j\360d81\034\261\030Lg\331\331\250`U \241\266\276\260\0271T\260\25578]v\206\2331\227!\212DA\203Q\260\221.\333\307\333AE\021\024\303d\237f\246\314^\316t\007\211\253dat8u\312\254\274\235\324\347C-d]\036\220wr\233\206Xq\216\313H\331\001]\241\360\302\224\343\206\001\017\215D\025]\270R[\317\001\335\303Gw\211D@\224`\2313\370\213\255\335\030\260\331\305\306\010\002+w\301a\026D\013}\206J\324\357\213}\345\215fN%\261\271\354\376\264g\304\307\320\251\220\241\301\274\2641\246\264\017p@\215\021pl\224\353\0032\026\034Cd\032\315\321\004\300\303&\211\265\230\033\257\277\223,\022\021\227\314\254\226i\030kE\350_\206\377\207av\333M\303Q-pQ/@\267\312\242\206P\034\rPC\234(a\207\325\006\326J\304 \231A=,\311\335\204\336\020P\004pPI\357?m\360\371cg\206\271\2152\213\371\363\363\236\020\351\034,l\230\315\261F\203\366\204\367\213@\210\271\265'\010\307?k\315W\031""\351\365p\006F%i\221Hc\240\2537\035\033\322\231W\022(G8T\340ve\316$+I\"X\256\356\022\234\"'0iI\303V\036uIz\262\262\305\215:z\275\023=:\210\272o\345\273+\006[\202_\220i\0302)^\034\254\303\272\223F\370\264GZ\365\247\365\003\327\227\250\364\217?J\264\353\265=\036\352v\274\231\272\371\267i\227\026C\224\251\024u~\354\345W\217t\271<\276L\370\363o\265\257\265&\306\362\366\260#\273\203y\324\034`6\005f\353\304\027\342\344\307o\237\277\213w.C\242\227c\275\307\240\326\336]}\230V\333\034I\025N\362\271\306\326R\320\035@\275\370,\352\217\344\323\303\311\305\35538\250\254-\002b\225C\275\010\264\253X@\206\263\3059\231\250\221\002\320(+\265C\252\315\032\232\024\253D\031\231\210V\245\3108\265\210f\260z\211\n\360\026\370T\324\271\300\356B\321\224\262\332\326R\360\030*\025h\254$\301Eh\020\254\345^\244\220t3\336=\210i\025)\206\024Z\250\322\273}1c+\377\213\271\"\234(Hh/\227\206\000";
+    PyObject *data = __Pyx_DecompressString(cstring, 3099, 2);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (2887 bytes) */
-const char* const cstring = "x\332\255VIw\323X\026N(\007\014\244B\034B\030\0032\320\025FW\231!\005TBuH\002\025\272\006\034\010P\3039:\317\322\263-\"K\266\206\014\024\013\226^j\251\245\226Zz\351e\226Yz\251\245\177\002?\241\277\373$+\206P\325}N\367\302\366\363\033\356\273\367\273\337\375\356{ =r+\025nI\033\032\337\224T\223\333\222a:\022\337j\2306\227l\307\322Tn/2C2\r}[R,\316\034.1\251\034\037rj\314\2214[RL\303\321\252\256\351\332\222fHu^7\255\355\002N\221)f\333Z\325\220\034S\302a\365\246\260\023\357\240+\223M\211\341MKsXY\347\311\206\330\251\212e\326\377\356\254f\250|K\332\324\234\232\344l7\2704\223\314;\0263l\021\306\336\221x\033Nh\026W\034I\325\352\334\2605\323\260\227\372#\351\037*ED\006\342M\313\365\206\263-\3315\006\323\216\333\200s\025\323\222\224m\247f\032\005fYl{nee\277Aa\301v\033\r\323r\270\272bl0]S\245\272\251\362\033\204.6sU\232Qf$\030\233\201E\362v\346\206T\305\251\376\346\370N\000\312\266\340\321\334O\"\212\227\024\205Y\221~6\r\376\263\t\314D\016\026\205;\344\270\312u\255\314-\240\t\254(\177\270H$\312\220\236-?\273y\347\336\035\211\031*\360|\003\027lxXVt\244\010y\207\321\262\253\351\016.$\034\355\202\264R\221\266MW28\\E\376\032\3307x\300\251qC\262\271C\003iF\200\316\034\304.\343\270fTg\022\000\265\rN\247\0373\335\346\205_\\G\\d\272\206\212+\215>\223\230\242pX\277\"B}\246)\353:,\320N\204\340\002X\244\020Q\321\365J\r\224\302\265z\245 s\303\001K\352\256\355HeN\260\352\232\2429\010\334\342M\227\333\004\261H\370?\231\353\230r\203\314\362+/,\227_]e\233\313t\370\212\301\352|~\315\020\254\203\227`\362\006\267@*\207\327\351\277Y&\234\n\017g\256~\317TU6\010q\302O\002\350\337l)\246\256S\204\310w\201\225\225\0338^o\310\266\366\226\317\323\310BHD\251\n\323t\256\316\rT\t\231\210\321y\370\351t\237\234\017a\315\332n8\204&\237\277!\251\314a\363*\337oW\325l\362\236\213\030\252J\225;\025W\327\231U\265\3012\351\n1\252*\330L@\023\252|\313\001p\242TS\276\202:\261\001\225\"\247\010\244\271y\351\233}\\\217\3612L\360\254\302\\\335\221d\331\342\252\253pY\226TW@h\230\306M\360nCc:V\025\315\320\034Y\026J \255""\362\206\366\214)\353R\005\216'\330\"N\263R\001\215\346\033XA\306\350\006b\262c\232\222n\032\325\007\310fCg\n\207\253N\232\354\362\266C\234\265D!\014l\260\323\035L\252\263FC\320\010\374\222\024\006P\020\240]\323,\323\261\335:\227q\203n\177\315,\245\006\216~-\320.4\266\267nH\"\203s\261\372\251\037%k\377\034YOs\366\321\372\307\263F\3256]K\341\017\335\224l\360\310T\204\240\022\264\"\303\205\317\254\306:@\026\023=\306\246TB8\246Q&\004\250k\254\033\346\246\261\2072\267,\323r\215T\205\366V\300q\312\372\302\363\305\225\225\305=F-\323\001y\t~\210\032\177\306,V\267\227\0069'v,\353\272\326\2605[~\274\262\374\343R\"W\317\241\362\314q-.\266\374\024C\017\205Z\251C3)3\\\245\253E\325\245\203BJ\237\230d\262<\270\004R\330\220\224\275E,oo\341\263\004U\223\177\006\217Wy\245_\311\375\337\375&\007V\366YL\327\322\312\335\233I\253/\235\"j\246\177b\326\246\177\305\331\004_\001\301s\322 C\341\317k\000\177\025\375K\314\256\031\202\346\351\357~w\007V\366\271\273\266\227\314\227q\n\205Qj\n\205\275\376\000)\352\223G\216\365\225\331\333\206\242\231\210\3222](<\267\313\314\346\242\206\024\324(%\233\320\215\007P\020\022\001\372\213\235\262\006A\267P]ex\365\211\340\t\320\210\266)z4`V\312\030\005:\357(\215\373\267o\355\241I\373\345\370\224\270\256\242q]\025\327\357\3155\004\363\006f\270M\322\207\312\022\337r\331T\267\223\241x0$j\204\003\304\214\376\217j\"8\225\356\224A\326Xn\220\021\234\212\277\205\231d\350\304\032\212\002\343PB\250\003\265P\336\024%$<\214\375\024\021P\261UtV\265\241\216u\346$\335\033\357\224\267\0349\252\270\206B\321T\373\311\223k\314\256\325@\000\310\257*\313Z\235\022(\023\256dH<_\204H\302\3074?\261\n'R\274\276)\323\323G\226\353\014\207\360\355(5\231\004\376\2231\257\323\033\207\006}\034\305\220@\244\207\007\376\231\252\253sr\256n\231r\022-\304\031\264N\277\321\022\360Mf\000X\314q\323\202\353\360K\370K\344l\230\rYF\202)\325d\r\242)+5\256\254CV\343\177H\276\310\007\215\023\024h(r!F\256\021\267cy\331\350\237I\247R\r\210\3477Dn\350\236\246\313\364\330Mz\017\356\265\236}5\224N\360-""\032V5\274\005\254\244K\0146\013\214-\233\363uzN\210rKP\300(\245TZ\204\362g\nRh\363\247-\245\220\264\224XB(\203\266\216u\033\317\023:n\3056\340R\303vL|\254\370\221#\3134)\013\220\\\315p\356\311\216+\264 \376\226\351!\0145g\025.\030\3456\220X\356\332<\365\n:\214W\317&g\353\026\257\310t'=\250\371\326\320\373\341^\366\254\177?x\034\346\303b\224=\343\337\014\336\266'\332\017:\245({\322{\033L\005\315p\370\303\301\241\221\354{\247u\273\305\242\354\341(3\022e\217\266\036x\253^3\032\235\360\362\336]\177\330?\035\344\203;A3\312\216\265\014\177\301_\013\256\207/\333E2\322\364\207\243\354\261\226\353=\362\336\004\231\340Q\300z\331\321\326B\253Dw\237\361\363Q\366\234\277\020e\317\3730>\355\227z\331)\217}\310\016\215\034\355\036\301\252_\364\227\202\341`2x\021N\205\315v\246\275\320~\335)uXt\366\234\277\022\224\002\026e\216{Eo\241G^\215\266\226\275\023\036#\277&\275\037\374\037\202\205\240\024\215\346\274i\237\371\315\340\020\305B\036\317\3709\272\366h\353;O\361s\264w\031?\331qo\0041\275\rN\206\007\302B\007\316\035k5=\341;~\336\303\305S\376!\230\311\004O\302Y`T\214W\016\342\276\355\340\000\302\277\025\274\n\027\302\022\355<\326r\274o\375\374\373\341(s\244u\335+u\207^t_\254\365\200\206M!\305@o\204\245\260\322~\324f\037\216\014\035\276\024\300\243\013~S`\220\214\362\001\274\272\034,`\375#\374\217\264\362\255\273\336\027\336\254?\341\027\367\007\376/\1773`H\305\350i\377\204\317\203oEjG\217\265\266\304\345s\201\035\346\243\361)$c\270\233\237\353,t\326v\362q\036o\303\202\345\237\014\276\014\377\350\034\307B\211N5\275\003\336\025\377\222_\202\251b\017\271ZB\260_\205\007C\026\332\355\213p\277\3349\330)\357\000\247\234\227\353\001\324Yo\n9\377\302\277\2058\340B\316\377\n\371C c\335\261\363\"\017_\"n\026]\270\016\024\247\332\315N\246\263\274\223K\211r8\032\035\027\230\272\376#\377M8J\370\364FE\212\243Q\360\241\367\027\261\236\362G\350\276\t\257@a\025\333g;\213\235&\274\312_\354^\274\325\316#[\371\213\301\215\220\267\037\342\262\321\263\240\025\354}\031\215Oz\217\001\312]\304t-\374\245s""\253S\352\215\307\236\214\003\375^\022\3775\332\034\017o\"1\311\260\020\214\004r{\271sn\347\371\356\241]L\203\270\261{9/\377\177\2107-\023\252\206\261\326\013\320X\rf\302\311\260\024eF[O\260\345\261\177\203\n\340\320\373\215\326+px\222\2303Aw\3038\221\315\361g\301\346\221\3609\352\346qg\006\327b/\210u\254{\354Zx\031\031\334l\257\357\234\334%\252\017\316\344\272C\257\272\257^\367\262'\274\227\002\250\330Y\310\300\341S}\002\237\367\353\210'\327\376\252s\240\223\207\203\207\317\373%\332 \r\022\227J{\021\010 \377\037\306\210\303[-\233\334K8|\337[\3646\374U\277\371)\207'\200\370\223\240\010\003\202\227E\357I\"\003\307\203\225\260\324'\341\365p5\264P\210\263\235\211N1\245\337w^\031\270\216\236\356\236\276\032\346\302\317\346\241\030]\270\002%\030H\301 \013~\244\210>\246\334\t\3577\234\037\303i\210S\215\214\221z\334i\375\351_FJD\365\\%\240z\177\021\004l\t\322D\343\307Qd\334\277\355+@h\362,\212\261\031~\021\336m\017G\271\211\010\304{\207\375\213\201\033.\020\363\\\300\323\244Y\027\202\372\234\344+\032?\007\223w\303\341\360x\370\264\315\310\334=\030c\376\237\341%$\371H'\037M\236\361\013X\317E\202\306\007\374k\270\177\374\224\177P8=~\006\205\374\033\331\021\324v\274\007(\353\n\355\230\3624\312S4z\322\333\204\020\243n\317B<\177\013Ee\035\201\270\025i\356L\032\016\304\274FAP\360\361\337zp;\256\304\370\257A\033cX\213\275d\356\r]0\345Uqi9\000\351HpK\036\373\337R\224VI\224\241\334\324\204\023\231\221\367\277\266X/s\025\325\262&\252\037\304\267[\371\356\321\313\3007\355R\245^F\n\016\006:v\314v\357\257vW\327\272k/\273/_E\231i\377Ep\"6%\016\266\346\241h\305\201s\027\203\313\001\017\213\341Bjy\0329\032\036\330q\301\337\010\376\240\n\351\336{\272{qwa\267Df_\007\277\267\017\264\363Q\2068<\0227\260Cq]xs\276M] \2650\335\235\276\333^m\277\333\271\325]\206[\257\273\257\177%)8\341=\365u!\352\010\363wt(\374\374\341\241\266\217\266\212\350\251\270\270\331\225\276i\037\355|\267\263\336-\255R\203\274\237\364B\\\365\216\032S\224\005\304\200ql\207%\307\242\314\014\270\010U\357\016}\337\021\342""\001\224NS[\234\026\205=r\264U@\233\317\201\361\314w\320\352\251{\251\000\356ng\270\223\213N\237\201\024\361\360!\206q?\026\257\204~G\235\014V\203?\333\371\244\243R\337\377|#\214\006\256\375O}/\332\327\367\236\372U\201g\242\031(\036?#\236\"W\351i\363_4&J\207\026\276\353\314\356L\3554w\207\243\013B\302\376\346\005\223\274\r~\3717\336\352A\243";
-    PyObject *data = __Pyx_DecompressString(cstring, 2887, 1);
+    #elif (CYTHON_COMPRESS_STRINGS) != 0 /* compression: zlib (3101 bytes) */
+const char* const cstring = "x\332\245VK{\323\326\026%4\201\020r!\016!\274\232\"S.\341\021\014\346U\240IZ\023\022\032\372\302\201\000-\275\325w,\035\333\"\262d\353\221\304\300\375>\206\036j\250\241\206\032z\350\241\207\014=\364\320?\201\237p\327>\222eC\332N\356 \316\321y\354\263\367\332k\257}\356K\017\334b\221[\322\266\306w$\325\344\266d\230\216\304w\253\246\315%\333\2614\225\333+\314\220LC\257K\212\305\231\303%&\025\242CN\2319\222fK\212i8Z\3115][\322\014\251\302+\246U\317\340\024\231b\266\255\225\014\3111%\034V\257\n;\321\016\2722\336\024\033\336\2614\207\025t\036o\210\234*Zf\345\237\316j\206\312w\245\035\315)KN\275\312\245\371x\336\261\230a\2130\006G\242m8\241Y\\q$U\253p\303\326L\303~\330\037I\377V)\"2\020mZ\255T\235\272d\227\031L;n\025\316\025MKR\352N\33142\314\262X}q}}\257Aa\301v\253U\323r\270\272nl3]S\245\212\251\362\005B\027\233\271*\315+\363\022\214\315\303\"y;\277 \225p\252\2779\272\023\200\262]x\264\370\263\210\3429Ea\026\245_L\203\377b\0023\221\203\025\341\0169\256r]+p\013h\002+\312\037.\022\2112\244'\253O\256\336\272{Kb\206\n<_\303\005\033\036\026\024\035)B\336a\264\340j\272\203\013\tG;#\255\027\245\272\351J\006\207\253\310_\025\373\206\0178enH6wh \315\013\320\231\203\330e\034\327\214\322|\014\240\266\315\351\364\032\323m\236\371\325u\304E\246k\250\270\322\3503\211)\n\207\365\213\"\324'\232\262\245\303\002\355D\010.\200E\n\021\025]\257\224A)\\\253\027327\034\260\244\342\332\216T\340\004\253\256)\232\203\300-^s\271M\020\213\204\177\317\\\307\224\253d\226_|f\271\374\322\006\333Y\245\303\027\rV\341K\233\206`\035\274\004\223\267\271\005R9\274B\337f\201p\272\270\360]fy\376\022SU\331 \314\tA\t\260_\337UL]\247\030\221\361\014+(\0130P\251\312\266\366\206/\321\310BPD\252\"\323t\256.\016\325\t\231\210\360Y\376|\272O\317e\005(9Ix\206i\\5x\211\021\240\270\307\252W\035B\232/-H*s\330\222\312\367\336\250j6E\306\215\350\027t@\336\352\032\327U@\363\3717\350\305E\340v\304\027q}\302\325'L\331\022\220E$-)%\356\024]]gV\311\306\026\351\242\230\025eC\031\245\364\361]\007w\010MH\n\003\034\215\274Q\243\253""\206\252A|\0039iqI\272\276\247\312\242L\031&\030^d\256\356H\262lq\325U\270,K\252+\222G\010!\244m\215\351XU4CsdYh\220\264\301\253\032E \025\001K\234\325\345\005\020\254\010\002/U\261\002\007\350\006\252!\3074%\3354J\367\301\243\252\316\024\016\337\007y(\324\035\252\026K\224\340\320\006;\331\301\244\n\253V\005\201\301lIa@\t\021\333e\3152\035\333\255p\0317\350\3665f)e$\363\232\310e\246Z\337]\220\004s\026#\335U?!\311\3369\262\236p\345\223\365Og\215\222m\272\226\302\227\335\204\346\360\310T\204\224\023\264\202?\231\277X\215\024\210,\306\235\000\233\222tqL\243@\tP\327\3302\314\035c\2002\267,\323r\215D\377\006+\250.\242A\356\351\312\372\372\312\200\257\253t@~\010?\204\272<a\026\253\330\017\207\031-v\254\352\272V\2655[^[_\375\351a,\224O\321_\230\343Z\\l\3719\202\036\332\270^\201ZSf\270\232\2207\031d\022\372D$\223\345\341%\220\302\206\230\r\026\261\\\337\305\337C\350\251\374\013\210\275\301\213}\r\351\377\337krhe\217\305d-Q\214\301LR\333\311\024Q3\371\210X\233|\212\2631\276\002\202\247\244~\206\302\237\226\001\376\006:\247\230\3354\004\315\223\377{\335\035Z\331\343\356\346 \231\317\243\024\n\243\324\2162\203\316\004\t\354\223G\216\224\235\331uC\321LDi\231.z\013\267\013\314\346\242\206\024\324(%\233\320\215\006\220\024\022\001\372\304NYC+\261P]\005x\365\231\320\n\320\210\266\tz4`V\302\030!^J\365\336\315\033\0034\007#\230\246\303rdB\334]$\025\024\276\014\346\252\202\206C3\334&\225E\231\211_\271`\252\365x(\336-\2614\341\000\321\244\377O5\021\251\032]k\313\221\366 =8\025\375\n3\361\320\031\022jn@*\250\223\363\232\250'\341a\344\247\010\202*\257\250\263\222\r\251\2540'~D\340\271\364\206#aE\327P(\232R?\223r\231\331\3452\330\000qVeY\253P6e\002\231\014\211W\224PL\370\230$+\222\344X\227_\233\232\261\265#\323+L\226+\014\007\361\353(e\231Z\300gc^\241\347\026\r\372X\212!\001Io |\231\252\253sr\260b\231r\0341\324\032<O~\3214\360Kf\000ZDz\323\202\373\360M\370Ll\255\232UYF\306)\367d\r**+e\256lAg\243/\260A\344\204\3061\0224\024\371\020#\327\210^\006\362\252\321?\223L%\242\020\315o\213\374""\320=5\227\351\221\233\3644\035\364\242=E\225L\360]\032\2264<K\254\270m\014w\017\214-\233\363-z\331\210\372\213Q\300(\241UR\225\362_T\250\020\353\317{L&\3561\221\246P\026m\035\3536^Jt\334\212l\300\245\252\355\230\370\263\242\367\226,\323\244,@r5\303\271+;\256\020\207\350W\24679\344\235\025\271`\225[Eb\271k\363\304+\0103\036`;\234mY\274(\323\235\364\266\347\273\317\336\356\373\363\376\177\337\217t\277\3126S\037\017\354;t\306O\177\234\330w\350\353 \335\035?\353\327\272\343s~>\036\245\203Tw\374+\237u\307\245`\244;~>\310}\234\33176\376~\273\361\324\303\367\254\247\370)?\335\033\237\361V\274\232\217\231\303\215\373\336\206W\353NN{\227\375\034\331\231\365\312>\353\215\036|\377\316\273\341\341\373H\243\342\337\tR\301BXh\212\003\267\032\266\227\356N\376\213\226X\303\205\245w\301\215 \337\033\035\353\216\177\351?\014\366\007\027\302\003!\013\355\346\271\346\203f\2415\331~\320\206C'\304\266?\232\323\315lw<\345\245z0u\307\233\205\033_\3707p\361\344)\270v!\030\t\260r\244s\004A\370\265\340_a>d\335\263W\302;\315\331f\2555\332Zm\247\310\224\360\375Pw\222\214f#\347\037\007\254;9\345\035\360X\024N\2727y\314\313z\271\356\344i\212\370h\003\360L6~\302\301\311\243\302\353Zwj\326{M\027\322\214\343\335\367\363\376\353p\204f5\277\326\221\356\267\322\255[\255Z\033\007f\274\037\375Z\017\036\036\367y\360M\230\016\263td\327\263\375\264\277\030\330a:6\325I/\266r\255\315vZ8\340\335\204/\256\377(XjN\266V\"Kp\303\033\363^\372Oq\357\361\200\365&O\372c\024\374\264\227\241\343\331\346\231xg\372\\\347\334\215f\032`\245\317\001{\336\\F\344\351\013\024\344\031?\353\347(\001S\307\274\345`\032\000\314\234\365\337\301\247\231\323\376\345\3401\000\2339\351\037 \374h&\335\233\212\360\232\0029z\261\003\277c-\036\376\0074\212\207\177\022\226\263\036\243\200s\224\237\333\336\027^\014o\2563w-\254u\256\257\265Y\273Fk\213\236\345\247\010\3611/OG\246\275k`I:X\244]\337\267\307\332\371aO\317\000\247\030\360\t\202k\306[\003vY\232a\211\203\340q\0179\3125\362\357Gz\343g\374{\301\232\300z\374\264\1775x\003\346\334o\345)""\373o\202\331\240\026\216\240\026@m\247q\263\301\210\014\304\277!:\247\275\333\376\210\177\n\036\335\302\315\340\252\001~o\006W\302\347D\300\230B\304\204\007\360i4x\200d\014\356\006lD\346\\\\L\3021x\372q|\337\330\341\316\304ir\035L\037\tf\202g\341lXk\2166s\315\227\255|\213u\317|\351\257\007y\244iT\260OT\305dc\325;\036\361r\306\373\301\377!\310\005\000'\345\315\t\216\037\244X\310\343y\252M\212\341[*S\332\273\212\177\343\204\360\006b>\021\356\0173\255\021AeO\370\216\177\357\341\342I\377 \314\214\006\217P%\242\272h\205\352\240\216ZL\243\350^\204\2710O;\211\346\337\370ih\311\350D\343\212\207P)\242#\215gpE\r\346\303\2310\337\035\235l<\202\347k\376\002\005q\020\322\361\002~\314\2204\000T\201\\\017?\016D\341D8\026>E\354k\255y\220\023{\201\363\321\316\321\313\341y\224\377Ns\253}\342\003\271;<\223\352\354{\321y\361\2627~\334{.\310\021e\202d\355\244(\247,A^A$\251\346\205\326\376V\032\016\036\372\312\317\323\006)Q8\350\032\245g\005a\243|?\036!\036\354\nY\"\036L4\322\215{(\360m\177\003U\373Y\002\210\313\217\202,\014\010\216d\275Gq*\217\005\353!\262\034)\330\225p#\264\000\346\235\326tk W\337z\005\222\217S\235S\227\302\024X\374\027:\225\355\236\275\210l\016IT\304\364\3330z9\374\211\"\372T\227\216S-\006Gp:R^\212\2214\366\255\177\036)\021Br\211\200\352\375M\020\307<\241E5\022\203\233\036\367o\372\n\020\232\021\365\026~\021\336\206f\247\246\273SB(\203\225\300\rs\275\201\376\235\200<\345\240E\007\2516\277\204\311\333\341Hx,|\334dd\356.\2141\377m\3705\222<\321J\223\230d\260\236\352\212z\335\017\255\311u\247\372J3u\332\377\332\377\235\354\010\221\211\344\264H;\204\234\242\033A\254wPLP\3213(\200\337\3037\255c\255\037\333\210\346\244?\001\232fi\345t\022\024\312\262L\241\020\004\321g%\270\0310\\\020\177\032\2641\226\221^<\367\232\256\231\365J\270\272\020\200z}q\372\277\022\225\310Bw\2242T\026N\214\216\275\377\255\2016y\t5\263)d\032\364\267\033\351\316\341\363@9\321\033tE)8\020\350\330q\247so\243\263\261\331\331|\336y\376\242;:\347?\243\006@\246\304\301\306\022\372`v\350\334\271\340|\300""\303l\230K,\317Q\327\030\332q\326\337F?E\235t\356>\376p\356C\356C\236\314\276\014^5\3677\323\335Qb\362X$E\007\243\352\360\026}\233\036\r\211\205\271\316\334\355\346F\363]\373Fg\025n\275\354\274\374\215\004\341\270\367\330\327\205\362\"\314W\320\032\374\373\303C\205\037nd\241\216\270\030\355\361z\363p\353\333\366V'\277ARw/V5\361n\370\206d\014\020\003\306#h\375t\254\263\357\273\316w\257:\257\376 \355\000<\247H\331\346D]\217\035nd\240\324)\020\236\371\016\324z\0339R\201\330\355\326H+\325=u\032J\304\303e\260%\027\213\252\220\372\276,\316\004\033\301\333f:\226E\312\322<\230\217\007\010\351\370\211\276\246P\007!\273E<I\304c\244\357\003=\221&>\355#\244\037\324\371\356\370\323~\266\273G\300\037\373%\201j\254\037\364\220\032\025\255\345\022\265\252\277{\324\014q\220\222\242\205\357Zw\332\263\355\332\207\221\356Y!g\377\320\221b\255\377\365\177\242\205\277\240";
+    PyObject *data = __Pyx_DecompressString(cstring, 3101, 1);
     if (unlikely(!data)) __PYX_ERR(0, 1, __pyx_L1_error)
     const char* const bytes = __Pyx_PyBytes_AsString(data);
     #if !CYTHON_ASSUME_SAFE_MACROS
     if (likely(bytes)); else { Py_DECREF(data); __PYX_ERR(0, 1, __pyx_L1_error) }
     #endif
-    #else /* compression: none (5420 bytes) */
-const char* const bytes = ": Buffer view does not expose stridesCan only create a buffer that is contiguous in memory.Cannot assign to read-only memoryviewCannot create writable memory view from read-only memoryviewCannot index with type 'Cannot transpose memoryview with indirect dimensionsDimension %d is not directEmpty shape tuple for cython.array<IIndirect dimensions not supportedInvalid mode, expected 'c' or 'fortran', got Invalid shape in axis <MemoryView of NoneNote that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Out of bounds on buffer access (axis Pickling of struct members such as self._entry must be explicitly requested with @auto_pickle(True)RawEntry(name=Unable to convert item to object.>')?add_note and  at 0xcollections.abc, comp_size=compression failed<contiguous and direct><contiguous and indirect>, crypt_type=, data=decompression faileddisableenablegcgetfullargspec (got got differing extents in dimension isenableditemsize <= 0 for cython.array(name=no default __reduce__ due to non-trivial __cinit__not a RepiPack file object>, offset=packed name is too long: replacement must be bytes or Nonereplacements must be a mapping or a callableshirotsume_tools/archive/crypt.pyx, size=<strided and direct><strided and direct or indirect><strided and indirect><stringsource>unable to allocate array data.unable to allocate shape and strides.unexpected end of fileunknown RepiPack errorunsupported RepiPack versionASCIICompressionError_DataclassParamsDecompressionErrorEllipsis_FIELDInvalidSignatureErrorMappingNotImplementedPackEntryPackEntry.__reduce_cython__PackEntry.__setstate_cython____Pyx_PyDict_NextRefRawEntryRawEntry.__reduce_cython__RawEntry.__setstate_cython__RawEntry.comp_sizeRawEntry.crypt_typeRawEntry.nameRawEntry.offsetRawEntry.sizeRepiPackErrorSequenceShortReadErrorUnpackerUnpacker.__reduce_cython__Unpacker.__setstate_cython__UnsupportedVersionErrorView.Memor""yViewabcallocate_bufferasyncio.coroutinesbasebytesc__class____class_getitem__cline_in_tracebackcollections.abccomp_datacomp_sizecomparecompresscountcp932crypt_typedata__dataclass_fields____dataclass_params__dataclassesdecodedecode_bodydecode_tabledefault__dict___dict__doc__dtype_is_objectencodeencode_bodyencode_tableentriesenumerateeqerrorfield_field_typefileflagsformatfortranfrozen__func____getstate__hashheaderid__import__in_fileindexinit_is_coroutineitemsitemsizekw_only__main__match_args__match_args__memview__metaclass__metadatamode__module____mro_entries__name__name__ndim__new__objoffsetorderout_filepackpop__prepare____pyx_checksum__pyx_result__pyx_state__pyx_type__pyx_unpickle_Enum__pyx_unpickle_PackEntry__pyx_vtable____qualname__read__reduce____reduce_cython____reduce_ex__registerreplacereplacementsreprseekself__set_name__setdefault__setstate____setstate_cython__shapeshirotsume_tools.archive.cryptsizeslotssplitstartstatestepstopstrstruct__test__typeuint8_tunpackunpack_fromunsafe_hashupdateuse_setstatevaluesweakref_slotwritex\000\200\001\340\010\033\2309\240F\250!\2501\330\010\032\230-\240z\260\022\260:\270Q\330\010\027\220z\240\026\240q\250\001\360\006\000\005\010\200t\2103\210a\330\010\t\330\004\005\330\010\013\210:\220R\220q\330\014\022\220!\2205\230\001\230\031\240!\2404\240q\330\010\016\210n\230A\230U\240+\250V\2601\330\010\027\220q\230\001\330\010\017\210u\220B\220j\240\004\240B\240a\340\010\014\210A\210Q\200\001\340\010\032\230!\330\010\034\230A\330\010\036\230a\330\010\035\230Q\340\010\026\220a\360\010\000\005\013\320\n\032\230!\2301\230D\240\001\240\024\240T\250\026\250q\260\004\260A\260X\270Q\270a\330\033\034\230I\240Q\240a\330\004\023\2201\220A\340\004\005\330\010\014\210E\220\025\220a\220q\330\014\024\220H\230H\240A\240Q\330\014\021\220\035\230a\230q\240\007\240q\250\001\330\014\022\220'\230\021\230!\330\010\013\210;\220c\230\021\330\014\024\220E\230\021\330\010\020\220\005\220R\220z\240\027\250\002\250.\270\001\340\010\017\210q\220\001\330\010\017""\210q\220\001\200A\330\010\030\230\007\230q\240\004\240G\2506\260\022\2601\330\010\017\210q\220\006\220a\220y\240\002\240!\2402\240W\250A\250Q\200A\330\010\017\210t\2207\230!\200\001\330\004\n\210+\220Q\320\000T\320TU\340\010\027\220s\230!\2301\330\010\032\230-\240v\250Q\250f\260B\260a\360\n\000\t#\240!\330\010\037\230q\330\010\035\230Q\330\010\037\230q\330\010!\240\021\330\010$\240A\360\n\000\005\010\200t\2103\210a\330\010\t\330\004\n\210!\2105\220\003\2206\230\022\2301\340\004\005\330\010\014\210E\220\025\220a\220q\330\014\024\220K\230w\240a\240q\330\014\031\230\025\230e\2407\250!\2501\330\014\017\210x\220s\230!\230<\240s\250!\330\020\026\220j\240\001\320!<\270A\270U\300!\330\014\022\220!\2203\220a\220r\230\027\240\r\250\\\270\023\270A\270Q\330\014\017\210q\220\002\220(\230#\230Q\230e\2401\340\010\034\230D\240\002\240&\250\006\250a\250s\260\"\260B\260b\270\006\270b\300\001\330\010\021\220\021\340\010\013\2106\220\026\220q\230\003\2302\230Q\330\014\031\230\021\230&\240\001\240\021\330\010\016\320\016\036\230a\230q\240\r\250Q\250a\330\037+\2506\260\026\260q\270\004\270E\300\021\330\010\027\220q\230\001\330\010\t\330\014\020\220\006\220a\220u\230B\230j\250\014\260B\260a\340\014\023\2201\220A\330\014\032\230!\340\010\014\210E\220\025\220a\220q\330\014\024\220K\230w\240a\240q\330\014\030\230\005\230Q\330\014\022\220.\240\001\320!1\260\033\270C\270q\300\001\330!\"\320\"2\260!\2601\330!\"\240,\250e\260>\300\021\330\014\033\2301\230A\330\014\r\330\020\024\220F\230!\2305\240\002\240*\250O\2702\270Q\340\020\027\220q\230\001\330\020!\240\021\340\014\017\210q\220\002\220*\230A\330\014\017\210q\220\002\220-\230q\330\014\017\210q\220\002\220.\240\005\240_\260E\270\034\300S\310\007\310q\330\014\026\220a\340\010\014\210E\220\021\220!\330\010\016\320\016\036\230a\230q\240\r\250Q\250a\330\037+\2506\260\026\260q\270\004\270E\300\021\330\010\027\220q\230\001\330\010\t\330\014\020\220\006\220a\220u\230B\230j\250\014\260B\260a\340\014\023\2201\220A\340\010\014\210A\210Q\200\001\360""\010\000\005\016\210T\220\035\230d\240'\250\024\250Q\330\004\014\210G\2201\220F\230,\240a\330\004\007\200v\210W\220E\230\024\230Q\330\010\022\220!\330\010\027\220q\340\010\027\220t\2306\240\027\250\005\250S\260\004\260F\270'\300\021\330\004\007\200q\330\010\017\320\017*\250$\250a\250w\260k\300\027\310\001\340\010\017\320\017*\250$\250a\250w\260k\300\021\320\000W\320WX\340\010\025\220V\2301\230A\330\010\027\220q\230\001\360\006\000\t\030\220s\230!\2301\330\010\036\230m\2506\260\021\260&\270\002\270!\360\010\000\t\036\230Q\360\006\000\t \230q\330\010!\240\021\330\010$\240A\330\010\034\230C\230q\240\001\240\021\360\016\000\005\010\200x\210s\220!\330\010\t\330\004\n\210!\2109\220C\220v\230R\230q\340\004\005\330\010\014\210E\220\025\220a\220q\330\014\022\220*\230G\2401\240A\330\014\022\220!\2201\220G\2301\230D\240\001\240\023\240I\250Q\340\010\034\230D\240\002\240+\250R\250r\260\022\2606\270\022\2701\330\010\021\220\021\340\010\013\210;\220b\230\001\330\014\031\320\031)\250\021\250!\330\010\016\320\016\036\230a\230q\240\r\250Q\250a\330\037+\2501\330\037(\250\001\330\010\027\220q\230\001\330\010\t\330\014\024\220F\230!\2305\240\002\240*\250L\270\002\270!\340\014\023\2201\220A\330\014\032\230!\340\010\025\220Z\230q\240\016\250a\330\010\026\220h\230a\230q\330\010\013\2104\210{\230$\230d\240!\330\014\022\220)\2301\230A\340\010\014\210E\220\025\220a\220q\330\014\022\220*\230G\2401\240A\330\014\023\2201\330\014\017\210q\330\020\023\2203\220e\2303\230c\240\021\330\024\033\230<\240q\250\003\2505\260\001\330\021\022\330\020\027\220|\2401\240C\240u\250A\340\014\017\210u\220C\220q\330\020\027\220u\230A\230S\240\007\240q\330\020\034\230G\2405\250\001\250\023\250J\260a\330\020\023\2208\2303\230a\230{\250#\250S\260\n\270!\330\024\032\230.\250\001\250\021\330\020\027\220q\230\002\230*\240A\330\020\030\230\006\230a\230q\330\020\032\230#\230Z\240q\330\020\021\340\014\017\210t\220:\230Q\230f\240A\330\020\026\220i\230q\240\001\330\014\027\220w\230a\330\014\031\230\033\240A\240Z\250q\330""\014\030\230\n\240!\2401\330\014\031\230\032\2401\240A\330\014\023\2201\220B\220h\230c\240\021\240!\330\014\023\2201\220B\220m\2403\240a\240q\330\014\023\2201\220B\220n\240A\330\014\024\220F\230!\2301\340\014\023\2201\220B\220j\240\001\330\014\026\220g\230Q\230b\240\001\340\010\020\220\005\220Q\220a\330\010\016\320\016\036\230a\230q\240\r\250Q\250a\330\037+\2501\330\037(\250\001\330\010\027\220q\230\001\330\010\t\330\014\024\220F\230!\2305\240\002\240*\250L\270\002\270!\340\014\023\2201\220A\340\010\014\210A\210Q\200\001\330\004\026\220h\230h\240a\240q\330\004\005\200Y\210a\340\004)\250\024\250U\260!\2601\330\004\007\200s\210!\320\013$\240C\240q\330\010\016\210n\230A\230Q\340\004 \240\006\240l\260!\2606\3209R\320RU\320UV\320VW\330\004\035\230T\240\025\240a\240q\330\004\007\200s\210!\210=\230\003\2301\330\010\016\210n\230A\230Q\340\004\"\240$\240e\2501\250A\330\004\007\200s\210!\320\013\035\230S\240\001\330\010\016\210n\230A\230Q\340\004\037\230v\240\\\260\021\260&\3208J\310\"\310A\310Q\330\004\035\230X\240[\260\002\260!\330\004\034\230D\240\005\240Q\240a\330\004\007\200x\210s\220!\220<\230s\240!\330\010\016\210n\230A\230Q\340\004\035\320\0355\260R\260|\3002\320EV\320VX\320XY\360\010\000\005\025\220J\230l\250!\2501\330\004\005\200[\220\001\330\004\005\200\\\220\021\330\004\013\2101\200\001\340\004\037\230q\320 0\260\013\270;\300k\320QR\330\004\023\2209\230H\240A\240Q\330\004\007\200|\2207\230!\330\010+\2501\250L\270\016\300a\330\004\013\2101\200\001\330\004'\240q\250\006\250a\320\000?\270q\340\010\027\220q\330\010\031\230\021\330\010\035\230Q\360\006\000\005\013\210.\230\001\230\021\230$\230a\230t\2404\240v\250Q\250d\260!\2605\270\001\270\021\330\031\032\230,\240e\250>\270\021\330\004\023\2201\220A\330\004\005\330\010\020\220\005\220R\220z\240\024\240R\240{\260!\340\010\017\210q\220\001\200\001\340\010\027\220s\230!\2301\330\010\032\230-\240v\250Q\250f\260B\260a\330\010\027\220q\330\010\031\230\021\330\010$\240A\360\n\000\005\010\200t\2103\210a\330\010\t\330\004\n""\210!\2105\220\003\2206\230\022\2301\330\004\005\330\010\014\210E\220\025\220a\220q\330\014\024\220J\230g\240Q\240a\330\014\022\220!\2201\220C\220q\230\004\230A\230U\240)\2501\330\010\013\2106\220\026\220q\230\003\2302\230Q\330\014\031\230\021\230&\240\001\240\021\330\010\016\320\016\036\230a\230q\240\005\240Q\240i\250|\2706\300\026\300q\310\001\330\037$\240A\330\010\027\220q\230\001\330\010\017\210u\220B\220j\240\004\240B\240a\340\010\014\210A\210Q\330\010\017\210q\220\001O";
+    #else /* compression: none (5754 bytes) */
+const char* const bytes = ": Buffer view does not expose stridesCan only create a buffer that is contiguous in memory.Cannot assign to read-only memoryviewCannot create writable memory view from read-only memoryviewCannot index with type 'Cannot transpose memoryview with indirect dimensionsDimension %d is not directEmpty shape tuple for cython.array<IIndirect dimensions not supportedInvalid mode, expected 'c' or 'fortran', got Invalid shape in axis <MemoryView of NoneNote that Cython is deliberately stricter than PEP-484 and rejects subclasses of builtin types. If you need to pass subclasses then set the 'annotation_typing' directive to False.Out of bounds on buffer access (axis Pickling of struct members such as self._entry must be explicitly requested with @auto_pickle(True)RawEntry(name=Unable to convert item to object(,?.>')add_note and  at 0xcollections.abc, comp_size=compression failed<contiguous and direct><contiguous and indirect>count must be non-negative, crypt_type=, data=decompression faileddisableenableentries yielded entries yielded more items than countexpected PackEntry, got gcgetfullargspec (got got differing extents in dimension isenabled items, expected itemsize <= 0 for cython.array(name=no default __reduce__ due to non-trivial __cinit__not a RepiPack file object>, offset=packed name is too long: replacement must be bytes or Nonereplacements must be a mapping or a callableshirotsume_tools/archive/crypt.pyx, size=<strided and direct><strided and direct or indirect><strided and indirect><stringsource>unable to allocate array data.unable to allocate shape and strides.unexpected end of fileunknown RepiPack errorunsupported RepiPack versionASCIICompressionError_DataclassParamsDecompressionErrorEllipsis_FIELDInvalidSignatureErrorMappingNotImplementedPackEntryPackEntry.__reduce_cython__PackEntry.__setstate_cython____Pyx_PyDict_NextRefRawEntryRawEntry.__reduce_cython__RawEntry.__setstate_cython__RawEntry.comp_sizeRawEntry.crypt_typeRawEntry.nameRawEntry.offsetRawEntry.sizeRepiPack""ErrorSequenceShortReadErrorUnpackerUnpacker.__reduce_cython__Unpacker.__setstate_cython__UnsupportedVersionErrorView.MemoryViewabcallocate_bufferasyncio.coroutinesbasebytesc__class____class_getitem__cline_in_tracebackcollections.abccomp_datacomp_sizecomparecompresscountcp932crypt_typecrypt_type_indata__dataclass_fields____dataclass_params__dataclassesdecodedecode_bodydecode_tabledefault__dict___dict__doc__dtype_is_objectencodeencode_bodyencode_tableentriesenumerateeqerrorfield_field_typefileflagsformatfortranfrozen__func____getstate__hashheaderid__import__in_fileindexinit_is_coroutineitemsitemsizejoinkw_only__main__match_args__match_args__memview__metaclass__metadatamode__module____mro_entries__name__name__ndim__new__objoffsetorderout_filepackpop__prepare____pyx_checksum__pyx_result__pyx_state__pyx_type__pyx_unpickle_Enum__pyx_unpickle_PackEntry__pyx_vtable____qualname__read__reduce____reduce_cython____reduce_ex__registerreplacereplacementsreprseekself__set_name__setdefault__setstate____setstate_cython__shapeshirotsume_tools.archive.cryptsizeslotssplitstartstatestepstopstrstruct__test__typeuint8_tunpackunpack_fromunsafe_hashupdateuse_setstatevaluesweakref_slotwritexT{\000^:}\200\001\330\0361\260\021\360\006\000\t\033\230!\360\n\000\t#\240!\330\010\037\230q\330\010\035\230Q\330\010\037\230q\330\010!\240\021\330\010\036\230a\330\010 \240\001\330\010$\240A\360\024\000\005\010\200v\210S\220\001\330\010\026\220c\230\021\230!\340\010\024\220C\220q\230\001\330\010\013\210:\220R\220q\330\014\022\220*\230A\230Q\330\010\026\220h\230a\340\004\007\200|\2202\220Q\330\010\016\210m\2306\240\021\240,\250b\260\001\330\010\013\2104\210s\220!\330\014\r\330\010\016\210a\210u\220C\220|\2402\240Q\340\004\005\330\010\034\230D\240\002\240&\250\006\250a\250s\260\"\260B\260b\270\014\300B\300a\330\010\027\220|\2402\240\\\260\022\2601\330\010\021\220\021\340\010\013\2106\220\026\220q\230\003\2302\230Q\330\014\031\230\021\230&\240\001\240\021\340\010\016\320\016\036\230a\230q\240\r\250Q\250a""\330\037+\2506\260\026\260q\270\004\270E\300\021\330\010\027\220q\230\001\330\010\t\330\014\027\220|\2401\330\014\022\220*\230J\240a\330\014\020\220\006\220a\220q\330\014\022\220!\340\014\023\2201\220A\330\014\032\230!\340\010\017\210q\330\010\014\210L\230\001\330\014\017\210u\220C\220q\330\020\026\220j\240\001\240\021\330\014\017\210t\220:\230Q\230j\250\001\330\020\026\220i\230q\320 :\270!\2704\270q\300\001\330\014\024\220K\230q\340\014\031\230\025\230e\2407\250!\2501\330\014\017\210x\220s\230!\230<\240s\250!\330\020\026\220j\240\001\320!<\270A\270U\300!\330\014\022\220!\2203\220a\220u\230G\240=\260\014\270C\270q\300\001\330\014\017\210q\220\005\220X\230S\240\001\240\025\240a\340\014\030\230\005\230Q\330\014\022\220.\240\001\320!1\260\033\270C\270q\300\001\330!\"\320\"2\260!\2601\330!\"\240,\250e\260>\300\021\330!&\240a\330\014\033\2301\230A\330\014\r\330\020\023\220>\240\022\2401\330\024\037\230|\2501\330\024\032\230*\240J\250a\330\024\030\230\006\230a\230q\330\024\032\230!\340\020\027\220q\230\001\330\020!\240\021\340\014\017\210q\220\005\220Z\230q\330\014\017\210q\220\005\220]\240!\330\014\017\210q\220\005\220^\2401\330\014\026\220a\330\014\024\220A\340\010\013\2105\220\003\2201\330\014\022\220*\230A\320\035/\250q\3200F\300a\300q\340\010\013\210<\220r\230\021\330\014\020\220\005\220Q\220a\330\014\022\220/\240\021\240!\240<\250q\3200@\300\005\300Q\330\014\033\2301\230A\330\014\r\330\020\033\230<\240q\330\020\026\220j\240\n\250!\330\020\024\220F\230!\2301\330\020\026\220a\340\020\027\220q\230\001\330\020\035\230Q\340\010\014\210A\210Q\200\001\340\010\033\2309\240F\250!\2501\330\010\032\230-\240z\260\022\260:\270Q\330\010\027\220z\240\026\240q\250\001\360\006\000\005\010\200t\2103\210a\330\010\t\330\004\005\330\010\013\210:\220R\220q\330\014\022\220!\2205\230\001\230\031\240!\2404\240q\330\010\016\210n\230A\230U\240+\250V\2601\330\010\027\220q\230\001\330\010\017\210u\220B\220j\240\004\240B\240a\340\010\014\210A\210Q\200\001\340\010\032\230!\330\010\034\230A\330""\010\036\230a\330\010\035\230Q\340\010\026\220a\360\010\000\005\013\320\n\032\230!\2301\230D\240\001\240\024\240T\250\026\250q\260\004\260A\260X\270Q\270a\330\033\034\230I\240Q\240a\330\004\023\2201\220A\340\004\005\330\010\014\210E\220\025\220a\220q\330\014\024\220H\230H\240A\240Q\330\014\021\220\035\230a\230q\240\007\240q\250\001\330\014\022\220'\230\021\230!\330\010\013\210;\220c\230\021\330\014\024\220E\230\021\330\010\020\220\005\220R\220z\240\027\250\002\250.\270\001\340\010\017\210q\220\001\330\010\017\210q\220\001\200A\330\010\030\230\007\230q\240\004\240G\2506\260\022\2601\330\010\017\210q\220\006\220a\220y\240\002\240!\2402\240W\250A\250Q\200A\330\010\017\210t\2207\230!\200\001\330\004\n\210+\220Q\200\001\360\010\000\005\016\210T\220\035\230d\240'\250\024\250Q\330\004\014\210G\2201\220F\230,\240a\330\004\007\200v\210W\220E\230\024\230Q\330\010\022\220!\330\010\027\220q\340\010\027\220t\2306\240\027\250\005\250S\260\004\260F\270'\300\021\330\004\007\200q\330\010\017\320\017*\250$\250a\250w\260k\300\027\310\001\340\010\017\320\017*\250$\250a\250w\260k\300\021\320\000W\320WX\340\010\025\220V\2301\230A\330\010\027\220q\230\001\360\006\000\t\030\220s\230!\2301\330\010\036\230m\2506\260\021\260&\270\002\270!\360\010\000\t\036\230Q\360\006\000\t \230q\330\010!\240\021\330\010$\240A\330\010\034\230C\230q\240\001\240\021\360\016\000\005\010\200x\210s\220!\330\010\t\330\004\n\210!\2109\220C\220v\230R\230q\340\004\005\330\010\014\210E\220\025\220a\220q\330\014\022\220*\230G\2401\240A\330\014\022\220!\2201\220G\2301\230D\240\001\240\023\240I\250Q\340\010\034\230D\240\002\240+\250R\250r\260\022\2606\270\022\2701\330\010\021\220\021\340\010\013\210;\220b\230\001\330\014\031\320\031)\250\021\250!\330\010\016\320\016\036\230a\230q\240\r\250Q\250a\330\037+\2501\330\037(\250\001\330\010\027\220q\230\001\330\010\t\330\014\024\220F\230!\2305\240\002\240*\250L\270\002\270!\340\014\023\2201\220A\330\014\032\230!\340\010\025\220Z\230q\240\016\250a\330\010\026\220h\230a\230q\330""\010\013\2104\210{\230$\230d\240!\330\014\022\220)\2301\230A\340\010\014\210E\220\025\220a\220q\330\014\022\220*\230G\2401\240A\330\014\023\2201\330\014\017\210q\330\020\023\2203\220e\2303\230c\240\021\330\024\033\230<\240q\250\003\2505\260\001\330\021\022\330\020\027\220|\2401\240C\240u\250A\340\014\017\210u\220C\220q\330\020\027\220u\230A\230S\240\007\240q\330\020\034\230G\2405\250\001\250\023\250J\260a\330\020\023\2208\2303\230a\230{\250#\250S\260\n\270!\330\024\032\230.\250\001\250\021\330\020\027\220q\230\002\230*\240A\330\020\030\230\006\230a\230q\330\020\032\230#\230Z\240q\330\020\021\340\014\017\210t\220:\230Q\230f\240A\330\020\026\220i\230q\240\001\330\014\027\220w\230a\330\014\031\230\033\240A\240Z\250z\270\023\270K\300q\330\014\030\230\n\240!\2401\330\014\031\230\032\2401\240A\330\014\023\2201\220B\220h\230c\240\021\240!\330\014\023\2201\220B\220m\2403\240a\240q\330\014\023\2201\220B\220n\240A\330\014\024\220F\230!\2301\340\014\023\2201\220B\220j\240\001\330\014\026\220g\230Q\230b\240\001\340\010\020\220\005\220Q\220a\330\010\016\320\016\036\230a\230q\240\r\250Q\250a\330\037+\2501\330\037(\250\001\330\010\027\220q\230\001\330\010\t\330\014\024\220F\230!\2305\240\002\240*\250L\270\002\270!\340\014\023\2201\220A\340\010\014\210A\210Q\200\001\330\004\026\220h\230h\240a\240q\330\004\005\200Y\210a\340\004)\250\024\250U\260!\2601\330\004\007\200s\210!\320\013$\240C\240q\330\010\016\210n\230A\230Q\340\004 \240\006\240l\260!\2606\3209R\320RU\320UV\320VW\330\004\035\230T\240\025\240a\240q\330\004\007\200s\210!\210=\230\003\2301\330\010\016\210n\230A\230Q\340\004\"\240$\240e\2501\250A\330\004\007\200s\210!\320\013\035\230S\240\001\330\010\016\210n\230A\230Q\340\004\037\230v\240\\\260\021\260&\3208J\310\"\310A\310Q\330\004\035\230X\240[\260\002\260!\330\004\034\230D\240\005\240Q\240a\330\004\007\200x\210s\220!\220<\230s\240!\330\010\016\210n\230A\230Q\340\004\035\320\0355\260R\260|\3002\320EV\320VX\320XY\360\010\000\005\025\220J\230l\250!\2501\330\004\005\200[\220""\001\330\004\005\200\\\220\021\330\004\013\2101\200\001\340\004\037\230q\320 0\260\013\270;\300k\320QR\330\004\023\2209\230H\240A\240Q\330\004\007\200|\2207\230!\330\010+\2501\250L\270\016\300a\330\004\013\2101\320\000?\320?[\320[\\\340\010\027\220q\330\010\031\230\021\330\010\035\230Q\360\006\000\005\013\210.\230\001\230\021\230$\230a\230t\2404\240v\250Q\250d\260!\2605\270\001\270\021\330\031\032\230,\240e\250>\270\023\270A\330\004\023\2201\220A\330\004\005\330\010\020\220\005\220R\220z\240\024\240R\240{\260!\340\010\017\210q\220\001\200\001\330\004'\240q\250\006\250a\200\001\340\010\027\220s\230!\2301\330\010\032\230-\240v\250Q\250f\260B\260a\330\010\027\220q\330\010\031\230\021\330\010$\240A\360\n\000\005\010\200t\2103\210a\330\010\t\330\004\n\210!\2105\220\003\2206\230\022\2301\330\004\005\330\010\014\210E\220\025\220a\220q\330\014\024\220J\230g\240Q\240a\330\014\022\220!\2201\220C\220q\230\004\230A\230U\240)\2501\330\010\013\2106\220\026\220q\230\003\2302\230Q\330\014\031\230\021\230&\240\001\240\021\330\010\016\320\016\036\230a\230q\240\005\240Q\240i\250|\2706\300\026\300q\310\001\330\037$\240A\330\010\027\220q\230\001\330\010\017\210u\220B\220j\240\004\240B\240a\340\010\014\210A\210Q\330\010\017\210q\220\001O";
     PyObject *data = NULL;
     CYTHON_UNUSED_VAR(__Pyx_DecompressString);
     #endif
     PyObject **stringtab = __pyx_mstate->__pyx_string_tab;
     Py_ssize_t pos = 0;
-    for (int i = 0; i < 213; i++) {
+    for (int i = 0; i < 222; i++) {
       Py_ssize_t bytes_length = index[i].length;
       PyObject *string = PyUnicode_DecodeUTF8(bytes + pos, bytes_length, NULL);
-      if (likely(string) && i >= 63) PyUnicode_InternInPlace(&string);
+      if (likely(string) && i >= 70) PyUnicode_InternInPlace(&string);
       if (unlikely(!string)) {
         Py_XDECREF(data);
         __PYX_ERR(0, 1, __pyx_L1_error)
@@ -28652,7 +29659,7 @@ const char* const bytes = ": Buffer view does not expose stridesCan only create 
       stringtab[i] = string;
       pos += bytes_length;
     }
-    for (int i = 213; i < 229; i++) {
+    for (int i = 222; i < 242; i++) {
       Py_ssize_t bytes_length = index[i].length;
       PyObject *string = PyBytes_FromStringAndSize(bytes + pos, bytes_length);
       stringtab[i] = string;
@@ -28663,15 +29670,15 @@ const char* const bytes = ": Buffer view does not expose stridesCan only create 
       }
     }
     Py_XDECREF(data);
-    for (Py_ssize_t i = 0; i < 229; i++) {
+    for (Py_ssize_t i = 0; i < 242; i++) {
       if (unlikely(PyObject_Hash(stringtab[i]) == -1)) {
         __PYX_ERR(0, 1, __pyx_L1_error)
       }
     }
     #if CYTHON_IMMORTAL_CONSTANTS
     {
-      PyObject **table = stringtab + 213;
-      for (Py_ssize_t i=0; i<16; ++i) {
+      PyObject **table = stringtab + 222;
+      for (Py_ssize_t i=0; i<20; ++i) {
         #if PY_VERSION_HEX >= 0x030F0000
         PyUnstable_SetImmortal(table[i]);
         #elif CYTHON_COMPILING_IN_CPYTHON_FREETHREADING
@@ -28812,9 +29819,9 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
     __pyx_mstate_global->__pyx_codeobj_tab[11] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_shirotsume_tools_archive_crypt_p, __pyx_mstate->__pyx_n_u_decode_body, __pyx_mstate->__pyx_kp_b_iso88591_9F_1_z_Q_z_q_t3a_Rq_5_4q_nAU_V1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[11])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {2, 0, 0, 2, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 165};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_data, __pyx_mstate->__pyx_n_u_compress};
-    __pyx_mstate_global->__pyx_codeobj_tab[12] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_shirotsume_tools_archive_crypt_p, __pyx_mstate->__pyx_n_u_encode_body, __pyx_mstate->__pyx_kp_b_iso88591_q_q_Q_at4vQd_5_e_1A_Rz_R_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[12])) goto bad;
+    const __Pyx_PyCode_New_function_description descr = {3, 0, 0, 3, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 165};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_data, __pyx_mstate->__pyx_n_u_compress, __pyx_mstate->__pyx_n_u_crypt_type_in};
+    __pyx_mstate_global->__pyx_codeobj_tab[12] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_shirotsume_tools_archive_crypt_p, __pyx_mstate->__pyx_n_u_encode_body, __pyx_mstate->__pyx_kp_b_iso88591_q_Q_at4vQd_5_e_A_1A_Rz_R_q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[12])) goto bad;
   }
   {
     const __Pyx_PyCode_New_function_description descr = {1, 0, 0, 1, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 1};
@@ -28832,12 +29839,12 @@ static int __Pyx_CreateCodeObjects(__pyx_mstatetype *__pyx_mstate) {
     __pyx_mstate_global->__pyx_codeobj_tab[15] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_shirotsume_tools_archive_crypt_p, __pyx_mstate->__pyx_n_u_unpack, __pyx_mstate->__pyx_kp_b_iso88591_hhaq_Ya_U_1_s_Cq_nAQ_l_69RRUUVV, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[15])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 257};
-    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_file, __pyx_mstate->__pyx_n_u_header, __pyx_mstate->__pyx_n_u_entries, __pyx_mstate->__pyx_n_u_compress};
-    __pyx_mstate_global->__pyx_codeobj_tab[16] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_shirotsume_tools_archive_crypt_p, __pyx_mstate->__pyx_n_u_pack, __pyx_mstate->__pyx_kp_b_iso88591_TTU_s_1_vQfBa_q_Q_q_A_t3a_5_6_1, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[16])) goto bad;
+    const __Pyx_PyCode_New_function_description descr = {5, 0, 0, 5, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 257};
+    PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_file, __pyx_mstate->__pyx_n_u_header, __pyx_mstate->__pyx_n_u_entries, __pyx_mstate->__pyx_n_u_compress, __pyx_mstate->__pyx_n_u_count};
+    __pyx_mstate_global->__pyx_codeobj_tab[16] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_shirotsume_tools_archive_crypt_p, __pyx_mstate->__pyx_n_u_pack, __pyx_mstate->__pyx_kp_b_iso88591_1_q_Q_q_a_A_vS_c_Cq_Rq_AQ_ha_2Q, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[16])) goto bad;
   }
   {
-    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 332};
+    const __Pyx_PyCode_New_function_description descr = {4, 0, 0, 4, (unsigned int)(CO_OPTIMIZED|CO_NEWLOCALS), 372};
     PyObject* const varnames[] = {__pyx_mstate->__pyx_n_u_in_file, __pyx_mstate->__pyx_n_u_out_file, __pyx_mstate->__pyx_n_u_replacements, __pyx_mstate->__pyx_n_u_compress};
     __pyx_mstate_global->__pyx_codeobj_tab[17] = __Pyx_PyCode_New(descr, varnames, __pyx_mstate->__pyx_kp_u_shirotsume_tools_archive_crypt_p, __pyx_mstate->__pyx_n_u_replace, __pyx_mstate->__pyx_kp_b_iso88591_WWX_V1A_q_s_1_m6_Q_q_A_Cq_xs_9C, tuple_dedup_map); if (unlikely(!__pyx_mstate_global->__pyx_codeobj_tab[17])) goto bad;
   }
@@ -31638,6 +32645,236 @@ static CYTHON_INLINE long __Pyx_div_long(long a, long b, int b_is_constant) {
     return q - adapt_python;
 }
 
+/* PyObjectCall2Args (used by PyObjectCallMethod1) */
+static CYTHON_INLINE PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2) {
+    PyObject *args[3] = {NULL, arg1, arg2};
+    return __Pyx_PyObject_FastCall(function, args+1, 2 | __Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET);
+}
+
+/* PyObjectGetMethod (used by PyObjectCallMethod1) */
+#if !(CYTHON_VECTORCALL && (__PYX_LIMITED_VERSION_HEX >= 0x030C0000 || (!CYTHON_COMPILING_IN_LIMITED_API && PY_VERSION_HEX >= 0x03090000)))
+static int __Pyx_PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method) {
+    PyObject *attr;
+#if CYTHON_UNPACK_METHODS && CYTHON_COMPILING_IN_CPYTHON && CYTHON_USE_PYTYPE_LOOKUP
+    __Pyx_TypeName type_name;
+    PyTypeObject *tp = Py_TYPE(obj);
+    PyObject *descr;
+    descrgetfunc f = NULL;
+    PyObject **dictptr, *dict;
+    int meth_found = 0;
+    assert (*method == NULL);
+    if (unlikely(tp->tp_getattro != PyObject_GenericGetAttr)) {
+        attr = __Pyx_PyObject_GetAttrStr(obj, name);
+        goto try_unpack;
+    }
+    if (unlikely(tp->tp_dict == NULL) && unlikely(PyType_Ready(tp) < 0)) {
+        return 0;
+    }
+    descr = _PyType_Lookup(tp, name);
+    if (likely(descr != NULL)) {
+        Py_INCREF(descr);
+#if defined(Py_TPFLAGS_METHOD_DESCRIPTOR) && Py_TPFLAGS_METHOD_DESCRIPTOR
+        if (__Pyx_PyType_HasFeature(Py_TYPE(descr), Py_TPFLAGS_METHOD_DESCRIPTOR))
+#else
+        #ifdef __Pyx_CyFunction_USED
+        if (likely(PyFunction_Check(descr) || __Pyx_IS_TYPE(descr, &PyMethodDescr_Type) || __Pyx_CyFunction_Check(descr)))
+        #else
+        if (likely(PyFunction_Check(descr) || __Pyx_IS_TYPE(descr, &PyMethodDescr_Type)))
+        #endif
+#endif
+        {
+            meth_found = 1;
+        } else {
+            f = Py_TYPE(descr)->tp_descr_get;
+            if (f != NULL && PyDescr_IsData(descr)) {
+                attr = f(descr, obj, (PyObject *)Py_TYPE(obj));
+                Py_DECREF(descr);
+                goto try_unpack;
+            }
+        }
+    }
+    dictptr = _PyObject_GetDictPtr(obj);
+    if (dictptr != NULL && (dict = *dictptr) != NULL) {
+        Py_INCREF(dict);
+        attr = __Pyx_PyDict_GetItemStr(dict, name);
+        if (attr != NULL) {
+            Py_INCREF(attr);
+            Py_DECREF(dict);
+            Py_XDECREF(descr);
+            goto try_unpack;
+        }
+        Py_DECREF(dict);
+    }
+    if (meth_found) {
+        *method = descr;
+        return 1;
+    }
+    if (f != NULL) {
+        attr = f(descr, obj, (PyObject *)Py_TYPE(obj));
+        Py_DECREF(descr);
+        goto try_unpack;
+    }
+    if (likely(descr != NULL)) {
+        *method = descr;
+        return 0;
+    }
+    type_name = __Pyx_PyType_GetFullyQualifiedName(tp);
+    PyErr_Format(PyExc_AttributeError,
+                 "'" __Pyx_FMT_TYPENAME "' object has no attribute '%U'",
+                 type_name, name);
+    __Pyx_DECREF_TypeName(type_name);
+    return 0;
+#else
+    attr = __Pyx_PyObject_GetAttrStr(obj, name);
+    goto try_unpack;
+#endif
+try_unpack:
+#if CYTHON_UNPACK_METHODS
+    if (likely(attr) && PyMethod_Check(attr) && likely(PyMethod_GET_SELF(attr) == obj)) {
+        PyObject *function = PyMethod_GET_FUNCTION(attr);
+        Py_INCREF(function);
+        Py_DECREF(attr);
+        *method = function;
+        return 1;
+    }
+#endif
+    *method = attr;
+    return 0;
+}
+#endif
+
+/* PyObjectCallMethod1 (used by StringJoin) */
+#if !(CYTHON_VECTORCALL && (__PYX_LIMITED_VERSION_HEX >= 0x030C0000 || (!CYTHON_COMPILING_IN_LIMITED_API && PY_VERSION_HEX >= 0x03090000)))
+static PyObject* __Pyx__PyObject_CallMethod1(PyObject* method, PyObject* arg) {
+    PyObject *result = __Pyx_PyObject_CallOneArg(method, arg);
+    Py_DECREF(method);
+    return result;
+}
+#endif
+static PyObject* __Pyx_PyObject_CallMethod1(PyObject* obj, PyObject* method_name, PyObject* arg) {
+#if CYTHON_VECTORCALL && (__PYX_LIMITED_VERSION_HEX >= 0x030C0000 || (!CYTHON_COMPILING_IN_LIMITED_API && PY_VERSION_HEX >= 0x03090000))
+    PyObject *args[2] = {obj, arg};
+    (void) __Pyx_PyObject_CallOneArg;
+    (void) __Pyx_PyObject_Call2Args;
+    return PyObject_VectorcallMethod(method_name, args, 2 | PY_VECTORCALL_ARGUMENTS_OFFSET, NULL);
+#else
+    PyObject *method = NULL, *result;
+    int is_method = __Pyx_PyObject_GetMethod(obj, method_name, &method);
+    if (likely(is_method)) {
+        result = __Pyx_PyObject_Call2Args(method, obj, arg);
+        Py_DECREF(method);
+        return result;
+    }
+    if (unlikely(!method)) return NULL;
+    return __Pyx__PyObject_CallMethod1(method, arg);
+#endif
+}
+
+/* StringJoin */
+static CYTHON_INLINE PyObject* __Pyx_PyBytes_Join(PyObject* sep, PyObject* values) {
+    (void) __Pyx_PyObject_CallMethod1;
+#if !CYTHON_COMPILING_IN_LIMITED_API && PY_VERSION_HEX >= 0x030e0000 || defined(PyBytes_Join)
+    return PyBytes_Join(sep, values);
+#elif CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX < 0x030d0000 || defined(_PyBytes_Join)
+    return _PyBytes_Join(sep, values);
+#else
+    return __Pyx_PyObject_CallMethod1(sep, __pyx_mstate_global->__pyx_n_u_join, values);
+#endif
+}
+
+/* CIntToPyUnicode */
+static CYTHON_INLINE PyObject* __Pyx_uchar___Pyx_PyUnicode_From_size_t(size_t value, Py_ssize_t width, char padding_char) {
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif
+    const size_t neg_one = (size_t) -1, const_zero = (size_t) 0;
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic pop
+#endif
+    const int is_unsigned = neg_one > const_zero;
+    if (unlikely(!(is_unsigned || value == 0 || value > 0) ||
+                    !(sizeof(value) <= 2 || value & ~ (size_t) 0x01fffff || __Pyx_CheckUnicodeValue((int) value)))) {
+        PyErr_SetString(PyExc_OverflowError, "%c arg not in range(0x110000)");
+        return NULL;
+    }
+    if (width <= 1) {
+        return PyUnicode_FromOrdinal((int) value);
+    }
+    return __Pyx_PyUnicode_FromOrdinal_Padded((int) value, width, padding_char);
+}
+static CYTHON_INLINE PyObject* __Pyx____Pyx_PyUnicode_From_size_t(size_t value, Py_ssize_t width, char padding_char, char format_char) {
+    char digits[sizeof(size_t)*3+2];
+    char *dpos, *end = digits + sizeof(size_t)*3+2;
+    const char *hex_digits = DIGITS_HEX;
+    Py_ssize_t length, ulength;
+    int prepend_sign, last_one_off;
+    size_t remaining;
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wconversion"
+#endif
+    const size_t neg_one = (size_t) -1, const_zero = (size_t) 0;
+#ifdef __Pyx_HAS_GCC_DIAGNOSTIC
+#pragma GCC diagnostic pop
+#endif
+    const int is_unsigned = neg_one > const_zero;
+    if (format_char == 'X') {
+        hex_digits += 16;
+        format_char = 'x';
+    }
+    remaining = value;
+    last_one_off = 0;
+    dpos = end;
+    do {
+        int digit_pos;
+        switch (format_char) {
+        case 'o':
+            digit_pos = abs((int)(remaining % (8*8)));
+            remaining = (size_t) (remaining / (8*8));
+            dpos -= 2;
+            memcpy(dpos, DIGIT_PAIRS_8 + digit_pos * 2, 2);
+            last_one_off = (digit_pos < 8);
+            break;
+        case 'd':
+            digit_pos = abs((int)(remaining % (10*10)));
+            remaining = (size_t) (remaining / (10*10));
+            dpos -= 2;
+            memcpy(dpos, DIGIT_PAIRS_10 + digit_pos * 2, 2);
+            last_one_off = (digit_pos < 10);
+            break;
+        case 'x':
+            *(--dpos) = hex_digits[abs((int)(remaining % 16))];
+            remaining = (size_t) (remaining / 16);
+            break;
+        default:
+            assert(0);
+            break;
+        }
+    } while (unlikely(remaining != 0));
+    assert(!last_one_off || *dpos == '0');
+    dpos += last_one_off;
+    length = end - dpos;
+    ulength = length;
+    prepend_sign = 0;
+    if (!is_unsigned && value <= neg_one) {
+        if (padding_char == ' ' || width <= length + 1) {
+            *(--dpos) = '-';
+            ++length;
+        } else {
+            prepend_sign = 1;
+        }
+        ++ulength;
+    }
+    if (width > ulength) {
+        ulength = width;
+    }
+    if (ulength == 1) {
+        return PyUnicode_FromOrdinal(*dpos);
+    }
+    return __Pyx_PyUnicode_BuildFromAscii(ulength, dpos, (int) length, prepend_sign, padding_char);
+}
+
 /* CIntToPyUnicode */
 static CYTHON_INLINE PyObject* __Pyx_uchar___Pyx_PyUnicode_From_uint32_t(uint32_t value, Py_ssize_t width, char padding_char) {
 #ifdef __Pyx_HAS_GCC_DIAGNOSTIC
@@ -31829,6 +33066,38 @@ static void __Pyx_RaiseBufferIndexError(int axis) {
   PyErr_Format(PyExc_IndexError,
      "Out of bounds on buffer access (axis %d)", axis);
 }
+
+/* PyObjectVectorCallKwBuilder */
+#if CYTHON_VECTORCALL
+static int __Pyx_VectorcallBuilder_AddArg(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
+    (void)__Pyx_PyObject_FastCallDict;
+    Py_INCREF(key);
+    if (__Pyx_PyTuple_SET_ITEM(builder, n, key) != (0)) return -1;
+    args[n] = value;
+    return 0;
+}
+CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
+    (void)__Pyx_VectorcallBuilder_AddArgStr;
+    if (unlikely(!PyUnicode_Check(key))) {
+        PyErr_SetString(PyExc_TypeError, "keywords must be strings");
+        return -1;
+    }
+    return __Pyx_VectorcallBuilder_AddArg(key, value, builder, args, n);
+}
+static int __Pyx_VectorcallBuilder_AddArgStr(const char *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
+    PyObject *pyKey = PyUnicode_FromString(key);
+    if (!pyKey) return -1;
+    return __Pyx_VectorcallBuilder_AddArg(pyKey, value, builder, args, n);
+}
+#else // CYTHON_VECTORCALL
+CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, CYTHON_UNUSED PyObject **args, CYTHON_UNUSED int n) {
+    if (unlikely(!PyUnicode_Check(key))) {
+        PyErr_SetString(PyExc_TypeError, "keywords must be strings");
+        return -1;
+    }
+    return PyDict_SetItem(builder, key, value);
+}
+#endif
 
 /* PyUnicode_Unicode */
 static CYTHON_INLINE PyObject* __Pyx_PyUnicode_Unicode(PyObject *obj) {
@@ -32061,98 +33330,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_CallNoArg(PyObject *func) {
     PyObject *arg[2] = {NULL, NULL};
     return __Pyx_PyObject_FastCall(func, arg + 1, 0 | __Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET);
 }
-
-/* PyObjectGetMethod (used by PyObjectCallMethod0) */
-#if !(CYTHON_VECTORCALL && (__PYX_LIMITED_VERSION_HEX >= 0x030C0000 || (!CYTHON_COMPILING_IN_LIMITED_API && PY_VERSION_HEX >= 0x03090000)))
-static int __Pyx_PyObject_GetMethod(PyObject *obj, PyObject *name, PyObject **method) {
-    PyObject *attr;
-#if CYTHON_UNPACK_METHODS && CYTHON_COMPILING_IN_CPYTHON && CYTHON_USE_PYTYPE_LOOKUP
-    __Pyx_TypeName type_name;
-    PyTypeObject *tp = Py_TYPE(obj);
-    PyObject *descr;
-    descrgetfunc f = NULL;
-    PyObject **dictptr, *dict;
-    int meth_found = 0;
-    assert (*method == NULL);
-    if (unlikely(tp->tp_getattro != PyObject_GenericGetAttr)) {
-        attr = __Pyx_PyObject_GetAttrStr(obj, name);
-        goto try_unpack;
-    }
-    if (unlikely(tp->tp_dict == NULL) && unlikely(PyType_Ready(tp) < 0)) {
-        return 0;
-    }
-    descr = _PyType_Lookup(tp, name);
-    if (likely(descr != NULL)) {
-        Py_INCREF(descr);
-#if defined(Py_TPFLAGS_METHOD_DESCRIPTOR) && Py_TPFLAGS_METHOD_DESCRIPTOR
-        if (__Pyx_PyType_HasFeature(Py_TYPE(descr), Py_TPFLAGS_METHOD_DESCRIPTOR))
-#else
-        #ifdef __Pyx_CyFunction_USED
-        if (likely(PyFunction_Check(descr) || __Pyx_IS_TYPE(descr, &PyMethodDescr_Type) || __Pyx_CyFunction_Check(descr)))
-        #else
-        if (likely(PyFunction_Check(descr) || __Pyx_IS_TYPE(descr, &PyMethodDescr_Type)))
-        #endif
-#endif
-        {
-            meth_found = 1;
-        } else {
-            f = Py_TYPE(descr)->tp_descr_get;
-            if (f != NULL && PyDescr_IsData(descr)) {
-                attr = f(descr, obj, (PyObject *)Py_TYPE(obj));
-                Py_DECREF(descr);
-                goto try_unpack;
-            }
-        }
-    }
-    dictptr = _PyObject_GetDictPtr(obj);
-    if (dictptr != NULL && (dict = *dictptr) != NULL) {
-        Py_INCREF(dict);
-        attr = __Pyx_PyDict_GetItemStr(dict, name);
-        if (attr != NULL) {
-            Py_INCREF(attr);
-            Py_DECREF(dict);
-            Py_XDECREF(descr);
-            goto try_unpack;
-        }
-        Py_DECREF(dict);
-    }
-    if (meth_found) {
-        *method = descr;
-        return 1;
-    }
-    if (f != NULL) {
-        attr = f(descr, obj, (PyObject *)Py_TYPE(obj));
-        Py_DECREF(descr);
-        goto try_unpack;
-    }
-    if (likely(descr != NULL)) {
-        *method = descr;
-        return 0;
-    }
-    type_name = __Pyx_PyType_GetFullyQualifiedName(tp);
-    PyErr_Format(PyExc_AttributeError,
-                 "'" __Pyx_FMT_TYPENAME "' object has no attribute '%U'",
-                 type_name, name);
-    __Pyx_DECREF_TypeName(type_name);
-    return 0;
-#else
-    attr = __Pyx_PyObject_GetAttrStr(obj, name);
-    goto try_unpack;
-#endif
-try_unpack:
-#if CYTHON_UNPACK_METHODS
-    if (likely(attr) && PyMethod_Check(attr) && likely(PyMethod_GET_SELF(attr) == obj)) {
-        PyObject *function = PyMethod_GET_FUNCTION(attr);
-        Py_INCREF(function);
-        Py_DECREF(attr);
-        *method = function;
-        return 1;
-    }
-#endif
-    *method = attr;
-    return 0;
-}
-#endif
 
 /* PyObjectCallMethod0 (used by PyType_Ready) */
 static PyObject* __Pyx_PyObject_CallMethod0(PyObject* obj, PyObject* method_name) {
@@ -32785,12 +33962,6 @@ static PyObject *__Pyx_CalculateMetaclass(PyTypeObject *metaclass, PyObject *bas
     }
     Py_INCREF((PyObject*) metaclass);
     return (PyObject*) metaclass;
-}
-
-/* PyObjectCall2Args (used by Py3ClassCreate) */
-static CYTHON_INLINE PyObject* __Pyx_PyObject_Call2Args(PyObject* function, PyObject* arg1, PyObject* arg2) {
-    PyObject *args[3] = {NULL, arg1, arg2};
-    return __Pyx_PyObject_FastCall(function, args+1, 2 | __Pyx_PY_VECTORCALL_ARGUMENTS_OFFSET);
 }
 
 /* PyObjectLookupSpecial (used by Py3ClassCreate) */
@@ -35764,6 +36935,41 @@ static const char* __Pyx_BufFmt_CheckString(__Pyx_BufFmt_Context* ctx, const cha
       return result;
   }
   
+/* ObjectToMemviewSlice */
+  static CYTHON_INLINE __Pyx_memviewslice __Pyx_PyObject_to_MemoryviewSlice_ds_nn_uint8_t(PyObject *obj, int writable_flag) {
+      __Pyx_memviewslice result = __Pyx_MEMSLICE_INIT;
+      __Pyx_BufFmt_StackElem stack[1];
+      int axes_specs[] = { (__Pyx_MEMVIEW_DIRECT | __Pyx_MEMVIEW_STRIDED) };
+      int retcode;
+      if (obj == Py_None) {
+          result.memview = (struct __pyx_memoryview_obj *) Py_None;
+          return result;
+      }
+      retcode = __Pyx_ValidateAndInit_memviewslice(axes_specs, 0,
+                                                   PyBUF_RECORDS_RO | writable_flag, 1,
+                                                   &__Pyx_TypeInfo_nn_uint8_t, stack,
+                                                   &result, obj);
+      if (unlikely(retcode == -1))
+          goto __pyx_fail;
+      return result;
+  __pyx_fail:
+      result.memview = NULL;
+      result.data = NULL;
+      return result;
+  }
+  
+/* MemviewDtypeToObject */
+  static CYTHON_INLINE PyObject *__pyx_memview_get_nn_uint8_t(const char *itemp) {
+      return (PyObject *) __Pyx_PyLong_From_uint8_t(*(uint8_t const *) itemp);
+  }
+  static CYTHON_INLINE int __pyx_memview_set_nn_uint8_t(char *itemp, PyObject *obj) {
+      uint8_t value = __Pyx_PyLong_As_uint8_t(obj);
+      if (unlikely((value == ((uint8_t)-1)) && PyErr_Occurred()))
+          return 0;
+      *(uint8_t *) itemp = value;
+      return 1;
+  }
+  
 /* MemviewSliceCopy */
   static __Pyx_memviewslice
   __pyx_memoryview_copy_new_contig(const __Pyx_memviewslice *from_mvs,
@@ -35833,38 +37039,6 @@ static const char* __Pyx_BufFmt_CheckString(__Pyx_BufFmt_Context* ctx, const cha
       __Pyx_RefNannyFinishContext();
       return new_mvs;
   }
-  
-/* PyObjectVectorCallKwBuilder (used by CIntToPy) */
-  #if CYTHON_VECTORCALL
-  static int __Pyx_VectorcallBuilder_AddArg(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
-      (void)__Pyx_PyObject_FastCallDict;
-      Py_INCREF(key);
-      if (__Pyx_PyTuple_SET_ITEM(builder, n, key) != (0)) return -1;
-      args[n] = value;
-      return 0;
-  }
-  CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
-      (void)__Pyx_VectorcallBuilder_AddArgStr;
-      if (unlikely(!PyUnicode_Check(key))) {
-          PyErr_SetString(PyExc_TypeError, "keywords must be strings");
-          return -1;
-      }
-      return __Pyx_VectorcallBuilder_AddArg(key, value, builder, args, n);
-  }
-  static int __Pyx_VectorcallBuilder_AddArgStr(const char *key, PyObject *value, PyObject *builder, PyObject **args, int n) {
-      PyObject *pyKey = PyUnicode_FromString(key);
-      if (!pyKey) return -1;
-      return __Pyx_VectorcallBuilder_AddArg(pyKey, value, builder, args, n);
-  }
-  #else // CYTHON_VECTORCALL
-  CYTHON_UNUSED static int __Pyx_VectorcallBuilder_AddArg_Check(PyObject *key, PyObject *value, PyObject *builder, CYTHON_UNUSED PyObject **args, CYTHON_UNUSED int n) {
-      if (unlikely(!PyUnicode_Check(key))) {
-          PyErr_SetString(PyExc_TypeError, "keywords must be strings");
-          return -1;
-      }
-      return PyDict_SetItem(builder, key, value);
-  }
-  #endif
   
 /* CIntToPy */
   static CYTHON_INLINE PyObject* __Pyx_PyLong_From_uint8_t(uint8_t value) {
@@ -36433,6 +37607,50 @@ static const char* __Pyx_BufFmt_CheckString(__Pyx_BufFmt_Context* ctx, const cha
       PyErr_SetString(PyExc_OverflowError,
           "can't convert negative value to uint32_t");
       return (uint32_t) -1;
+  }
+  
+/* TypeInfoToFormat */
+  static struct __pyx_typeinfo_string __Pyx_TypeInfoToFormat(const __Pyx_TypeInfo *type) {
+      struct __pyx_typeinfo_string result = { {0} };
+      char *buf = (char *) result.string;
+      size_t size = type->size;
+      switch (type->typegroup) {
+          case 'H':
+              *buf = 'c';
+              break;
+          case 'I':
+          case 'U':
+              if (size == 1)
+                  *buf = (type->is_unsigned) ? 'B' : 'b';
+              else if (size == 2)
+                  *buf = (type->is_unsigned) ? 'H' : 'h';
+              else if (size == 4)
+                  *buf = (type->is_unsigned) ? 'I' : 'i';
+              else if (size == 8)
+                  *buf = (type->is_unsigned) ? 'Q' : 'q';
+              break;
+          case 'P':
+              *buf = 'P';
+              break;
+          case 'C':
+           {
+              __Pyx_TypeInfo complex_type = *type;
+              complex_type.typegroup = 'R';
+              complex_type.size /= 2;
+              *buf++ = 'Z';
+              *buf = __Pyx_TypeInfoToFormat(&complex_type).string[0];
+              break;
+           }
+          case 'R':
+              if (size == 4)
+                  *buf = 'f';
+              else if (size == 8)
+                  *buf = 'd';
+              else
+                  *buf = 'g';
+              break;
+      }
+      return result;
   }
   
 /* CIntFromPy */
@@ -37071,33 +38289,6 @@ static const char* __Pyx_BufFmt_CheckString(__Pyx_BufFmt_Context* ctx, const cha
       PyErr_SetString(PyExc_OverflowError,
           "can't convert negative value to size_t");
       return (size_t) -1;
-  }
-  
-/* PyObjectCallMethod1 */
-  #if !(CYTHON_VECTORCALL && (__PYX_LIMITED_VERSION_HEX >= 0x030C0000 || (!CYTHON_COMPILING_IN_LIMITED_API && PY_VERSION_HEX >= 0x03090000)))
-  static PyObject* __Pyx__PyObject_CallMethod1(PyObject* method, PyObject* arg) {
-      PyObject *result = __Pyx_PyObject_CallOneArg(method, arg);
-      Py_DECREF(method);
-      return result;
-  }
-  #endif
-  static PyObject* __Pyx_PyObject_CallMethod1(PyObject* obj, PyObject* method_name, PyObject* arg) {
-  #if CYTHON_VECTORCALL && (__PYX_LIMITED_VERSION_HEX >= 0x030C0000 || (!CYTHON_COMPILING_IN_LIMITED_API && PY_VERSION_HEX >= 0x03090000))
-      PyObject *args[2] = {obj, arg};
-      (void) __Pyx_PyObject_CallOneArg;
-      (void) __Pyx_PyObject_Call2Args;
-      return PyObject_VectorcallMethod(method_name, args, 2 | PY_VECTORCALL_ARGUMENTS_OFFSET, NULL);
-  #else
-      PyObject *method = NULL, *result;
-      int is_method = __Pyx_PyObject_GetMethod(obj, method_name, &method);
-      if (likely(is_method)) {
-          result = __Pyx_PyObject_Call2Args(method, obj, arg);
-          Py_DECREF(method);
-          return result;
-      }
-      if (unlikely(!method)) return NULL;
-      return __Pyx__PyObject_CallMethod1(method, arg);
-  #endif
   }
   
 /* UpdateUnpickledDict */
@@ -37752,7 +38943,7 @@ static const char* __Pyx_BufFmt_CheckString(__Pyx_BufFmt_Context* ctx, const cha
           result = name;
           name = NULL;
       } else {
-          result = __Pyx_NewRef(__pyx_mstate_global->__pyx_kp_u__8);
+          result = __Pyx_NewRef(__pyx_mstate_global->__pyx_kp_u__13);
       }
       goto done;
   }
