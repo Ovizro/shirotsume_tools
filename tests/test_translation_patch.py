@@ -4,9 +4,9 @@ from shirotsume_tools.translation.patch import (
     patch_script_text,
 )
 
-SAMPLE = '''page T {
+SAMPLE = """page T {
 CreateBalloon("x", "こんにちは");
-}'''
+}"""
 
 
 def test_patch_script_text_mapping():
@@ -29,13 +29,13 @@ def test_patch_script_text_no_match():
 
 
 def test_patch_script_text_five_functions():
-    script = '''page T {
+    script = """page T {
 CreateBalloon("a", "b1");
 CreateBalloonEx("a","b","c","b2","d","e","f");
 CreateBalloonBie("a", "b3");
 CreateText("b4");
 AddText("w", "b5");
-}'''
+}"""
     patched, count = patch_script_text(script, {"b1": "c1", "b2": "c2", "b3": "c3", "b4": "c4", "b5": "c5"})
     assert count == 5
     for c in ("c1", "c2", "c3", "c4", "c5"):

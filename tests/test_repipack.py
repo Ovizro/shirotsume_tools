@@ -3,7 +3,6 @@ import pytest
 from shirotsume_tools.archive import Archive, crypt, read_pack, replace_entries, write_pack
 from shirotsume_tools.archive.crypt import PackEntry
 
-
 # Bytes that decode only under MS932, not shift-jis.
 # ① = U+2460, encoded as 0x87 0x40 in MS932.
 NEC_CIRCLED_ONE = b"\x87\x40"
@@ -88,7 +87,7 @@ def test_pack_unpack_binary_patterns(tmp_path):
     ]
     result = _pack_and_read(tmp_path, header, entries, compress=True)
     assert [e.name for e in result] == ["zeros.bin", "ones.bin", "mixed.bin"]
-    for orig, got in zip(entries, result):
+    for orig, got in zip(entries, result, strict=True):
         assert got.data == orig.data
 
 
@@ -119,7 +118,7 @@ def test_replace_entries_roundtrip(tmp_path, dat_path):
     out = tmp_path / "replaced.dat"
     replace_entries(dat_path, out, {"script.txt": b"replaced content"}, compress=True)
 
-    header, entries = read_pack(out)
+    _header, entries = read_pack(out)
     names = [e.name for e in entries]
     assert "script.txt" in names
     target = next(e for e in entries if e.name == "script.txt")

@@ -1,15 +1,14 @@
-
 from shirotsume_tools.parser import parse_script
 from shirotsume_tools.parser.model import TextEntry
 
-SAMPLE_SCRIPT = '''\
+SAMPLE_SCRIPT = """\
 // comment
 page TestPage {
 CreateBalloon("speaker", "hello world");
 AddText("window", "second line");
 CreateBalloonEx("a", "b", "c", "ex text", "e", "f", "g");
 }
-'''
+"""
 
 
 def test_parse_script_extracts_text(tmp_path):
@@ -28,6 +27,7 @@ def test_parse_directory(tmp_path):
     (tmp_path / "a.txt").write_text('page A { CreateBalloon("x", "one"); }')
     (tmp_path / "b.txt").write_text('page B { AddText("y", "two"); }')
     from shirotsume_tools.parser import parse_directory
+
     entries = parse_directory(str(tmp_path))
     assert len(entries) == 2
     assert {e.text for e in entries} == {"one", "two"}
@@ -35,7 +35,7 @@ def test_parse_directory(tmp_path):
 
 from shirotsume_tools.parser import parse_script_text
 
-FIVE_FUNC_SCRIPT = '''\
+FIVE_FUNC_SCRIPT = """\
 page TestPage {
 CreateBalloon("a", "balloon text");
 CreateBalloonEx("a", "b", "c", "ex text", "e", "f", "g");
@@ -43,7 +43,7 @@ CreateBalloonBie("a", "bie text");
 CreateText("text content");
 AddText("win", "add text");
 }
-'''
+"""
 
 
 def test_parse_script_text_extracts_all_five_functions():

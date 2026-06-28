@@ -24,7 +24,10 @@ DEFAULT_MEMORY: dict[str, Any] = {
 
 
 def extract_translation_items(
-    script_dir: str | Path, *, source_encoding: str = "cp932", limit: int | None = None,
+    script_dir: str | Path,
+    *,
+    source_encoding: str = "cp932",
+    limit: int | None = None,
 ) -> list[TextEntry]:
     script_root = Path(script_dir).resolve()
     entries = parse_directory(str(script_root), encoding=source_encoding)

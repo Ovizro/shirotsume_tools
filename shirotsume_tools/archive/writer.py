@@ -21,10 +21,7 @@ def read_pack(path: str | Path) -> tuple[bytes, list[PackEntry]]:
         except (crypt.InvalidSignatureError, crypt.UnsupportedVersionError) as exc:
             raise ValueError(str(exc)) from exc
         header = unpacker.header
-        entries = [
-            PackEntry(e.name, e.data, crypt_type=unpacker.entries[i].crypt_type())
-            for i, e in enumerate(unpacker)
-        ]
+        entries = [PackEntry(e.name, e.data, crypt_type=unpacker.entries[i].crypt_type()) for i, e in enumerate(unpacker)]
     return header, entries
 
 
@@ -33,8 +30,9 @@ def write_pack(path: str | Path, header: bytes, entries: Iterable[PackEntry], *,
         crypt.pack(f, header, [crypt.PackEntry(e.name, e.data) for e in entries], compress=compress)
 
 
-def replace_entries(dat_path: str | Path, out_path: str | Path,
-                    replacements: Mapping[str, bytes], *, compress: bool = True) -> None:
+def replace_entries(
+    dat_path: str | Path, out_path: str | Path, replacements: Mapping[str, bytes], *, compress: bool = True
+) -> None:
     missing = set(replacements)
     with open(dat_path, "rb") as fin, open(out_path, "wb") as fout:
         # Verify targets exist by reading table first

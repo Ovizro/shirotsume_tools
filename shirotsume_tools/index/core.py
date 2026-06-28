@@ -1,4 +1,3 @@
-
 from pydantic import BaseModel, Field
 
 from ..parser.model import TextEntry
@@ -13,20 +12,14 @@ class Index(BaseModel):
     def add(self, entry: IndexEntry) -> None:
         self.entries.append(entry)
 
-    def add_text(self, text: str, file_path: str, line: int,
-                 start: int, stop: int) -> None:
-        self.entries.append(IndexEntry(
-            text=text, file_path=file_path, line=line,
-            index=(start, stop)
-        ))
+    def add_text(self, text: str, file_path: str, line: int, start: int, stop: int) -> None:
+        self.entries.append(IndexEntry(text=text, file_path=file_path, line=line, index=(start, stop)))
 
     @classmethod
     def from_text_entries(cls, entries: list[TextEntry]) -> "Index":
-        return cls(entries=[
-            IndexEntry(text=e.text, file_path=e.file_path,
-                       line=e.line, index=(e.start, e.stop))
-            for e in entries
-        ])
+        return cls(
+            entries=[IndexEntry(text=e.text, file_path=e.file_path, line=e.line, index=(e.start, e.stop)) for e in entries]
+        )
 
     @property
     def statement_count(self) -> int:
@@ -38,9 +31,11 @@ class Index(BaseModel):
 
     def save(self, path: str) -> None:
         from .io import write_index
+
         write_index(self, path)
 
     @classmethod
     def load(cls, path: str) -> "Index":
         from .io import read_index
+
         return read_index(path)

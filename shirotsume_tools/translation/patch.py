@@ -19,7 +19,7 @@ def _escape_script_string(text: str) -> str:
         char = text[index]
         if char == "\\":
             if index + 1 < len(text):
-                result.append(text[index:index + 2])
+                result.append(text[index : index + 2])
                 index += 2
                 continue
             result.append("\\")

@@ -1,4 +1,3 @@
-
 from antlr4.Token import CommonToken
 
 from .model import TextEntry
@@ -7,11 +6,11 @@ from .ShirotsumeListener import ShirotsumeListener
 from .ShirotsumeParser import ShirotsumeParser
 
 TEXT_EXTRACTORS = {
-    "CreateBalloon":    lambda exprs: exprs[-1],
-    "CreateBalloonEx":  lambda exprs: exprs[-4],
+    "CreateBalloon": lambda exprs: exprs[-1],
+    "CreateBalloonEx": lambda exprs: exprs[-4],
     "CreateBalloonBie": lambda exprs: exprs[-1],
-    "CreateText":       lambda exprs: exprs[-1],
-    "AddText":          lambda exprs: exprs[1],
+    "CreateText": lambda exprs: exprs[-1],
+    "AddText": lambda exprs: exprs[1],
 }
 
 
@@ -41,12 +40,14 @@ class TextExtractionListener(ShirotsumeListener):
         if not (raw and raw.startswith('"') and raw.endswith('"')):
             return
         text = raw[1:-1].replace("\r", "")
-        self.entries.append(TextEntry(
-            text=text,
-            file_path=self.file_path,
-            line=text_sym.line,
-            start=text_sym.start,
-            stop=text_sym.stop,
-        ))
+        self.entries.append(
+            TextEntry(
+                text=text,
+                file_path=self.file_path,
+                line=text_sym.line,
+                start=text_sym.start,
+                stop=text_sym.stop,
+            )
+        )
         self.statement_count += 1
         self.character_count += len(text)

@@ -63,8 +63,7 @@ def parse_cmd(
         index.save(str(out_index))
     if out_csv:
         to_csv(index, str(out_csv))
-    logger.info("Parsed %d statements, %d characters",
-                index.statement_count, index.character_count)
+    logger.info("Parsed %d statements, %d characters", index.statement_count, index.character_count)
 
 
 from ..translation import patch_script_file, sync_translation_csvs, translate_scripts
@@ -121,7 +120,10 @@ def translate_scripts_cmd(
     source_encoding: str = typer.Option("cp932", "-e", "--source-encoding", help="Encoding of extracted scripts"),
     batch_size: int = typer.Option(24, "-b", "--batch-size", min=1, help="Number of strings per OpenAI request"),
     max_source_chars: int = typer.Option(
-        6000, "--max-source-chars", min=1, help="Maximum source characters per OpenAI request",
+        6000,
+        "--max-source-chars",
+        min=1,
+        help="Maximum source characters per OpenAI request",
     ),
     limit: int | None = typer.Option(None, "--limit", min=1, help="Translate only the first N strings"),
     story_context: str = typer.Option("", "--context", help="Global story/style context passed to the translator"),

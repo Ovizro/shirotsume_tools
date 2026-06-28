@@ -26,6 +26,7 @@ def test_to_csv(tmp_path):
 
 def test_to_excel(tmp_path):
     from shirotsume_tools.index import Index, IndexEntry
+
     index = Index()
     index.add(IndexEntry(text="hello", file_path="a.txt", line=1, index=(0, 5)))
     path = tmp_path / "out.xlsx"

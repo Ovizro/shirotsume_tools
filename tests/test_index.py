@@ -1,4 +1,3 @@
-
 from shirotsume_tools.index import Index, IndexEntry
 from shirotsume_tools.parser.model import TextEntry
 

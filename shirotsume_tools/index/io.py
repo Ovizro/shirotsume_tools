@@ -22,12 +22,14 @@ class IndexReader:
         self._current_index = tuple(index)
 
     def at_text(self, text: str) -> None:
-        self.index.add(IndexEntry(
-            text=text,
-            file_path=self._current_file,
-            line=self._current_line,
-            index=self._current_index,
-        ))
+        self.index.add(
+            IndexEntry(
+                text=text,
+                file_path=self._current_file,
+                line=self._current_line,
+                index=self._current_index,
+            )
+        )
 
 
 def read_index(path: str) -> Index:

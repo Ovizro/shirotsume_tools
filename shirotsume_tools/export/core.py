@@ -27,8 +27,7 @@ def to_dataframe(index: Index) -> "pd.DataFrame":
         import pandas as pd
     except ImportError as e:
         raise ImportError(
-            "exporting to DataFrame requires 'pandas'. "
-            "Install with: pip install shirotsume_tools[export]"
+            "exporting to DataFrame requires 'pandas'. Install with: pip install shirotsume_tools[export]"
         ) from e
     return pd.DataFrame(_to_records(index))
 
@@ -40,9 +39,6 @@ def to_csv(index: Index, path: str, *, index_label: bool = True) -> None:
 
 def to_excel(index: Index, path: str) -> None:
     if importlib.util.find_spec("openpyxl") is None:
-        raise ImportError(
-            "exporting to Excel requires 'openpyxl'. "
-            "Install with: pip install shirotsume_tools[export]"
-        )
+        raise ImportError("exporting to Excel requires 'openpyxl'. Install with: pip install shirotsume_tools[export]")
     df = to_dataframe(index)
     df.to_excel(path, index=False)
