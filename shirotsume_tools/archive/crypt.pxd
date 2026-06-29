@@ -20,22 +20,22 @@ cdef extern from "repipack.h":
 
     rp_error_t rp_decode_header(const uint8_t *data, size_t data_len,
                                 uint8_t **header, size_t *header_len,
-                                rp_entry_t **entries, size_t *entry_count)
+                                rp_entry_t **entries, size_t *entry_count) nogil
     rp_error_t rp_encode_header(uint8_t **out, size_t *out_len,
                                 const uint8_t *header, size_t header_len,
-                                const rp_entry_t *entries, size_t entry_count)
+                                const rp_entry_t *entries, size_t entry_count) nogil
     rp_error_t rp_encode_table(uint8_t **out, size_t *out_len,
-                               const rp_entry_t *entries, size_t entry_count)
-    rp_error_t rp_decode_body(uint8_t *buf, size_t comp_size, uint32_t size, uint8_t crypt_type)
+                               const rp_entry_t *entries, size_t entry_count) nogil
+    rp_error_t rp_decode_body(uint8_t *buf, size_t comp_size, uint32_t size, uint8_t crypt_type) nogil
     rp_error_t rp_encode_body(const uint8_t *data, size_t data_len,
                               uint8_t **out, size_t *out_len,
                               uint8_t *crypt_type, int compress,
-                              uint8_t crypt_type_in)
-    void rp_free(void *p)
+                              uint8_t crypt_type_in) nogil
+    void rp_free(void *p) nogil
 
 cdef class RawEntry:
     cdef rp_entry_t _entry
-    cdef _init_from_c(self, const rp_entry_t *entry)
+    cdef void _init_from_c(self, const rp_entry_t *entry) nogil
     cpdef str name(self)
     cpdef uint32_t offset(self)
     cpdef uint32_t size(self)

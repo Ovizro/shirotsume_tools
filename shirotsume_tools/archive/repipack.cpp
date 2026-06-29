@@ -68,6 +68,28 @@ static void build_encrypted_table(uint8_t *raw_table,
     }
 }
 
+// --- Okumura LZSS binary search tree compressor ---
+// The original RepiPack compressor uses Haruhiko Okumura's classic LZSS
+// algorithm with a binary search tree for longest-match finding. Key
+// properties that make output byte-identical to the original:
+//   1. Binary tree naturally orders candidates by string content, so the
+//      "first longest match in tree-traversal order" tie-break is automatic.
+//   2. When a full F-byte match is found, the new node REPLACES the old
+//      node in the tree (identical strings), which deterministically prunes
+//      earlier duplicate positions and explains every observed tie-break.
+//   3. RLE / overlapping matches work automatically because the lookahead is
+//      pre-written into the cache, so comparisons against fresh writes read
+//      the correct (soon-to-be-output) bytes.
+
+namespace {
+
+constexpr int LZSS_N = 4096;
+constexpr int LZSS_F = 18;
+constexpr int LZSS_THRESHOLD = 2;
+constexpr int LZSS_NIL = -1;
+
+}  // namespace
+
 static rp_error_t compress(const uint8_t *in, size_t in_len,
                            uint8_t **out, size_t *out_len) {
     if (in_len == 0) {
@@ -76,79 +98,172 @@ static rp_error_t compress(const uint8_t *in, size_t in_len,
         return RP_OK;
     }
 
-    uint8_t cache[0x1000];
+    uint8_t cache[LZSS_N];
     std::memset(cache, 0, sizeof(cache));
-    uint16_t cache_ptr = 0xFEE;
+
+    // Tree arrays: indices 0..N-1 are real nodes; N..N+255 are root sentinels
+    // (one per byte value, only rson is used for roots).
+    int lson[LZSS_N + 256];
+    int rson[LZSS_N + 256];
+    int dad[LZSS_N + 256];
+    for (int i = 0; i < LZSS_N + 256; ++i) {
+        lson[i] = LZSS_NIL;
+        rson[i] = LZSS_NIL;
+        dad[i] = LZSS_NIL;
+    }
+
+    int match_position = 0;
+    int match_length = 0;
+
+    // InsertNode: insert the F-byte string starting at position r into the
+    // tree and find the longest match. On a full F-byte match, replace the
+    // existing node (identical strings) so only the newest position survives.
+    auto insert_node = [&](int r) {
+        int cmp = 1;
+        int p = LZSS_N + cache[r];  // root sentinel for this byte value
+        lson[r] = LZSS_NIL;
+        rson[r] = LZSS_NIL;
+        match_length = 0;
+
+        for (;;) {
+            if (cmp >= 0) {
+                if (rson[p] != LZSS_NIL) {
+                    p = rson[p];
+                } else {
+                    rson[p] = r;
+                    dad[r] = p;
+                    return;
+                }
+            } else {
+                if (lson[p] != LZSS_NIL) {
+                    p = lson[p];
+                } else {
+                    lson[p] = r;
+                    dad[r] = p;
+                    return;
+                }
+            }
+
+            // Compare strings at r and p, starting from byte 1 (byte 0 is
+            // guaranteed equal because they share the same root).
+            int i = 1;
+            while (i < LZSS_F) {
+                uint8_t cr = cache[(r + i) & (LZSS_N - 1)];
+                uint8_t cp = cache[(p + i) & (LZSS_N - 1)];
+                if (cr != cp) {
+                    cmp = static_cast<int>(cr) - static_cast<int>(cp);
+                    break;
+                }
+                ++i;
+            }
+            if (i >= LZSS_F) cmp = 0;
+
+            if (i > match_length) {
+                match_position = p;
+                match_length = i;
+                if (match_length >= LZSS_F) break;  // full match: replace
+            }
+        }
+
+        // Replace p with r in the tree (identical F-byte strings).
+        dad[r] = dad[p];
+        lson[r] = lson[p];
+        rson[r] = rson[p];
+        if (lson[p] != LZSS_NIL) dad[lson[p]] = r;
+        if (rson[p] != LZSS_NIL) dad[rson[p]] = r;
+        if (dad[p] != LZSS_NIL) {
+            if (rson[dad[p]] == p) rson[dad[p]] = r;
+            else lson[dad[p]] = r;
+        }
+        dad[p] = LZSS_NIL;
+    };
+
+    // DeleteNode: remove node p from the tree (standard BST deletion using
+    // the in-order predecessor as replacement).
+    auto delete_node = [&](int p) {
+        if (dad[p] == LZSS_NIL) return;  // not in tree
+
+        int q;
+        if (rson[p] == LZSS_NIL) {
+            q = lson[p];
+        } else if (lson[p] == LZSS_NIL) {
+            q = rson[p];
+        } else {
+            q = lson[p];
+            if (rson[q] != LZSS_NIL) {
+                while (rson[q] != LZSS_NIL) q = rson[q];
+                rson[dad[q]] = lson[q];
+                if (lson[q] != LZSS_NIL) dad[lson[q]] = dad[q];
+                lson[q] = lson[p];
+                if (lson[p] != LZSS_NIL) dad[lson[p]] = q;
+            }
+            rson[q] = rson[p];
+            if (rson[p] != LZSS_NIL) dad[rson[p]] = q;
+        }
+
+        if (q != LZSS_NIL) dad[q] = dad[p];
+        if (dad[p] != LZSS_NIL) {
+            if (rson[dad[p]] == p) rson[dad[p]] = q;
+            else lson[dad[p]] = q;
+        }
+        dad[p] = LZSS_NIL;
+    };
 
     std::vector<uint8_t> temp;
     temp.reserve(in_len + in_len / 8 + 16);
 
-    size_t i = 0;
-    while (i < in_len) {
+    int r = LZSS_N - LZSS_F;  // 0xFEE
+    int s = 0;
+
+    // Pre-load the first F bytes (lookahead) into the cache.
+    int lookahead = static_cast<int>(std::min<size_t>(LZSS_F, in_len));
+    for (int i = 0; i < lookahead; ++i) {
+        cache[(r + i) & (LZSS_N - 1)] = in[i];
+    }
+    size_t data_pos = static_cast<size_t>(lookahead);
+
+    insert_node(r);
+
+    while (lookahead > 0) {
         size_t flag_pos = temp.size();
         temp.push_back(0);
         uint8_t flag = 0;
 
-        for (int bit = 0; bit < 8 && i < in_len; ++bit) {
-            uint16_t best_offset = 0;
-            uint8_t best_len = 0;
-            const uint8_t max_len = 18;
-            size_t remaining = in_len - i;
+        for (int bit = 0; bit < 8 && lookahead > 0; ++bit) {
+            if (match_length > lookahead) match_length = lookahead;
 
-            for (uint16_t off = 0; off < 0x1000; ++off) {
-                uint8_t len = 0;
-                size_t limit = std::min<size_t>(max_len, remaining);
-                while (len < limit && cache[(off + len) & 0xFFF] == in[i + len]) {
-                    ++len;
-                }
-
-                // Disallow self-referential matches: the match window
-                // [off, off+len) must not overlap the write window
-                // [cache_ptr, cache_ptr+len), otherwise the compressor and
-                // decompressor will disagree on the cache contents.
-                if (len >= 3) {
-                    uint16_t write_start = cache_ptr;
-                    uint16_t write_end = (cache_ptr + len) & 0xFFF;
-                    uint16_t match_end = (off + len) & 0xFFF;
-                    if (write_start < write_end) {
-                        if (!(match_end <= write_start || off >= write_end)) {
-                            if (off <= write_start) {
-                                len = static_cast<uint8_t>((write_start - off) & 0xFFF);
-                            } else {
-                                len = 0;
-                            }
-                        }
-                    } else {
-                        if (write_start <= match_end || off < write_end) {
-                            len = 0;
-                        }
-                    }
-                }
-
-                if (len > best_len) {
-                    best_len = len;
-                    best_offset = off;
-                }
+            if (match_length <= LZSS_THRESHOLD) {
+                match_length = 1;
+                flag |= static_cast<uint8_t>(1 << bit);
+                temp.push_back(cache[r]);
+            } else {
+                int offset = match_position & 0xFFF;
+                int length_code = (match_length - 3) & 0x0F;
+                temp.push_back(static_cast<uint8_t>(offset & 0xFF));
+                temp.push_back(static_cast<uint8_t>(((offset >> 4) & 0xF0) | length_code));
             }
 
-            if (best_len >= 3) {
-                uint8_t byte_0 = best_offset & 0xFF;
-                uint8_t byte_1 = ((best_offset >> 4) & 0xF0) | ((best_len - 3) & 0x0F);
-                temp.push_back(byte_0);
-                temp.push_back(byte_1);
-                for (uint8_t k = 0; k < best_len; ++k) {
-                    uint8_t v = cache[(best_offset + k) & 0xFFF];
-                    cache[cache_ptr] = v;
-                    cache_ptr = (cache_ptr + 1) & 0xFFF;
+            // Shift the window by match_length bytes: delete the oldest
+            // position, write the next input byte (if available), advance
+            // s/r, and insert the new position into the tree.
+            // NOTE: save match_length before the loop — insert_node()
+            // overwrites it with the next decision's match.
+            const int consume = match_length;
+            for (int k = 0; k < consume; ++k) {
+                if (data_pos < in_len) {
+                    uint8_t c = in[data_pos++];
+                    delete_node(s);
+                    cache[s] = c;
+                    s = (s + 1) & (LZSS_N - 1);
+                    r = (r + 1) & (LZSS_N - 1);
+                    insert_node(r);
+                } else {
+                    delete_node(s);
+                    s = (s + 1) & (LZSS_N - 1);
+                    r = (r + 1) & (LZSS_N - 1);
+                    --lookahead;
+                    if (lookahead > 0) insert_node(r);
                 }
-                i += best_len;
-            } else {
-                uint8_t v = in[i];
-                temp.push_back(v);
-                cache[cache_ptr] = v;
-                cache_ptr = (cache_ptr + 1) & 0xFFF;
-                flag |= static_cast<uint8_t>(1 << bit);
-                ++i;
             }
         }
 

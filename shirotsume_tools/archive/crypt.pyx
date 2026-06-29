@@ -56,7 +56,7 @@ cdef inline void _raise_on_error(rp_error_t err) except *:
 
 
 cdef class RawEntry:
-    cdef _init_from_c(self, const rp_entry_t *entry):
+    cdef void _init_from_c(self, const rp_entry_t *entry) nogil:
         memcpy(&self._entry, entry, sizeof(rp_entry_t))
 
     cpdef str name(self):
@@ -96,9 +96,12 @@ cpdef tuple decode_table(const uint8_t[::1] data):
         list result = []
         RawEntry entry
         size_t i
+        const uint8_t *data_ptr = &data[0] if data.shape[0] > 0 else NULL
+        size_t data_len = data.shape[0]
 
-    err = rp_decode_header(&data[0], data.shape[0], &header, &header_len,
-                           &entries, &entry_count)
+    with nogil:
+        err = rp_decode_header(data_ptr, data_len, &header, &header_len,
+                               &entries, &entry_count)
     _raise_on_error(err)
 
     try:
@@ -121,6 +124,7 @@ cpdef bytes encode_table(const uint8_t[::1] header, list entries):
         uint8_t *out = NULL
         size_t out_len = 0
         const uint8_t *header_ptr = NULL
+        size_t header_len = header.shape[0]
         rp_error_t err
         RawEntry entry
         size_t i
@@ -132,10 +136,11 @@ cpdef bytes encode_table(const uint8_t[::1] header, list entries):
         for i in range(count):
             entry = <RawEntry>entries[i]
             memcpy(&raw[i], &entry._entry, sizeof(rp_entry_t))
-        if header.shape[0] > 0:
+        if header_len > 0:
             header_ptr = &header[0]
-        err = rp_encode_header(&out, &out_len, header_ptr, header.shape[0],
-                               raw, count)
+        with nogil:
+            err = rp_encode_header(&out, &out_len, header_ptr, header_len,
+                                   raw, count)
         _raise_on_error(err)
         return bytes((<uint8_t*>out)[:out_len])
     finally:
@@ -148,14 +153,18 @@ cpdef bytes decode_body(const uint8_t[::1] comp_data, uint32_t size, uint8_t cry
         size_t comp_size = comp_data.shape[0]
         size_t buf_size = comp_size if comp_size > size else size
         uint8_t *buf = <uint8_t*>malloc(buf_size)
+        const uint8_t *src = NULL
         rp_error_t err
 
     if buf is NULL:
         raise MemoryError()
     try:
         if comp_size > 0:
-            memcpy(buf, &comp_data[0], comp_size)
-        err = rp_decode_body(buf, comp_size, size, crypt_type)
+            src = &comp_data[0]
+        with nogil:
+            if comp_size > 0:
+                memcpy(buf, src, comp_size)
+            err = rp_decode_body(buf, comp_size, size, crypt_type)
         _raise_on_error(err)
         return bytes((<uint8_t*>buf)[:size])
     finally:
@@ -164,13 +173,19 @@ cpdef bytes decode_body(const uint8_t[::1] comp_data, uint32_t size, uint8_t cry
 
 cpdef tuple encode_body(const uint8_t[::1] data, bint compress=True, uint8_t crypt_type_in=0):
     cdef:
+        size_t data_len = data.shape[0]
+        const uint8_t *data_ptr = NULL
         uint8_t *out = NULL
         size_t out_len = 0
         uint8_t crypt_type = 0
+        int compress_flag = 1 if compress else 0
         rp_error_t err
 
-    err = rp_encode_body(&data[0], data.shape[0], &out, &out_len,
-                         &crypt_type, 1 if compress else 0, crypt_type_in)
+    if data_len > 0:
+        data_ptr = &data[0]
+    with nogil:
+        err = rp_encode_body(data_ptr, data_len, &out, &out_len,
+                             &crypt_type, compress_flag, crypt_type_in)
     _raise_on_error(err)
     try:
         return (bytes((<uint8_t*>out)[:out_len]), crypt_type)
@@ -271,9 +286,14 @@ cpdef void pack(object file, const uint8_t[::1] header, object entries,
         uint8_t *full_table = NULL
         size_t full_table_len = 0
         const uint8_t *header_ptr = NULL
+        size_t header_len = header.shape[0]
         rp_error_t err
         bytes name_bytes
         bytes body_data
+        const uint8_t *body_ptr = NULL
+        size_t body_len
+        uint8_t entry_ct
+        int compress_flag = 1 if compress else 0
         object py_entry
         object count_obj
         Py_ssize_t view_len
@@ -295,15 +315,16 @@ cpdef void pack(object file, const uint8_t[::1] header, object entries,
         memset(raw, 0, entry_count * sizeof(rp_entry_t))
 
     try:
-        data_offset = 8 + 4 + 4 + header.shape[0] + 4 + entry_count * 80
+        data_offset = 8 + 4 + 4 + header_len + 4 + entry_count * 80
         table_offset = data_offset - entry_count * 80
         offset = data_offset
 
-        if header.shape[0] > 0:
+        if header_len > 0:
             header_ptr = &header[0]
 
-        err = rp_encode_header(&full_header, &full_header_len,
-                               header_ptr, header.shape[0], raw, entry_count)
+        with nogil:
+            err = rp_encode_header(&full_header, &full_header_len,
+                                   header_ptr, header_len, raw, entry_count)
         _raise_on_error(err)
         try:
             view_len = <Py_ssize_t>full_header_len
@@ -329,10 +350,13 @@ cpdef void pack(object file, const uint8_t[::1] header, object entries,
             raw[seen].size = len(entry.data)
 
             body_data = entry.data
-            err = rp_encode_body(<const uint8_t*>body_data, len(body_data),
-                                 &encrypted_body, &encrypted_len,
-                                 &crypt_type, 1 if compress else 0,
-                                 entry.crypt_type)
+            body_ptr = <const uint8_t*>body_data
+            body_len = len(body_data)
+            entry_ct = entry.crypt_type
+            with nogil:
+                err = rp_encode_body(body_ptr, body_len,
+                                     &encrypted_body, &encrypted_len,
+                                     &crypt_type, compress_flag, entry_ct)
             _raise_on_error(err)
             try:
                 if encrypted_len > 0:
@@ -355,7 +379,8 @@ cpdef void pack(object file, const uint8_t[::1] header, object entries,
 
         if entry_count > 0:
             file.seek(table_offset)
-            err = rp_encode_table(&full_table, &full_table_len, raw, entry_count)
+            with nogil:
+                err = rp_encode_table(&full_table, &full_table_len, raw, entry_count)
             _raise_on_error(err)
             try:
                 view_len = <Py_ssize_t>full_table_len
@@ -407,9 +432,10 @@ cpdef void replace(object in_file, object out_file, object replacements, bint co
 
         if header_len > 0:
             header_ptr = <const uint8_t*>u.header
-        err = rp_encode_header(&full_header, &full_header_len,
-                               header_ptr, header_len,
-                               raw_arr, count)
+        with nogil:
+            err = rp_encode_header(&full_header, &full_header_len,
+                                   header_ptr, header_len,
+                                   raw_arr, count)
         _raise_on_error(err)
         try:
             out_file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
@@ -456,9 +482,10 @@ cpdef void replace(object in_file, object out_file, object replacements, bint co
             offset += raw_arr[i].comp_size
 
         out_file.seek(0)
-        err = rp_encode_header(&full_header, &full_header_len,
-                               header_ptr, header_len,
-                               raw_arr, count)
+        with nogil:
+            err = rp_encode_header(&full_header, &full_header_len,
+                                   header_ptr, header_len,
+                                   raw_arr, count)
         _raise_on_error(err)
         try:
             out_file.write(bytes((<uint8_t*>full_header)[:full_header_len]))
